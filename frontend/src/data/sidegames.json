@@ -1,0 +1,10 @@
+[
+  { "name": "Open Net", "key": "Open Net", "value": 40 },
+  { "name": "Senior Net", "key": "Sr Net", "value": 40 },
+  { "name": "Super Skins", "key": "Super Skins", "value": 20 },
+  { "name": "Division 1", "key": "D1 Skins", "value": 20 },
+  { "name": "Division 2", "key": "D2 Skins", "value": 20 },
+  { "name": "Division 3", "key": "D3 Skins", "value": 20 },
+  { "name": "Division 4", "key": "D4 Skins", "value": 20 },
+  { "name": "Division 5", "key": "D5 Skins", "value": 20 }
+]

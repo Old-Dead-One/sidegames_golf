@@ -1,0 +1,568 @@
+[
+  {
+    "tour_id": 1,
+    "tour_label": "Amateur Players Tour 2025",
+    "year": 2025,
+    "events": [
+      {
+        "location_id": 1,
+        "events": [
+          {
+            "event_id": 1,
+            "name": "Tournament 1",
+            "course": "Course A",
+            "date": "2024-12-10"
+          },
+          {
+            "event_id": 2,
+            "name": "Tournament 2",
+            "course": "Course B",
+            "date": "2025-01-15"
+          }
+        ]
+      },
+      {
+        "location_id": 2,
+        "events": [
+          {
+            "event_id": 3,
+            "name": "Tournament 3",
+            "course": "Course C",
+            "date": "2025-02-01"
+          },
+          {
+            "event_id": 4,
+            "name": "Tournament 4",
+            "course": "Course D",
+            "date": "2024-12-01"
+          }
+        ]
+      },
+      {
+        "location_id": 3,
+        "events": [
+          {
+            "event_id": 5,
+            "name": "Tournament 5",
+            "course": "Course E",
+            "date": "2025-03-01"
+          },
+          {
+            "event_id": 6,
+            "name": "Tournament 6",
+            "course": "Course F",
+            "date": "2025-03-15"
+          }
+        ]
+      },
+      {
+        "location_id": 4,
+        "events": [
+          {
+            "event_id": 7,
+            "name": "Tournament 7",
+            "course": "Course G",
+            "date": "2025-04-01"
+          },
+          {
+            "event_id": 8,
+            "name": "Tournament 8",
+            "course": "Course H",
+            "date": "2025-04-15"
+          }
+        ]
+      },
+      {
+        "location_id": 5,
+        "events": [
+          {
+            "event_id": 9,
+            "name": "Tournament 9",
+            "course": "Course I",
+            "date": "2025-05-01"
+          },
+          {
+            "event_id": 10,
+            "name": "Tournament 10",
+            "course": "Course J",
+            "date": "2025-05-15"
+          }
+        ]
+      },
+      {
+        "location_id": 6,
+        "events": [
+          {
+            "event_id": 11,
+            "name": "Tournament 11",
+            "course": "Course K",
+            "date": "2025-06-01"
+          },
+          {
+            "event_id": 12,
+            "name": "Tournament 12",
+            "course": "Course L",
+            "date": "2025-06-15"
+          }
+        ]
+      },
+      {
+        "location_id": 7,
+        "events": [
+          {
+            "event_id": 13,
+            "name": "Tournament 13",
+            "course": "Course M",
+            "date": "2025-07-01"
+          },
+          {
+            "event_id": 14,
+            "name": "Tournament 14",
+            "course": "Course N",
+            "date": "2025-07-15"
+          }
+        ]
+      },
+      {
+        "location_id": 8,
+        "events": [
+          {
+            "event_id": 15,
+            "name": "Tournament 15",
+            "course": "Course O",
+            "date": "2025-08-01"
+          },
+          {
+            "event_id": 16,
+            "name": "Tournament 16",
+            "course": "Course P",
+            "date": "2025-08-15"
+          }
+        ]
+      },
+      {
+        "location_id": 9,
+        "events": [
+          {
+            "event_id": 17,
+            "name": "Tournament 17",
+            "course": "Course Q",
+            "date": "2025-09-01"
+          },
+          {
+            "event_id": 18,
+            "name": "Tournament 18",
+            "course": "Course R",
+            "date": "2025-09-15"
+          }
+        ]
+      },
+      {
+        "location_id": 10,
+        "events": [
+          {
+            "event_id": 19,
+            "name": "Tournament 19",
+            "course": "Course S",
+            "date": "2025-10-01"
+          },
+          {
+            "event_id": 20,
+            "name": "Tournament 20",
+            "course": "Course T",
+            "date": "2025-10-15"
+          }
+        ]
+      },
+      {
+        "location_id": 11,
+        "events": [
+          {
+            "event_id": 21,
+            "name": "Tournament 21",
+            "course": "Course U",
+            "date": "2025-11-01"
+          },
+          {
+            "event_id": 22,
+            "name": "Tournament 22",
+            "course": "Course V",
+            "date": "2025-11-15"
+          }
+        ]
+      },
+      {
+        "location_id": 12,
+        "events": [
+          {
+            "event_id": 23,
+            "name": "Tournament 23",
+            "course": "Course W",
+            "date": "2025-12-01"
+          },
+          {
+            "event_id": 24,
+            "name": "Tournament 24",
+            "course": "Course X",
+            "date": "2025-12-15"
+          }
+        ]
+      },
+      {
+        "location_id": 13,
+        "events": [
+          {
+            "event_id": 25,
+            "name": "Tournament 25",
+            "course": "Course Y",
+            "date": "2025-01-01"
+          },
+          {
+            "event_id": 26,
+            "name": "Tournament 26",
+            "course": "Course Z",
+            "date": "2025-01-15"
+          }
+        ]
+      },
+      {
+        "location_id": 14,
+        "events": [
+          {
+            "event_id": 27,
+            "name": "Tournament 27",
+            "course": "Course AA",
+            "date": "2025-02-01"
+          },
+          {
+            "event_id": 28,
+            "name": "Tournament 28",
+            "course": "Course BB",
+            "date": "2025-02-15"
+          }
+        ]
+      },
+      {
+        "location_id": 15,
+        "events": [
+          {
+            "event_id": 29,
+            "name": "Tournament 29",
+            "course": "Course CC",
+            "date": "2025-03-01"
+          },
+          {
+            "event_id": 30,
+            "name": "Tournament 30",
+            "course": "Course DD",
+            "date": "2025-03-15"
+          }
+        ]
+      },
+      {
+        "location_id": 16,
+        "events": [
+          {
+            "event_id": 31,
+            "name": "Tournament 31",
+            "course": "Course EE",
+            "date": "2025-04-01"
+          },
+          {
+            "event_id": 32,
+            "name": "Tournament 32",
+            "course": "Course FF",
+            "date": "2025-04-15"
+          }
+        ]
+      },
+      {
+        "location_id": 17,
+        "events": [
+          {
+            "event_id": 33,
+            "name": "Tournament 33",
+            "course": "Course GG",
+            "date": "2025-05-01"
+          },
+          {
+            "event_id": 34,
+            "name": "Tournament 34",
+            "course": "Course HH",
+            "date": "2025-05-15"
+          }
+        ]
+      },
+      {
+        "location_id": 18,
+        "events": [
+          {
+            "event_id": 35,
+            "name": "Tournament 35",
+            "course": "Course II",
+            "date": "2025-06-01"
+          },
+          {
+            "event_id": 36,
+            "name": "Tournament 36",
+            "course": "Course JJ",
+            "date": "2025-06-15"
+          }
+        ]
+      },
+      {
+        "location_id": 19,
+        "events": [
+          {
+            "event_id": 37,
+            "name": "Tournament 37",
+            "course": "Course KK",
+            "date": "2025-07-01"
+          },
+          {
+            "event_id": 38,
+            "name": "Tournament 38",
+            "course": "Course LL",
+            "date": "2025-07-15"
+          }
+        ]
+      },
+      {
+        "location_id": 20,
+        "events": [
+          {
+            "event_id": 39,
+            "name": "Tournament 39",
+            "course": "Course MM",
+            "date": "2025-08-01"
+          },
+          {
+            "event_id": 40,
+            "name": "Tournament 40",
+            "course": "Course NN",
+            "date": "2025-08-15"
+          }
+        ]
+      },
+      {
+        "location_id": 21,
+        "events": [
+          {
+            "event_id": 41,
+            "name": "Tournament 41",
+            "course": "Course OO",
+            "date": "2025-09-01"
+          },
+          {
+            "event_id": 42,
+            "name": "Tournament 42",
+            "course": "Course PP",
+            "date": "2025-09-15"
+          }
+        ]
+      },
+      {
+        "location_id": 22,
+        "events": [
+          {
+            "event_id": 43,
+            "name": "Tournament 43",
+            "course": "Course QQ",
+            "date": "2025-10-01"
+          },
+          {
+            "event_id": 44,
+            "name": "Tournament 44",
+            "course": "Course RR",
+            "date": "2025-10-15"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tour_id": 2,
+    "tour_label": "Pro Golf Tour 2025",
+    "year": 2025,
+    "events": [
+      {
+        "location_id": 1,
+        "events": [
+          {
+            "event_id": 45,
+            "name": "Tournament 45",
+            "course": "Course SS",
+            "date": "2025-01-01"
+          },
+          {
+            "event_id": 46,
+            "name": "Tournament 46",
+            "course": "Course TT",
+            "date": "2025-01-15"
+          }
+        ]
+      },
+      {
+        "location_id": 2,
+        "events": [
+          {
+            "event_id": 47,
+            "name": "Tournament 47",
+            "course": "Course UU",
+            "date": "2025-02-01"
+          },
+          {
+            "event_id": 48,
+            "name": "Tournament 48",
+            "course": "Course VV",
+            "date": "2025-02-15"
+          }
+        ]
+      },
+      {
+        "location_id": 3,
+        "events": [
+          {
+            "event_id": 49,
+            "name": "Tournament 49",
+            "course": "Course WW",
+            "date": "2025-03-01"
+          },
+          {
+            "event_id": 50,
+            "name": "Tournament 50",
+            "course": "Course XX",
+            "date": "2025-03-15"
+          }
+        ]
+      },
+      {
+        "location_id": 4,
+        "events": [
+          {
+            "event_id": 51,
+            "name": "Tournament 51",
+            "course": "Course YY",
+            "date": "2025-04-01"
+          },
+          {
+            "event_id": 52,
+            "name": "Tournament 52",
+            "course": "Course ZZ",
+            "date": "2025-04-15"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tour_id": 3,
+    "tour_label": "Champions Tour 2025",
+    "year": 2025,
+    "events": [
+      {
+        "location_id": 1,
+        "events": [
+          {
+            "event_id": 53,
+            "name": "Tournament 53",
+            "course": "Course AAA",
+            "date": "2025-01-01"
+          },
+          {
+            "event_id": 54,
+            "name": "Tournament 54",
+            "course": "Course BBB",
+            "date": "2025-01-15"
+          }
+        ]
+      },
+      {
+        "location_id": 2,
+        "events": [
+          {
+            "event_id": 55,
+            "name": "Tournament 55",
+            "course": "Course CCC",
+            "date": "2025-02-01"
+          },
+          {
+            "event_id": 56,
+            "name": "Tournament 56",
+            "course": "Course DDD",
+            "date": "2025-02-15"
+          }
+        ]
+      },
+      {
+        "location_id": 3,
+        "events": [
+          {
+            "event_id": 57,
+            "name": "Tournament 57",
+            "course": "Course EEE",
+            "date": "2025-03-01"
+          },
+          {
+            "event_id": 58,
+            "name": "Tournament 58",
+            "course": "Course FFF",
+            "date": "2025-03-15"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tour_id": 4,
+    "tour_label": "Legends Tour 2025",
+    "year": 2025,
+    "events": [
+      {
+        "location_id": 1,
+        "events": [
+          {
+            "event_id": 59,
+            "name": "Tournament Test this 59",
+            "course": "Course GGG",
+            "date": "2024-09-11"
+          },
+          {
+            "event_id": 60,
+            "name": "Tournament 60",
+            "course": "Course HHH",
+            "date": "2025-01-15"
+          }
+        ]
+      },
+      {
+        "location_id": 2,
+        "events": [
+          {
+            "event_id": 61,
+            "name": "Tournament 61",
+            "course": "Course III",
+            "date": "2025-06-01"
+          }
+        ]
+      },
+      {
+        "location_id": 3,
+        "events": [
+          {
+            "event_id": 62,
+            "name": "Tournament 62",
+            "course": "Course JJJ",
+            "date": "2025-07-01"
+          },
+          {
+            "event_id": 63,
+            "name": "Tournament 63",
+            "course": "Course K",
+            "date": "2025-07-15"
+          }
+        ]
+      }
+    ]
+  }
+]

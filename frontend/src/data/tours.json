@@ -1,0 +1,14 @@
+[
+  {
+    "tour_id": 1,
+    "label": "APT USA 2025",
+    "year": 2025,
+    "locations": []
+  },
+  {
+    "tour_id": 2,
+    "label": "APT Canada 2025",
+    "year": 2025,
+    "locations": []
+  }
+]
