@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TopNavBar from "./components/TopNavBar";
-// import BottomNavBar from "./components/bottomnav";
+import BottomNavBar from "./components/bottomnav";
 import CenteredGraphic from "./components/centeredgraphic";
 import { UserProvider } from "./context/UserContext";
 import Dashboard from "./pages/Dashboard";
@@ -28,10 +28,10 @@ const App: React.FC = () => {
   return (
     <UserProvider>
       <BrowserRouter>
-        <div style={{ position: "relative", backgroundColor: bgColor }}>
+        <div className="flex flex-col min-h-screen" style={{ position: "relative", backgroundColor: bgColor }}>
           <TopNavBar logoColor={navbarColor} />
           <CenteredGraphic setNavbarColor={setNavbarColor} setBgColor={setBgColor} />
-          <div style={{ position: "relative", zIndex: 10 }}>
+          <div style={{ position: "relative", zIndex: 1, marginTop: "40px", paddingBottom: "100px" }}>
             <Routes>
               <Route path="/" element={<Landing theme={bgColor} />} />
               <Route path="/Dashboard" element={<Dashboard theme={bgColor} />} />
@@ -49,9 +49,9 @@ const App: React.FC = () => {
               <Route path="/CreateGame" element={<CreateGame theme={bgColor} />} />
             </Routes>
           </div>
+          <BottomNavBar />
           <ToastContainer />
         </div>
-        {/* <BottomNavBar /> */}
       </BrowserRouter>
     </UserProvider>
   );

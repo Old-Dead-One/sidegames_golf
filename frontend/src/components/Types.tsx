@@ -61,20 +61,6 @@ export interface EventItem extends LocationEvent {
     date: string;
 }
 
-// EventSummaryProps interface to represent event summary data
-export interface EventSummaryProps {
-    selectedEvent: EventItem | null;
-    tourLabel: string | null;
-    locationLabel: string | null;
-}
-
-// SideGame interface to represent side game data
-export interface SideGame {
-    name: string;
-    cost: number;
-    selected: boolean;
-}
-
 // SideGames interface to represent side games data
 export interface SideGames {
     name: string;

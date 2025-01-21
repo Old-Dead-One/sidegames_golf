@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import Cookie from 'js-cookie';
 import { useEffect } from 'react';
 import find_a_game_blue from '../assets/find_a_game_blue.png';
-// import find_a_game_green from '../assets/find_a_game_green.png';
+import find_a_game_green from '../assets/find_a_game_green.png';
 import find_a_game_orange from '../assets/find_a_game_orange.png';
 import find_a_game_pink from '../assets/find_a_game_pink.png';
 import find_a_game_purple from '../assets/find_a_game_purple.png';
@@ -23,7 +23,7 @@ const CenteredGraphic: React.FC<CenteredGraphicProps> = ({ setNavbarColor, setBg
   const location = useLocation();
   const images = [
     { src: find_a_game_blue, color: '#66d3fa', bg: background_blue },
-    // { src: find_a_game_green, color: '#0062b8', bg: background_blue },
+    { src: find_a_game_green, color: '#0062b8', bg: background_blue },
     { src: find_a_game_blue, color: '#25f78c', bg: background_green },
     { src: find_a_game_orange, color: '#808080', bg: background_grey },
     { src: find_a_game_purple, color: '#f72585', bg: background_pink },

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import AutoCompleteForm from "../components/AutoCompleteForm";
 import { Tour, Location, LocationDetail, EventItem, SideGames } from "../components/Types";
@@ -9,11 +10,16 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const event_id = Number(query.get("event_id"));
+    const tour_id = query.get("tour_id");
+    const location_id = Number(query.get("location_id"));
     const [tours, setTours] = useState<Tour[]>([]);
     const [locations, setLocations] = useState<Location[]>([]);
     const [events, setEvents] = useState<EventItem[]>([]);
-    const [selectedTourId, setSelectedTourId] = useState<number | null>(null);
-    const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
+    const [selectedtour_id, setSelectedtour_id] = useState<number | null>(null);
+    const [selectedlocation_id, setSelectedlocation_id] = useState<number | null>(null);
     const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
     const [tourValue, setTourValue] = useState<Tour | null>(null);
     const [locationValue, setLocationValue] = useState<LocationDetail | null>(null);
@@ -31,7 +37,6 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-
             try {
                 const [toursResponse, locationsResponse, eventsResponse, sideGamesResponse] = await Promise.all([
                     fetch("/src/data/tours.json"),
@@ -49,6 +54,23 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 setLocations(locationsData);
                 setEvents(eventsData);
                 setSideGamesRows(sideGamesData);
+
+                // Pre-select event, tour, and location based on query params
+                if (event_id && toursData.length > 0 && locationsData.length > 0 && eventsData.length > 0) {
+                    const event = eventsData.find((e: EventItem) => e.event_id === Number(event_id));
+                    if (event) {
+                        setSelectedEvent(event);
+                        setEventValue(event);
+
+                        const tour = toursData.find((tour: Tour) => tour.tour_id === event.tour_id);
+                        setTourValue(tour || null);
+
+                        const locationDetail = locationsData
+                            .find((location: Location) => location.tour_id === event.tour_id)
+                            ?.locations?.find((loc: LocationDetail) => loc.location_id === event.location_id) || null;
+                        setLocationValue(locationDetail);
+                    }
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -57,21 +79,55 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         fetchData();
     }, []);
 
-    const filteredLocationDetails: LocationDetail[] = selectedTourId
-        ? locations.find(location => location.tour_id === selectedTourId)?.locations || []
+    useEffect(() => {
+
+        if (event_id && tours.length > 0 && locations.length > 0 && events.length > 0) {
+            const event = events.find(e => e.event_id === event_id);
+            if (event) {
+                setSelectedEvent(event);
+                setEventValue(event);
+                setSelectedtour_id(event.tour_id);
+                setSelectedlocation_id(event.location_id);
+
+                const tour = tours.find(tour => tour.tour_id === event.tour_id);
+                setTourValue(tour || null);
+
+                const locationDetail = locations
+                    .find(location => location.tour_id === event.tour_id)
+                    ?.locations?.find(loc => loc.location_id === event.location_id) || null;
+                setLocationValue(locationDetail);
+            } else {
+                console.warn("No event found for event_id:", event_id);
+            }
+        }
+
+        // Set the selected tour and location based on the URL parameters
+        if (tour_id) {
+            const matchedTour = tours.find(tour => tour.label === tour_id);
+            if (matchedTour) {
+                setSelectedtour_id(matchedTour.tour_id);
+            }
+        }
+        if (location_id) {
+            setSelectedlocation_id(location_id);
+        }
+    }, [event_id, tours, locations, tour_id, location_id]);
+
+    const filteredLocationDetails: LocationDetail[] = selectedtour_id
+        ? locations.find(location => location.tour_id === selectedtour_id)?.locations || []
         : [];
 
-    const handleSelectTour = (tourId: number | null, selectedTour: Tour | null) => {
-        setSelectedTourId(tourId);
+    const handleSelectTour = (tour_id: number | null, selectedTour: Tour | null) => {
+        setSelectedtour_id(tour_id);
         setTourValue(selectedTour);
-        setSelectedLocationId(null);
+        setSelectedlocation_id(null);
         setLocationValue(null);
         setSelectedEvent(null);
         setEventValue(null);
     };
 
     const handleSelectLocation = (location: LocationDetail | null) => {
-        setSelectedLocationId(location ? location.location_id : null);
+        setSelectedlocation_id(location ? location.location_id : null);
         setLocationValue(location);
         setSelectedEvent(null);
         setEventValue(null);
@@ -143,8 +199,8 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
         const eventSummary = {
             selectedEvent,
-            tourLabel: tours.find(tour => tour.tour_id === selectedTourId)?.label || null,
-            locationLabel: filteredLocationDetails.find(loc => loc.location_id === selectedLocationId)?.label || null,
+            tourLabel: tours.find(tour => tour.tour_id === selectedtour_id)?.label || null,
+            locationLabel: filteredLocationDetails.find(loc => loc.location_id === selectedlocation_id)?.label || null,
         };
 
         const sideGamesData = {
@@ -168,7 +224,6 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
     return (
         <div className="max-w-[640px] text-center mx-auto">
-            {/* Error and Success messages as Tailwind alerts */}
             {errorMessage && (
                 <div className="p-4 mb-4 bg-red-500 text-white rounded-md">
                     {errorMessage}
@@ -180,25 +235,19 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 </div>
             )}
 
-            {/* Card component */}
-            <Card
-                title="Dashboard"
-                theme={theme}
-            // footerContent={<button className="text-yellow-400">Footer Action</button>}
-            >
+            <Card title="Dashboard" theme={theme}>
                 <div className="p-2 text-left flex justify-center max-w-4xl mx-auto">
                     <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                        {/* AutoCompleteForm component */}
                         <AutoCompleteForm
                             tours={tours}
                             locations={filteredLocationDetails}
                             events={events}
-                            selectedTourId={selectedTourId}
-                            selectedLocationId={selectedLocationId}
+                            selectedTourId={selectedtour_id}
+                            selectedLocationId={selectedlocation_id}
                             tourValue={tourValue}
                             locationValue={locationValue}
                             eventValue={eventValue}
-                            onSelectTour={(tourId: number | null, selectedTour: Tour | null) => handleSelectTour(tourId, selectedTour)}
+                            onSelectTour={(tour_id: number | null, selectedTour: Tour | null) => handleSelectTour(tour_id, selectedTour)}
                             onSelectLocation={handleSelectLocation}
                             onSelectEvent={handleSelectEvent}
                             expanded={expanded}
@@ -212,12 +261,12 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                             onDivisionChange={handleDivisionChange}
                             onSuperSkinsChange={handleSuperSkinsChange}
                             onAddToCart={handleAddToCart}
-                            selectedEvent={selectedEvent} />
+                            selectedEvent={selectedEvent}
+                        />
                     </div>
                 </div>
-            </Card >
+            </Card>
         </div>
-
     );
 };
 

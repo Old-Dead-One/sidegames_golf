@@ -84,7 +84,7 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
         <Card
             title="Profile"
             theme={theme}
-            // footerContent={<button className="text-blue-500">Footer Action</button>}
+        // footerContent={<button className="text-blue-500">Footer Action</button>}
         >
             <div className="p-2 text-left flex justify-center mx-auto">
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
@@ -143,7 +143,7 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                                             <div className="flex items-center">
                                                 <div
                                                     aria-hidden="true"
-                                                    className="inline-block size-20 shrink-0 overflow-hidden rounded-full"
+                                                    className="inline-block size-20 shrink-0 rounded-full"
                                                 >
                                                     <img alt="" src={imageUrl} className="size-full rounded-full" />
                                                 </div>
@@ -174,7 +174,7 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                                             </div>
                                         </div>
 
-                                        <div className="ml-2 relative hidden overflow-hidden rounded-full lg:block">
+                                        <div className="m-2 relative hidden overflow-hidden rounded-full lg:block">
                                             <img alt="" src={imageUrl} className="relative size-28 rounded-full" />
                                             <label
                                                 htmlFor="desktop-user-photo"

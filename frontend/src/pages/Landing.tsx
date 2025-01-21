@@ -12,7 +12,7 @@ interface LandingProps {
 const LandingPage: React.FC<LandingProps> = ({ theme }) => {
     return (
         <Card title="Welcome to sidegames.golf" theme={theme}>
-            <div className="py-2 text-left flex justify-center mx-auto">
+            <div className="w-full py-2 text-left flex justify-center mx-auto">
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     <div className="text-sm text-center">
                         <p className="my-2 text-white">Choose an option below to continue...</p>
@@ -21,7 +21,7 @@ const LandingPage: React.FC<LandingProps> = ({ theme }) => {
                                 <a href="/dashboard">
                                     <img
                                         src={find_a_game_logo_black}
-                                        className="w-40 transition-colors duration-300"
+                                        className="w-80 transition-colors duration-300"
                                         onMouseEnter={(e) => (e.currentTarget.src = find_a_game_logo_blue)}
                                         onMouseLeave={(e) => (e.currentTarget.src = find_a_game_logo_black)}
                                         alt="Find a Game"
@@ -32,7 +32,7 @@ const LandingPage: React.FC<LandingProps> = ({ theme }) => {
                                 <a href="/CreateGame">
                                     <img
                                         src={create_a_game_logo_black}
-                                        className="w-40 transition-colors duration-300"
+                                        className="w-80 transition-colors duration-300"
                                         onMouseEnter={(e) => (e.currentTarget.src = create_a_game_logo_blue)}
                                         onMouseLeave={(e) => (e.currentTarget.src = create_a_game_logo_black)}
                                         alt="Create a Game"

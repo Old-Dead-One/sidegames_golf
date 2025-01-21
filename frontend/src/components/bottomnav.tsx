@@ -1,3 +1,9 @@
+import React from 'react';
+
+interface BottomNavBarProps {
+    className?: string;
+}
+
 const navigation = [
     {
         name: 'Facebook',
@@ -62,19 +68,19 @@ const navigation = [
     },
 ]
 
-function BottomNavBar() {
+const BottomNavBar: React.FC<BottomNavBarProps> = ({ className }) => {
     return (
-        <footer className="bg-black">
-            <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
+        <footer className={`fixed bottom-0 w-full bg-black z-50 ${className || ''}`} style={{ height: '80px' }}>
+            <div className="mx-auto max-w-7xl p-4 md:p-6 md:flex md:items-center md:justify-between">
                 <div className="flex justify-center gap-x-6 md:order-2">
                     {navigation.map((item) => (
-                        <a key={item.name} href={item.href} className="text-gray-600 hover:text-gray-800">
+                        <a key={item.name} href={item.href} className="text-gray-400 hover:text-white">
                             <span className="sr-only">{item.name}</span>
                             <item.icon aria-hidden="true" className="size-6" />
                         </a>
                     ))}
                 </div>
-                <p className="mt-8 text-center text-sm/6 text-primary md:order-1 md:mt-0">
+                <p className="mt-2 text-center text-sm/6 text-primary md:order-1 md:mt-0">
                     &copy; 2024 Your sidegames.golf, Inc. All rights reserved.
                 </p>
             </div>

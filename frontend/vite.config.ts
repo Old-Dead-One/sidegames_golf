@@ -12,19 +12,20 @@ export default defineConfig({
   ],
   build: {
     chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            // Split large libraries into separate chunks
-            if (id.includes('@fullcalendar')) return 'vendor-calendar';
-            if (id.includes('@mui')) return 'vendor-mui';
-            if (id.includes('@supabase')) return 'vendor-supabase';
-            return 'vendor';
-          }
-        }
-      }
-    }
+    // Disable manual chunking by commenting out the rollupOptions
+    // rollupOptions: {
+    //   output: {
+    //     manualChunks(id) {
+    //       if (id.includes('node_modules')) {
+    //         // Split large libraries into separate chunks
+    //         if (id.includes('@fullcalendar')) return 'vendor-calendar';
+    //         if (id.includes('@mui')) return 'vendor-mui';
+    //         if (id.includes('@supabase')) return 'vendor-supabase';
+    //         return 'vendor';
+    //       }
+    //     }
+    //   }
+    // }
   },
   base: '/',
 });

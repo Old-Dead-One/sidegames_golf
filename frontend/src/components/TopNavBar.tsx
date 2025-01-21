@@ -16,10 +16,8 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <Disclosure
-            style={{ backgroundColor: logoColor }}
-            as="nav" className="sticky top-0 z-50">
-            <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8">
+        <Disclosure as="nav" className="sticky top-0 z-50 h-12" style={{ backgroundColor: logoColor }}>
+            <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8 h-12">
                 <div className="relative flex h-12 items-center justify-between">
                     <div className="flex items-center">
                         <NavLink to="/" className="flex-shrink-0"
@@ -283,7 +281,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                 </div>
             </DisclosurePanel>
             <div className='h-0.5 bg-black' />
-        </Disclosure >
+        </Disclosure>
     )
 }
 

@@ -9,7 +9,15 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ theme }) => {
-    const [tooltip, setTooltip] = useState<{ title: string; date: string; location: string; tour: string; link: string; visible: boolean }>({ title: "", date: "", location: "", tour: "", link: "", visible: false });
+    const [tooltip, setTooltip] = useState<{
+        title: string;
+        date: string;
+        location_id: number;
+        tour_id: number;
+        event_id: number;
+        link: string;
+        visible: boolean
+    }>({ title: "", date: "", location_id: 0, tour_id: 0, event_id: 0, link: "", visible: false });
     const tooltipRef = useRef<HTMLDivElement | null>(null);
 
     const events = eventsData.flatMap(tour =>
@@ -19,7 +27,8 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                 start: event.date,
                 extendedProps: {
                     location: location.location_id,
-                    tour: tour.tour_label
+                    tour: tour.tour_label,
+                    event_id: event.event_id
                 }
             }))
         )
@@ -30,15 +39,16 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
         setTooltip({
             title: event.event.title,
             date: eventDate,
-            location: event.event.extendedProps.location,
-            tour: event.event.extendedProps.tour,
-            link: "/test-event",
+            location_id: event.event.extendedProps.location,
+            tour_id: event.event.extendedProps.tour,
+            event_id: event.event.extendedProps.event_id,
+            link: `/Dashboard?event_id=${event.event.extendedProps.event_id}&tour_id=${event.event.extendedProps.tour}&location_id=${event.event.extendedProps.location}`,
             visible: true,
         });
     };
 
     const closeTooltip = () => {
-        setTooltip({ title: "", date: "", location: "", tour: "", link: "", visible: false });
+        setTooltip({ title: "", date: "", location_id: 0, tour_id: 0, event_id: 0, link: "", visible: false });
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -65,7 +75,7 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
-                        events={events} // Use original events
+                        events={events}
                         headerToolbar={{
                             center: "title",
                             left: "prev,next today",
@@ -85,7 +95,6 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                                     style={{
                                         maxWidth: '32px',
                                         overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
                                         whiteSpace: 'nowrap',
                                         display: 'block',
                                     }}
@@ -101,19 +110,31 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                 </div>
             </div>
             {tooltip.visible && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
                     <div
                         ref={tooltipRef}
                         className="bg-white border border-gray-300 rounded p-4 text-opacity-100"
                     >
                         <span className="font-bold">{tooltip.title}</span>
                         <div className="text-sm">Date: {tooltip.date}</div>
-                        <div className="text-sm">Location: {tooltip.location}</div>
-                        <div className="text-sm">Tour: {tooltip.tour}</div>
+                        <div className="text-sm">Location: {tooltip.location_id}</div>
+                        <div className="text-sm">Tour: {tooltip.tour_id}</div>
                         <a
                             href={tooltip.link}
                             className="text-blue-500 underline"
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                console.log("Event data being passed to Dashboard:", {
+                                    title: tooltip.title,
+                                    date: tooltip.date,
+                                    location_id: tooltip.location_id,
+                                    tour_id: tooltip.tour_id,
+                                    event_id: tooltip.event_id,
+                                    link: tooltip.link,
+                                });
+                                closeTooltip();
+                                window.location.href = tooltip.link;
+                            }}
                         >
                             Go to Event
                         </a>
