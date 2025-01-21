@@ -124,14 +124,6 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                             className="text-blue-500 underline"
                             onClick={(e) => {
                                 e.preventDefault();
-                                console.log("Event data being passed to Dashboard:", {
-                                    title: tooltip.title,
-                                    date: tooltip.date,
-                                    location_id: tooltip.location_id,
-                                    tour_id: tooltip.tour_id,
-                                    event_id: tooltip.event_id,
-                                    link: tooltip.link,
-                                });
                                 closeTooltip();
                                 window.location.href = tooltip.link;
                             }}

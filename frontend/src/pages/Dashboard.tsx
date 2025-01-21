@@ -32,6 +32,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const [totalCost, setTotalCost] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
     const { addToCart, isEventInCart } = useUser();
 
@@ -73,6 +74,8 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -80,9 +83,21 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     }, []);
 
     useEffect(() => {
+        if (loading) return; // Prevent running this effect while loading
 
         if (event_id && tours.length > 0 && locations.length > 0 && events.length > 0) {
-            const event = events.find(e => e.event_id === event_id);
+            // Flatten the events array
+            const flattenedEvents = events.flatMap(tour =>
+                tour.events.flatMap(location =>
+                    location.events.map(event => ({
+                        ...event,
+                        tour_id: tour.tour_id,
+                        location_id: location.location_id
+                    }))
+                )
+            );
+
+            const event = flattenedEvents.find(e => e.event_id === event_id);
             if (event) {
                 setSelectedEvent(event);
                 setEventValue(event);
@@ -111,7 +126,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         if (location_id) {
             setSelectedlocation_id(location_id);
         }
-    }, [event_id, tours, locations, tour_id, location_id]);
+    }, [event_id, tours, locations, tour_id, location_id, events, loading]);
 
     const filteredLocationDetails: LocationDetail[] = selectedtour_id
         ? locations.find(location => location.tour_id === selectedtour_id)?.locations || []
@@ -221,6 +236,11 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
             setSuccessMessage(null);
         }, 3000);
     };
+
+    // Render loading state or the main content
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="max-w-[640px] text-center mx-auto">
