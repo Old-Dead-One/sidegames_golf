@@ -27,7 +27,10 @@ const App: React.FC = () => {
 
   return (
     <UserProvider>
-      <BrowserRouter>
+      <BrowserRouter future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}>
         <div className="flex flex-col min-h-screen" style={{ position: "relative", backgroundColor: bgColor }}>
           <TopNavBar logoColor={navbarColor} />
           <CenteredGraphic setNavbarColor={setNavbarColor} setBgColor={setBgColor} />

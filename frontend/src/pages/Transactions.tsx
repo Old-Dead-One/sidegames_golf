@@ -56,14 +56,16 @@ const Transactions: React.FC<TransactionsProps> = ({ theme }) => {
                             </div>
                             <table className="w-full table-auto text-center text-sm divide-y divide-white lg:col-span-9">
                                 <thead>
-                                    <th className="text-left">Event</th>
-                                    <th>Type</th>
-                                    <th>Amount</th>
-                                    <th>Event Date</th>
+                                    <tr>
+                                        <th className="text-left">Event</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>Event Date</th>
+                                    </tr>
                                 </thead>
                                 <tbody className="text-center text-sm divide-y divide-neutral-400 lg:col-span-9">
                                     {purchases.map((purchase) => (
-                                        <tr key={purchase.id}>
+                                        <tr key={`${purchase.id}-${purchase.eventDate}`}>
                                             <td className="text-left">{purchase.cartItems}</td>
                                             <td>Entrance Fee</td>
                                             <td>$ {purchase.totalCost}</td>
