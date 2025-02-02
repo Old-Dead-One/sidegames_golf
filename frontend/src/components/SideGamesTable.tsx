@@ -63,7 +63,7 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
     };
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer>
             <Typography align="center" variant="h6" paddingTop={1}>
                 <strong>Available Side Games</strong>
             </Typography>

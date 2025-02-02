@@ -135,8 +135,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                 .from('events')
                 .update({
                     name: eventName,
-                    course: courseDetails.course_name,
-                    
+                    course: courseDetails.course_name,                   
                     event_date: eventDate,
                 })
                 .eq('event_id', selectedEvent.event_id);
@@ -193,9 +192,9 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
     };
 
     return (
-        // <div className="max-w-[320px] text-center mx-auto">
             <Card title="Create a Game" 
             theme={theme}
+            className="max-w-[380px]"
             // footerContent={<button className="text-blue-600">Footer Action</button>}
             >
 
@@ -274,7 +273,6 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                     </div>
                 </div>
             </Card>
-        // </div>
     );
 };
 

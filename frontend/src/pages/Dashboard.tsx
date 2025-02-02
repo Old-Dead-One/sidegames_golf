@@ -242,10 +242,10 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     }
 
     return (
-        // <div className="max-w-[320px] text-center mx-auto">
             <Card
                 title="Find a Game"
                 theme={theme}
+                className="min-w-[380px]"
             // footerContent={<button className="text-blue-600">Footer Action</button>}
             >
 
@@ -280,7 +280,6 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                     </div>
                 </div>
             </Card>
-        // </div>
     );
 };
 

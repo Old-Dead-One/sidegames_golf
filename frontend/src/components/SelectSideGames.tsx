@@ -31,7 +31,7 @@ const SelectSideGames: React.FC<SelectSideGamesProps> = ({
 }) => {
 
     return (
-        <Box sx={{ maxWidth: "296px" }}>
+        <Box>
             <SideGamesTable
                 rows={rows}
                 net={net}
