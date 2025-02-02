@@ -83,17 +83,18 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
             theme={theme}
         // footerContent={<button className="text-blue-500">Footer Action</button>}
         >
-            <div className="min-w-[320px] p-2 text-left flex justify-center mx-auto">
+            <div className="p-2 text-left flex justify-center mx-auto">
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
                         <Profilenav />
-                        <form onSubmit={handleSave} method="POST" className="text-sm pl-1 divide-y divide-white lg:col-span-9">
-                            {/* Account section */}
+
+                        {/* Account section */}
+                        <form onSubmit={handleSave} method="POST" className="p-2 text-sm divide-y divide-white lg:col-span-9">
                             <div className="p-1">
                                 {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-                                <div className="mb-2">
+                                <div>
                                     <p className="text-xs text-yellow-300">
-                                        This information is required for financial transactions and used to verify your account.
+                                        Required for financial transactions and used to verify your account.
                                     </p>
                                 </div>
                                 <div className="mt-2 grid grid-cols-12 gap-2">

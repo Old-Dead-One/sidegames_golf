@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+import { supabase } from "../services/supabaseClient";
 import AutoCompleteForm from "../components/AutoCompleteForm";
-import { Tour, Location, LocationDetail, EventItem, SideGames } from "../components/Types";
+import { Tour, LocationDetail, EventItem, SideGames } from "../components/Types";
 import Card from "../components/defaultcard";
 
 interface DashboardProps {
@@ -13,10 +14,10 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const event_id = Number(query.get("event_id"));
-    const tour_id = query.get("tour_id");
+    const tour_id = Number(query.get("tour_id"));
     const location_id = Number(query.get("location_id"));
     const [tours, setTours] = useState<Tour[]>([]);
-    const [locations, setLocations] = useState<Location[]>([]);
+    const [locations, setLocations] = useState<LocationDetail[]>([]);
     const [events, setEvents] = useState<EventItem[]>([]);
     const [selectedtour_id, setSelectedtour_id] = useState<number | null>(null);
     const [selectedlocation_id, setSelectedlocation_id] = useState<number | null>(null);
@@ -32,24 +33,21 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const [totalCost, setTotalCost] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const { addToCart, isEventInCart } = useUser();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [toursResponse, locationsResponse, eventsResponse, sideGamesResponse] = await Promise.all([
-                    fetch("/src/data/tours.json"),
-                    fetch("/src/data/locations.json"),
-                    fetch("/src/data/events.json"),
-                    fetch("/src/data/sidegames.json")
-                ]);
+                const { data: toursData, error: toursError } = await supabase.from('tours').select('*');
+                const { data: locationsData, error: locationsError } = await supabase.from('locations').select('*');
+                const { data: eventsData, error: eventsError } = await supabase.from('events').select('*');
+                const { data: sideGamesData, error: sideGamesError } = await supabase.from('side_games').select('*');
 
-                const toursData: Tour[] = await toursResponse.json();
-                const locationsData: Location[] = await locationsResponse.json();
-                const eventsData: EventItem[] = await eventsResponse.json();
-                const sideGamesData: SideGames[] = await sideGamesResponse.json();
+                if (toursError || locationsError || eventsError || sideGamesError) {
+                    throw new Error("Error fetching data from Supabase");
+                }
 
                 setTours(toursData);
                 setLocations(locationsData);
@@ -58,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
                 // Pre-select event, tour, and location based on query params
                 if (event_id && toursData.length > 0 && locationsData.length > 0 && eventsData.length > 0) {
-                    const event = eventsData.find((e: EventItem) => e.event_id === Number(event_id));
+                    const event = eventsData.find((e: EventItem) => e.event_id === event_id);
                     if (event) {
                         setSelectedEvent(event);
                         setEventValue(event);
@@ -66,36 +64,42 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                         const tour = toursData.find((tour: Tour) => tour.tour_id === event.tour_id);
                         setTourValue(tour || null);
 
-                        const locationDetail = locationsData
-                            .find((location: Location) => location.tour_id === event.tour_id)
-                            ?.locations?.find((loc: LocationDetail) => loc.location_id === event.location_id) || null;
+                        const locationDetail = locationsData.find((loc: LocationDetail) => loc.location_id === event.location_id) || null;
                         setLocationValue(locationDetail);
                     }
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setErrorMessage("Failed to load data.");
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [event_id]);
 
     useEffect(() => {
         if (loading) return; // Prevent running this effect while loading
 
-        if (event_id && tours.length > 0 && locations.length > 0 && events.length > 0) {
-            // Flatten the events array
-            const flattenedEvents = events.flatMap(tour =>
-                tour.events.flatMap(location =>
-                    location.events.map(event => ({
+        if (event_id && tours.length > 0 && locations.length > 0 && Array.isArray(events)) {
+            const flattenedEvents = events.flatMap(tour => {
+                if (!tour.events) {
+                    console.warn("Tour events are undefined for tour:", tour);
+                    return [];
+                }
+                return tour.events.flatMap(location => {
+                    if (!location.events) {
+                        console.warn("Location events are undefined for location:", location);
+                        return [];
+                    }
+                    return location.events.map(event => ({
                         ...event,
                         tour_id: tour.tour_id,
-                        location_id: location.location_id
-                    }))
-                )
-            );
+                        location_id: location.location_id,
+                    }));
+                });
+            });
 
             const event = flattenedEvents.find(e => e.event_id === event_id);
             if (event) {
@@ -107,9 +111,8 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 const tour = tours.find(tour => tour.tour_id === event.tour_id);
                 setTourValue(tour || null);
 
-                const locationDetail = locations
-                    .find(location => location.tour_id === event.tour_id)
-                    ?.locations?.find(loc => loc.location_id === event.location_id) || null;
+                // Update the logic to find the location correctly
+                const locationDetail = locations.find(loc => loc.location_id === event.location_id) || null;
                 setLocationValue(locationDetail);
             } else {
                 console.warn("No event found for event_id:", event_id);
@@ -118,7 +121,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
         // Set the selected tour and location based on the URL parameters
         if (tour_id) {
-            const matchedTour = tours.find(tour => tour.label === tour_id);
+            const matchedTour = tours.find(tour => tour.tour_id === tour_id);
             if (matchedTour) {
                 setSelectedtour_id(matchedTour.tour_id);
             }
@@ -243,7 +246,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     }
 
     return (
-        <div className="max-w-[640px] text-center mx-auto">
+        <div className="max-w-[320px] text-center mx-auto">
             {errorMessage && (
                 <div className="p-4 mb-4 bg-red-500 text-white rounded-md">
                     {errorMessage}
@@ -254,20 +257,26 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                     {successMessage}
                 </div>
             )}
+            <Card
+                title="Dashboard"
+                theme={theme}
+            // footerContent={<button className="text-blue-600">Footer Action</button>}
+            >
 
-            <Card title="Dashboard" theme={theme}>
-                <div className="p-2 text-left flex justify-center max-w-4xl mx-auto">
+                {/* Dashboard section */}
+                <div className="p-2 w-auto text-xs text-left">
                     <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
                         <AutoCompleteForm
                             tours={tours}
-                            locations={filteredLocationDetails}
+                            locations={locations}
                             events={events}
                             selectedTourId={selectedtour_id}
                             selectedLocationId={selectedlocation_id}
+                            selectedEvent={selectedEvent}
                             tourValue={tourValue}
                             locationValue={locationValue}
                             eventValue={eventValue}
-                            onSelectTour={(tour_id: number | null, selectedTour: Tour | null) => handleSelectTour(tour_id, selectedTour)}
+                            onSelectTour={handleSelectTour}
                             onSelectLocation={handleSelectLocation}
                             onSelectEvent={handleSelectEvent}
                             expanded={expanded}
@@ -281,7 +290,6 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                             onDivisionChange={handleDivisionChange}
                             onSuperSkinsChange={handleSuperSkinsChange}
                             onAddToCart={handleAddToCart}
-                            selectedEvent={selectedEvent}
                         />
                     </div>
                 </div>

@@ -13,13 +13,13 @@ const TourAutoComplete: React.FC<TourAutoCompleteProps> = ({ tours, value, onSel
 
     return (
         <Autocomplete
-            sx={{ width: "100%" }}
+            sx={{ width: "100%", borderRadius: "4px" }}
             size="small"
             options={tours}
             getOptionLabel={(option) => option.label || ""}
             value={controlledValue}
             onChange={(_event, newValue) => onSelect(newValue ? newValue.tour_id : null, newValue)}
-            renderInput={(params) => <TextField {...params} />}
+            renderInput={(params) => <TextField {...params} placeholder="Select a Tour" />}
         />
     );
 };

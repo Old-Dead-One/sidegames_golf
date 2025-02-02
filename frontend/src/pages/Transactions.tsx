@@ -44,36 +44,35 @@ const Transactions: React.FC<TransactionsProps> = ({ theme }) => {
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
                         <Profilenav />
-                        <div className="pl-2 text-sm divide-y divide-white lg:col-span-9">
 
-                            {/* Transactions section */}
-                            <div className="py-2">
-                                <div>
-                                    <p className="text-left text-xs text-yellow-300">
-                                        Your entrance fees and winnings can be found here.
-                                    </p>
-                                </div>
-                            </div>
-                            <table className="w-full table-auto text-center text-sm divide-y divide-white lg:col-span-9">
-                                <thead>
-                                    <tr>
-                                        <th className="text-left">Event</th>
-                                        <th>Type</th>
-                                        <th>Amount</th>
-                                        <th>Event Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="text-center text-sm divide-y divide-neutral-400 lg:col-span-9">
-                                    {purchases.map((purchase) => (
-                                        <tr key={`${purchase.id}-${purchase.eventDate}`}>
-                                            <td className="text-left">{purchase.cartItems}</td>
-                                            <td>Entrance Fee</td>
-                                            <td>$ {purchase.totalCost}</td>
-                                            <td>{purchase.eventDate}</td>
+                        {/* Transactions section */}
+                        <div className="p-2 divide-y divide-white lg:col-span-9">
+                            <div className="p-1">
+                                <p className="text-xs text-yellow-300">
+                                    Your entrance fees and winnings can be found here.
+                                </p>
+
+                                <table role="table" className="text-xs divide-y divide-white">
+                                    <thead>
+                                        <tr>
+                                            <th className="pr-32">Event</th>
+                                            <th className="pr-10">Type</th>
+                                            <th className="pr-6">$$$</th>
+                                            <th className="pr-7">Date</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="divide-y divide-neutral-400">
+                                        {purchases.map((purchase) => (
+                                            <tr key={`${purchase.id}-${purchase.eventDate}`}>
+                                                <td className="py-1 pr-1">{purchase.cartItems}</td>
+                                                <td className="">Fee</td>
+                                                <td className="">${purchase.totalCost}</td>
+                                                <td className="">{new Date(purchase.eventDate).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' })}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>

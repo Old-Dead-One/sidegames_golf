@@ -58,7 +58,7 @@ export interface EventItem extends LocationEvent {
     event_id: number;
     name: string;
     course: string;
-    date: string;
+    event_date: string;
 }
 
 // SideGames interface to represent side games data
@@ -67,4 +67,10 @@ export interface SideGames {
     key: string;
     value: number;
     selected: boolean;
+}
+
+export interface CourseDetails {
+    event_id: number;
+    course_name: string;
+    address: string;
 }

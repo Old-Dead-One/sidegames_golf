@@ -1,11 +1,10 @@
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { Event, EventItem } from "./Types";
-import { toast } from "react-toastify";
+import { EventItem } from "./Types";
 
 interface EventAutoCompleteProps {
-    events: Event[];
+    events: EventItem[];
     tourId: number | null;
     locationId: number | null;
     value: EventItem | null;
@@ -13,28 +12,13 @@ interface EventAutoCompleteProps {
 }
 
 const EventAutoComplete: React.FC<EventAutoCompleteProps> = ({ events, tourId, locationId, value, onSelect }) => {
-    const filteredEvents = events
-        .filter(event => event.tour_id === tourId)
-        .flatMap(event => event.events)
-        .filter(eventDetail => eventDetail.location_id === locationId)
-        .flatMap(eventDetail => eventDetail.events);
-
-    const isEventClosed = (eventDate: string): boolean => {
-        const now = new Date();
-        const eventDateObj = new Date(eventDate);
-        return now >= eventDateObj;
-    };
+    const filteredEvents = events.filter(event => event.tour_id === tourId && event.location_id === locationId);
 
     const handleSelect = (_event: React.SyntheticEvent, selectedEvent: EventItem | null) => {
         if (selectedEvent) {
-            if (isEventClosed(selectedEvent.date)) {
-                toast.error("This event has already passed. Please select a different event.");
-                onSelect(null); // Reset selection if the event is closed
-            } else {
-                onSelect(selectedEvent); // Pass the selected event if it's valid
-            }
+            onSelect(selectedEvent);
         } else {
-            onSelect(null); // If no event is selected, reset
+            onSelect(null);
         }
     };
 
@@ -45,7 +29,7 @@ const EventAutoComplete: React.FC<EventAutoCompleteProps> = ({ events, tourId, l
             getOptionLabel={(option) => option.name}
             value={value}
             onChange={handleSelect}
-            renderInput={(params) => <TextField {...params} variant="outlined" />}
+            renderInput={(params) => <TextField {...params} placeholder="Select an Event" />}
             fullWidth
             disabled={!locationId}
         />

@@ -64,13 +64,14 @@ const Notifications: React.FC<NotificationsProps> = ({ theme }) => {
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
                         <Profilenav />
-                        <form onSubmit={handleSave} className="text-sm divide-y divide-white lg:col-span-9">
+
+                        {/* Notification preferences section */}
+                        <form onSubmit={handleSave} className="p-2 text-sm divide-y divide-white lg:col-span-9">
                             <div className="p-1">
-                                <div>
                                     <p className="text-xs text-yellow-300">
                                         You can set your notification preferences here.
                                     </p>
-                                </div>
+
                                 <ul role="list" className="divide-y divide-white">
                                     <li className="flex items-center justify-between pb-2">
                                         <div className="flex flex-col">

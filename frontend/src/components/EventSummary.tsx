@@ -8,8 +8,13 @@ interface EventSummaryProps {
     locationLabel: string | null;
 }
 
-const getEntryStatus = (eventDate: string): string => {
-    const closingEventDate = new Date(eventDate);
+const getEntryStatus = (event_date: string): string => {
+    const eventDateObj = new Date(event_date);
+    if (isNaN(eventDateObj.getTime())) {
+        return "Invalid date"; // Handle invalid date
+    }
+
+    const closingEventDate = new Date(event_date);
     closingEventDate.setDate(closingEventDate.getDate() - 1);
     closingEventDate.setHours(22, 0, 0, 0); // 10:00 PM
 
@@ -17,7 +22,6 @@ const getEntryStatus = (eventDate: string): string => {
     const timeRemaining = closingEventDate.getTime() - now.getTime();
 
     // Check if the event date has already passed
-    const eventDateObj = new Date(eventDate);
     if (now >= eventDateObj) {
         return "Closed";
     }
@@ -47,7 +51,7 @@ const EventSummary: React.FC<EventSummaryProps> = ({ selectedEvent, tourLabel, l
         );
     }
 
-    const entryStatus = getEntryStatus(selectedEvent.date);
+    const entryStatus = getEntryStatus(selectedEvent.event_date);
 
     return (
         <Box>
@@ -56,7 +60,7 @@ const EventSummary: React.FC<EventSummaryProps> = ({ selectedEvent, tourLabel, l
                 <ListItem disableGutters disablePadding><strong>Location:&nbsp;</strong> {locationLabel}</ListItem>
                 <ListItem disableGutters disablePadding><strong>Event Name:&nbsp;</strong> {selectedEvent.name}</ListItem>
                 <ListItem disableGutters disablePadding><strong>Course:&nbsp;</strong> {selectedEvent.course}</ListItem>
-                <ListItem disableGutters disablePadding><strong>Date:&nbsp;</strong> {selectedEvent.date}</ListItem>
+                <ListItem disableGutters disablePadding><strong>Date:&nbsp;</strong> {selectedEvent.event_date}</ListItem>
                 <ListItem disableGutters disablePadding>
                     <strong>Closes in:&nbsp;</strong> {entryStatus}
                 </ListItem>

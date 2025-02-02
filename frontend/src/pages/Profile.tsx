@@ -90,8 +90,9 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
                         <Profilenav />
-                        <form onSubmit={handleSave} method="POST" className="text-sm pl-1 divide-y divide-white lg:col-span-9">
-                            {/* Profile section */}
+
+                        {/* Profile section */}
+                        <form onSubmit={handleSave} method="POST" className="text-sm divide-y divide-white lg:col-span-9">
                             <div className="p-1">
                                 {error && <p className="text-red-500">{error}</p>}
                                 <div className="mb-1">
@@ -101,7 +102,6 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                                 </div>
                                 <div className="flex flex-col lg:flex-row">
                                     <div>
-                                        <div>
                                             <div className="flex rounded-lg">
                                                 <label className="text-sm inline-flex items-center rounded-l-lg border text-nowrap border-white px-2">
                                                     Display Name:
@@ -118,7 +118,6 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                                                     className="block w-full grow rounded-r-lg border-0 py-1 placeholder:text-neutral-500 placeholder:text-sm focus:ring-2 focus:ring-indigo-600"
                                                 />
                                             </div>
-                                        </div>
                                         <div className="mt-2">
                                             <label htmlFor="about">
                                                 About you:

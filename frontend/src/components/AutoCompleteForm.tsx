@@ -31,7 +31,7 @@ interface AutoCompleteFormProps {
     onNetChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onDivisionChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onSuperSkinsChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-    onAddToCart: () => void;
+    onAddToCart: () => void;    
 }
 
 const AutoCompleteForm: React.FC<AutoCompleteFormProps> = ({
@@ -58,19 +58,13 @@ const AutoCompleteForm: React.FC<AutoCompleteFormProps> = ({
     onDivisionChange,
     onSuperSkinsChange,
     onAddToCart,
+    // isEventClosed,
 }) => {
+
     const selectedTourLabel = tours.find(tour => tour.tour_id === selectedTourId)?.label || null;
     const selectedLocationLabel = selectedLocationId
         ? locations.find(loc => loc.location_id === selectedLocationId)?.label || null
         : null;
-
-    const isEventClosed = (eventDate: string): boolean => {
-        const now = new Date();
-        const eventDateObj = new Date(eventDate);
-        return now >= eventDateObj;
-    };
-
-    const isDisabled = selectedEvent ? isEventClosed(selectedEvent.date) : true;
 
     return (
         <div>
@@ -140,7 +134,7 @@ const AutoCompleteForm: React.FC<AutoCompleteFormProps> = ({
                         onDivisionChange={onDivisionChange}
                         onSuperSkinsChange={onSuperSkinsChange}
                         onAddToCart={onAddToCart}
-                        disabled={isDisabled}
+                        disabled={false}
                     />
                 </AccordionDetails>
             </Accordion>

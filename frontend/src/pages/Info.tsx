@@ -30,19 +30,22 @@ const FaqPage: React.FC<InfoProps> = ({ theme }) => {
         <Card
             title="Frequently Asked Questions"
             theme={theme}
+            className="mx-4"
             // footerContent={<button className="text-blue-600">Footer Action</button>}
         >
-            <div className='min-w-[320px] max-w-[480px] p-2'>
-                <div className="p-4 text-xs bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <dl className="space-y-px divide-y divide-white">
+
+            {/* FAQ section */}
+            <div className="p-2 w-auto mx-auto text-xs text-left">
+                <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
+                    <div className="space-y-px divide-y divide-white">
                         {faqs.map((faq) => (
-                            <Disclosure key={faq.question} as="div" className="py-2">
+                            <Disclosure key={faq.question} as="div" className="p-2">
                                 <dt>
-                                    <DisclosureButton className="group flex w-full items-start justify-between">
+                                    <DisclosureButton className="group flex justify-between w-full">
                                         <span className="text-left text-sm text-wrap font-semibold">{faq.question}</span>
                                         <span>
-                                            <PlusIcon aria-hidden="true" className="px-2 h-4 group-data-[open]:hidden" />
-                                            <MinusIcon aria-hidden="true" className="px-2 h-4 [.group:not([data-open])_&]:hidden" />
+                                            <PlusIcon aria-hidden="true" className="h-4 group-data-[open]:hidden" />
+                                            <MinusIcon aria-hidden="true" className="h-4 [.group:not([data-open])_&]:hidden" />
                                         </span>
                                     </DisclosureButton>
                                 </dt>
@@ -51,7 +54,7 @@ const FaqPage: React.FC<InfoProps> = ({ theme }) => {
                                 </DisclosurePanel>
                             </Disclosure>
                         ))}
-                    </dl>
+                    </div>
                 </div>
             </div>
         </Card>

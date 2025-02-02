@@ -21,6 +21,7 @@ const getGridColumns = (itemCount: number) => {
 const Cart: React.FC<CartProps> = ({ theme }) => {
     const { cartItems, setCartItems } = useUser();
     const navigate = useNavigate();
+
     useEffect(() => {
         const fetchUserCart = async () => {
             const { data: { session } } = await supabase.auth.getSession();
@@ -122,14 +123,16 @@ const Cart: React.FC<CartProps> = ({ theme }) => {
         <Card
             title="Cart"
             theme={theme}
-        // footerContent={<button className="text-blue-600">Footer Action</button>}
+            // footerContent={<button className="text-blue-600">Footer Action</button>}
         >
+
+            {/* Cart section */}
             <div className="p-2 w-auto mx-auto text-xs text-left">
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     {cartItems.length === 0 && <p className="text-sm text-white text-center">Your cart is empty</p>}
                     <ul className={`grid grid-cols-1 gap-1 ${getGridColumns(cartItems.length)}`}>
                         {cartItems.map((item, key) => (
-                            <li key={key} className="rounded-lg p-2 text-nowrap">
+                            <li key={key} className="p-2 rounded-lg text-nowrap">
                                 <div className="border rounded-lg p-2">
                                     <div className="text-green-400">Selected Event:</div>
                                     <ul>

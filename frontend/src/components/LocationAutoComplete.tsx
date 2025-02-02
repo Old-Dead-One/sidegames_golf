@@ -22,7 +22,7 @@ const LocationAutoComplete: React.FC<LocationAutoCompleteProps> = ({ locations, 
             getOptionLabel={(option) => option.label}
             value={value}
             onChange={handleSelect}
-            renderInput={(params) => <TextField {...params} variant="outlined" />}
+            renderInput={(params) => <TextField {...params} placeholder="Select a Location" />}
             fullWidth
             disabled={!tour_id}
             clearOnBlur={false}
