@@ -46,7 +46,17 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                                             : "rounded-md px-3 py-2 text-base font-semibold hover:bg-gray-700 hover:text-white"
                                     }
                                 >
-                                    Dashboard
+                                    Find a Game
+                                </NavLink>
+                                <NavLink
+                                    to="/CreateGame"
+                                    className={({ isActive }) =>
+                                        isActive
+                                            ? "rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+                                            : "rounded-md px-3 py-2 text-base font-semibold hover:bg-gray-700 hover:text-white"
+                                    }
+                                >
+                                    Create a Game
                                 </NavLink>
                                 <NavLink
                                     to="/Cart"
@@ -128,7 +138,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                                 </div>
                                 <MenuItems
                                     transition
-                                    className="absolute right-0 z-10 mt-3 w-50 origin-top-right rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 transition flex flex-col focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                                    className="absolute right-0 z-10 mt-3 w-32 origin-top-right rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 transition flex flex-col focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
                                 >
                                     <MenuItem>
                                         <NavLink
@@ -137,6 +147,15 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                                                     ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
                                                     : "rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 hover:text-white"}>
                                             Profile
+                                        </NavLink>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <NavLink
+                                            to="/MyEvents" className={({ isActive }) =>
+                                                isActive
+                                                    ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
+                                                    : "rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 hover:text-white"}>
+                                            My Events
                                         </NavLink>
                                     </MenuItem>
                                     <MenuItem>
@@ -176,7 +195,18 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                                 : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                         }
                     >
-                        Dashboard
+                        Find a Game
+                    </DisclosureButton>
+                    <DisclosureButton
+                        as={NavLink}
+                        to="/CreateGame"
+                        className={() =>
+                            isActive("/CreateGame")
+                                ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+                                : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
+                        }
+                    >
+                        Create Game
                     </DisclosureButton>
                     <DisclosureButton
                         as={NavLink}

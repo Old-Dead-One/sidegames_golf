@@ -39,7 +39,7 @@ const FaqPage: React.FC<InfoProps> = ({ theme }) => {
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
                     <div className="space-y-px divide-y divide-white">
                         {faqs.map((faq) => (
-                            <Disclosure key={faq.question} as="div" className="p-2">
+                            <Disclosure key={faq.question} as="div" className="p-2 text-left">
                                 <dt>
                                     <DisclosureButton className="group flex justify-between w-full">
                                         <span className="text-left text-sm text-wrap font-semibold">{faq.question}</span>

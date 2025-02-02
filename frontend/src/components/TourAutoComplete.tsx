@@ -9,17 +9,19 @@ interface TourAutoCompleteProps {
     onSelect: (tour_id: number | null, tour: Tour | null) => void;
 }
 const TourAutoComplete: React.FC<TourAutoCompleteProps> = ({ tours, value, onSelect }) => {
-    const controlledValue = value || null;
 
     return (
         <Autocomplete
-            sx={{ width: "100%", borderRadius: "4px" }}
             size="small"
             options={tours}
             getOptionLabel={(option) => option.label || ""}
-            value={controlledValue}
+            value={value}
             onChange={(_event, newValue) => onSelect(newValue ? newValue.tour_id : null, newValue)}
             renderInput={(params) => <TextField {...params} placeholder="Select a Tour" />}
+            fullWidth
+            clearOnBlur={false}
+            clearOnEscape
+            clearText="Clear selection"
         />
     );
 };

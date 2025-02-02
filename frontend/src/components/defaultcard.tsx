@@ -12,7 +12,7 @@ const Card: React.FC<CardProps> = ({ title, children, footerContent, className, 
     return (
         <div className='flex justify-center'>
             <div className='min-w-[380px]'>
-                <div className={`shadow-[0_10px_50px_-10px_rgba(0,0,0,0.5)] text-center rounded-lg p-2 max-w-screen-lg ${className}`} style={{ backgroundColor: theme || undefined }}>
+                <div className={`shadow-[0_10px_50px_-10px_rgba(0,0,0,0.5)] text-center rounded-lg p-2 ${className}`} style={{ backgroundColor: theme || undefined }}>
                     {/* Header Section */}
                     {title && <h2 className="text-lg font-semibold">{title}</h2>}
                     {/* Body Section */}

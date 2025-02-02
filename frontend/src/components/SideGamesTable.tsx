@@ -64,10 +64,10 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
 
     return (
         <TableContainer component={Paper}>
-            <Typography align="center" variant="h6">
+            <Typography align="center" variant="h6" paddingTop={1}>
                 <strong>Available Side Games</strong>
             </Typography>
-            <Table size="small" aria-label="side games table">
+            <Table size="small" width="100%" aria-label="side games table">
                 <TableHead>
                     <TableRow>
                         <TableCell>
@@ -121,15 +121,15 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
                     ))}
                     <TableRow>
                         <TableCell component="th" scope="row"><strong>Total</strong></TableCell>
-                        <TableCell colSpan={2} align="right">
+                        <TableCell colSpan={3} align="right">
                             <Typography sx={{ color: getLabelColor("Total") }}>
                                 ${totalCost.toFixed(2)}
                             </Typography>
                         </TableCell>
                     </TableRow>
                     <TableRow>
-                        <TableCell colSpan={3}>
-                            <Stack direction="row" justifyContent="center">
+                        <TableCell colSpan={3} align="right">
+                            <Stack direction="row" justifyContent="right">
                                 <Button variant="contained" color="secondary" startIcon={<AddShoppingCartIcon />} onClick={onAddToCart}>
                                     Add to Cart
                                 </Button>

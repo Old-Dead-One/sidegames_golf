@@ -7,6 +7,7 @@ import EventAutoComplete from "../components/EventAutoComplete";
 import { Tour, LocationDetail, EventItem, CourseDetails } from "../components/Types";
 import Card from "../components/defaultcard";
 import { supabase } from "../services/supabaseClient";
+import { toast } from 'react-toastify';
 
 const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
     const [tours, setTours] = useState<Tour[]>([]);
@@ -22,8 +23,6 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
         address: ""
     });
     const [eventDate, setEventDate] = useState<string>("");
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,7 +40,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                 setEvents(eventsData);
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setErrorMessage("Failed to load data.");
+                toast.error("Failed to load data.");
             }
         };
 
@@ -50,7 +49,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
 
     const handleCreateEvent = async () => {
         if (!selectedTour || !selectedLocation || !eventName || !courseDetails.course_name || !courseDetails.address || !eventDate) {
-            setErrorMessage("Please fill in all fields.");
+            toast.error("Please fill in all fields.");
             return;
         }
 
@@ -108,12 +107,11 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
 
             if (courseError) throw new Error("Failed to create course details");
 
-            setSuccessMessage("Event created successfully!");
-            setErrorMessage(null);
+            toast.success("Event created successfully!");
             resetFields();
         } catch (error) {
             console.error("Error creating event:", error);
-            setErrorMessage("Error creating event. Please try again.");
+            toast.error("Error creating event. Please try again.");
         }
     };
 
@@ -128,7 +126,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
 
     const handleEditEvent = async () => {
         if (!selectedEvent) {
-            setErrorMessage("No event selected to edit.");
+            toast.error("No event selected to edit.");
             return;
         }
 
@@ -138,6 +136,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                 .update({
                     name: eventName,
                     course: courseDetails.course_name,
+                    
                     event_date: eventDate,
                 })
                 .eq('event_id', selectedEvent.event_id);
@@ -155,18 +154,17 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
 
             if (courseError) throw new Error("Failed to update course details");
 
-            setSuccessMessage("Event updated successfully!");
-            setErrorMessage(null);
+            toast.success("Event updated successfully!");
             resetFields();
         } catch (error) {
             console.error("Error updating event:", error);
-            setErrorMessage("Error updating event. Please try again.");
+            toast.error("Error updating event. Please try again.");
         }
     };
 
     const handleDeleteEvent = async () => {
         if (!selectedEvent) {
-            setErrorMessage("No event selected to delete.");
+            toast.error("No event selected to delete.");
             return;
         }
 
@@ -186,29 +184,23 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
 
             if (courseError) throw new Error("Failed to delete course details");
 
-            setSuccessMessage("Event deleted successfully!");
-            setErrorMessage(null);
+            toast.success("Event deleted successfully!");
             resetFields();
         } catch (error) {
             console.error("Error deleting event:", error);
-            setErrorMessage("Error deleting event. Please try again.");
+            toast.error("Error deleting event. Please try again.");
         }
     };
 
     return (
-        <div className="max-w-[320px] text-center mx-auto">
-            {errorMessage && (
-                <div className="p-4 mb-4 bg-red-500 text-white rounded-md">
-                    {errorMessage}
-                </div>
-            )}
-            {successMessage && (
-                <div className="p-4 mb-4 bg-green-500 text-white rounded-md">
-                    {successMessage}
-                </div>
-            )}
-            <Card title="Create a Game" theme={theme}>
-                <div className="p-2 text-left flex justify-center max-w-4xl mx-auto">
+        // <div className="max-w-[320px] text-center mx-auto">
+            <Card title="Create a Game" 
+            theme={theme}
+            // footerContent={<button className="text-blue-600">Footer Action</button>}
+            >
+
+                {/* Create a Game section */}
+                <div className="p-2 text-left max-w-sm mx-auto">
                     <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
                         <div className="p-4 bg-white rounded-md space-y-2">
                             <TourAutoComplete
@@ -247,33 +239,33 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                                 placeholder="Event Name"
                                 value={eventName}
                                 onChange={(e) => setEventName(e.target.value)}
-                                className="border p-2 w-full mt-2 rounded-md"
+                                className="border w-full mt-2 rounded-md"
                             />
                             <input
                                 type="text"
                                 placeholder="Course Name"
                                 value={courseDetails.course_name}
                                 onChange={(e) => setCourseDetails({ ...courseDetails, course_name: e.target.value })}
-                                className="border p-2 w-full mt-2 rounded-md"
+                                className="border w-full mt-2 rounded-md"
                             />
                             <input
                                 type="text"
                                 placeholder="Course Address"
                                 value={courseDetails.address}
                                 onChange={(e) => setCourseDetails({ ...courseDetails, address: e.target.value })}
-                                className="border p-2 w-full mt-2 rounded-md"
+                                className="border w-full mt-2 rounded-md"
                             />
                             <input
                                 type="date"
                                 value={eventDate}
                                 onChange={(e) => setEventDate(e.target.value)}
-                                className="border p-2 w-full mt-2 rounded-md"
+                                className="border w-full mt-2 rounded-md"
                             />
                             <button onClick={handleCreateEvent} className="bg-blue-500 text-white p-2 mt-4 rounded-md w-full">
                                 Create Event
                             </button>
                             <button onClick={handleEditEvent} className="bg-yellow-500 text-white p-2 mt-4 rounded-md w-full">
-                                Edit Event
+                                Update Event
                             </button>
                             <button onClick={handleDeleteEvent} className="bg-red-500 text-white p-2 mt-4 rounded-md w-full">
                                 Delete Event
@@ -282,7 +274,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                     </div>
                 </div>
             </Card>
-        </div>
+        // </div>
     );
 };
 

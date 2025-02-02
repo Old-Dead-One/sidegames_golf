@@ -5,6 +5,7 @@ import { supabase } from "../services/supabaseClient";
 import AutoCompleteForm from "../components/AutoCompleteForm";
 import { Tour, LocationDetail, EventItem, SideGames } from "../components/Types";
 import Card from "../components/defaultcard";
+import { toast } from 'react-toastify';
 
 interface DashboardProps {
     theme: string;
@@ -31,8 +32,6 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const [division, setDivision] = useState<string | null>(null);
     const [superSkins, setSuperSkins] = useState<boolean>(false);
     const [totalCost, setTotalCost] = useState<number>(0);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
     const { addToCart, isEventInCart } = useUser();
@@ -70,7 +69,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                setErrorMessage("Failed to load data.");
+                toast.error("Failed to load data.");
             } finally {
                 setLoading(false);
             }
@@ -198,22 +197,19 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
     const handleAddToCart = () => {
         if (!selectedEvent) {
-            setErrorMessage("Please select an event");
+            toast.error("Please select an event");
             return;
         }
 
         if (isEventInCart && isEventInCart(selectedEvent.event_id)) {
-            setErrorMessage("Event is already in cart");
+            toast.error("Event is already in cart");
             return;
         }
 
         if (!net && !division && !superSkins) {
-            setErrorMessage("Please select a side game");
+            toast.error("Please select a side game");
             return;
         }
-
-        setErrorMessage(null);
-        setSuccessMessage("Event added to cart");
 
         const eventSummary = {
             selectedEvent,
@@ -236,8 +232,8 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         addToCart(eventSummary, sideGamesData);
 
         setTimeout(() => {
-            setSuccessMessage(null);
-        }, 3000);
+            toast.success("Event added to cart");
+        }, 1000);
     };
 
     // Render loading state or the main content
@@ -246,25 +242,15 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     }
 
     return (
-        <div className="max-w-[320px] text-center mx-auto">
-            {errorMessage && (
-                <div className="p-4 mb-4 bg-red-500 text-white rounded-md">
-                    {errorMessage}
-                </div>
-            )}
-            {successMessage && (
-                <div className="p-4 mb-4 bg-green-500 text-white rounded-md">
-                    {successMessage}
-                </div>
-            )}
+        // <div className="max-w-[320px] text-center mx-auto">
             <Card
-                title="Dashboard"
+                title="Find a Game"
                 theme={theme}
             // footerContent={<button className="text-blue-600">Footer Action</button>}
             >
 
                 {/* Dashboard section */}
-                <div className="p-2 w-auto text-xs text-left">
+                <div className="p-2 text-left max-w-sm mx-auto">
                     <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
                         <AutoCompleteForm
                             tours={tours}
@@ -294,7 +280,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                     </div>
                 </div>
             </Card>
-        </div>
+        // </div>
     );
 };
 

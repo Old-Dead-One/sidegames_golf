@@ -81,14 +81,14 @@ const AutoCompleteForm: React.FC<AutoCompleteFormProps> = ({
                     <Typography>Find an Event</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Box marginBottom={1}>
+                    <Box marginBottom={1} width="100%">
                         <TourAutoComplete
                             tours={tours}
                             value={tourValue}
                             onSelect={onSelectTour}
                         />
                     </Box>
-                    <Box marginBottom={1}>
+                    <Box marginBottom={1} width="100%">
                         <LocationAutoComplete
                             locations={locations}
                             tour_id={selectedTourId}

@@ -20,7 +20,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReviewCart from "./pages/ReviewCart";
 import CreateGame from "./pages/CreateGame";
-
+import MyEvents from "./pages/MyEvents";
 const App: React.FC = () => {
   const [navbarColor, setNavbarColor] = useState("#66d3fa");
   const [bgColor, setBgColor] = useState("");
@@ -50,6 +50,7 @@ const App: React.FC = () => {
               <Route path="/Transactions" element={<Transactions theme={bgColor} />} />
               <Route path="/ReviewCart" element={<ReviewCart theme={bgColor} />} />
               <Route path="/CreateGame" element={<CreateGame theme={bgColor} />} />
+              <Route path="/MyEvents" element={<MyEvents theme={bgColor} />} />
             </Routes>
           </div>
           <BottomNavBar />

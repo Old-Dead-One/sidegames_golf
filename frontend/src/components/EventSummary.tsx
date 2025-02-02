@@ -40,7 +40,6 @@ const EventSummary: React.FC<EventSummaryProps> = ({ selectedEvent, tourLabel, l
         return (
             <Accordion>
                 <TextField
-                    sx={{}}
                     size="small"
                     label="No event selected"
                     disabled
@@ -55,7 +54,7 @@ const EventSummary: React.FC<EventSummaryProps> = ({ selectedEvent, tourLabel, l
 
     return (
         <Box>
-            <List sx={{ maxWidth: "300px" }}>
+            <List>
                 <ListItem disableGutters disablePadding><strong>Tour:&nbsp;</strong> {tourLabel}</ListItem>
                 <ListItem disableGutters disablePadding><strong>Location:&nbsp;</strong> {locationLabel}</ListItem>
                 <ListItem disableGutters disablePadding><strong>Event Name:&nbsp;</strong> {selectedEvent.name}</ListItem>

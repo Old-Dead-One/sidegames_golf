@@ -32,6 +32,9 @@ const EventAutoComplete: React.FC<EventAutoCompleteProps> = ({ events, tourId, l
             renderInput={(params) => <TextField {...params} placeholder="Select an Event" />}
             fullWidth
             disabled={!locationId}
+            clearOnBlur={false}
+            clearOnEscape
+            clearText="Clear selection"
         />
     );
 };
