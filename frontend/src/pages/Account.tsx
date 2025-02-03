@@ -90,14 +90,14 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
 
                         {/* Account section */}
                         <form onSubmit={handleSave} method="POST" className="p-2 text-sm divide-y divide-white lg:col-span-9">
-                            <div className="p-1">
+                            <div className="">
                                 {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
                                 <div>
                                     <p className="text-xs text-yellow-300">
                                         Required for financial transactions and used to verify your account.
                                     </p>
                                 </div>
-                                <div className="mt-2 grid grid-cols-12 gap-2">
+                                <div className="grid grid-cols-12 gap-2">
                                     <div className="col-span-12">
                                         <label htmlFor="first-name">First Name:</label>
                                         <input

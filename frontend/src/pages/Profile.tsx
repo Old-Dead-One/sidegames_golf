@@ -93,17 +93,17 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
 
                         {/* Profile section */}
                         <form onSubmit={handleSave} method="POST" className="text-sm divide-y divide-white lg:col-span-9">
-                            <div className="p-1">
+                            <div className="p-2">
                                 {error && <p className="text-red-500">{error}</p>}
                                 <div className="mb-1">
                                     <p className="text-xs text-yellow-300">
                                         This information will be displayed publicly so be careful what you share.
                                     </p>
                                 </div>
-                                <div className="flex flex-col lg:flex-row">
+                                <div className="text-xs flex flex-col lg:flex-row">
                                     <div>
                                             <div className="flex rounded-lg">
-                                                <label className="text-sm inline-flex items-center rounded-l-lg border text-nowrap border-white px-2">
+                                                <label className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2">
                                                     Display Name:
                                                 </label>
                                                 <input
