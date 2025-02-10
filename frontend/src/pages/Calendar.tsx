@@ -4,7 +4,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import { supabase } from "../services/supabaseClient";
 import Card from "../components/defaultcard";
 import { Tour, Location, EventItem } from "../components/Types";
-// import eventsData from "../data/events.json";
 
 interface CalendarProps {
     theme: string;

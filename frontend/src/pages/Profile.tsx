@@ -3,7 +3,7 @@ import Card from "../components/defaultcard";
 import Profilenav from "../components/profilenav";
 import { useUser } from "../context/UserContext";
 import { getUserProfile } from "../services/supabaseUserAPI";
-import tours from "../data/tours.json"; // Import your tours data
+import tours from "../data/tours.json"; // Import your tours data                                                  !!!YOU NEED TO CHANGE THIS TO THE TOURS DATA FROM THE DATABASE!!!
 import TourAutoComplete from "../components/TourAutoComplete"; // Import the TourAutoComplete component
 import { Tour } from '../components/Types'; // Adjust the path as necessary
 
