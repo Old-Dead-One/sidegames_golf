@@ -2,30 +2,34 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
-    visualizer({
-      filename: './bundle-analysis.html',
-      open: true
-    })
+    ...(mode === 'analyze' ? [
+      visualizer({
+        filename: './bundle-analysis.html',
+        open: true
+      })
+    ] : [])
   ],
   build: {
     chunkSizeWarningLimit: 1000,
-    // Disable manual chunking by commenting out the rollupOptions
-    // rollupOptions: {
-    //   output: {
-    //     manualChunks(id) {
-    //       if (id.includes('node_modules')) {
-    //         // Split large libraries into separate chunks
-    //         if (id.includes('@fullcalendar')) return 'vendor-calendar';
-    //         if (id.includes('@mui')) return 'vendor-mui';
-    //         if (id.includes('@supabase')) return 'vendor-supabase';
-    //         return 'vendor';
-    //       }
-    //     }
-    //   }
-    // }
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@mui/material', '@mui/icons-material', '@headlessui/react'],
+          supabase: ['@supabase/supabase-js', '@supabase/auth-ui-react'],
+          calendar: ['@fullcalendar/core', '@fullcalendar/react', '@fullcalendar/daygrid'],
+        }
+      }
+    },
+    sourcemap: mode === 'development',
+    minify: mode === 'production',
   },
   base: '/',
-});
+  define: {
+    __DEV__: mode === 'development',
+  },
+}));

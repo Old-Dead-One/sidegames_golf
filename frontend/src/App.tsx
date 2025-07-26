@@ -1,63 +1,87 @@
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import TopNavBar from "./components/TopNavBar";
 import BottomNavBar from "./components/bottomnav";
 import CenteredGraphic from "./components/centeredgraphic";
 import { UserProvider } from "./context/UserContext";
-import Dashboard from "./pages/Dashboard";
-import Cart from "./pages/Cart";
-import Info from "./pages/Info";
-import Calendar from "./pages/Calendar";
-import Profile from "./pages/Profile";
-import Notifications from "./pages/Notifications";
-import Messages from "./pages/Messages";
-import Login from "./pages/Login";
-import Account from "./pages/Account";
-import Password from "./pages/Password";
-import Transactions from "./pages/Transactions";
-import Landing from "./pages/Landing";
+import ErrorBoundary from "./components/ErrorBoundary";
+import LoadingSpinner from "./components/LoadingSpinner";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ReviewCart from "./pages/ReviewCart";
-import CreateGame from "./pages/CreateGame";
-import MyEvents from "./pages/MyEvents";
+import ContactModal from './components/ContactModal';
+import LegalModal from './components/LegalModal';
+import CartDrawer from './components/CartDrawer';
+import Cart from './pages/Cart';
+import ProfileEvents from './pages/ProfileEvents';
+
+// Lazy load pages for better performance
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Info = lazy(() => import("./pages/Info"));
+const Calendar = lazy(() => import("./pages/Calendar"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+const Messages = lazy(() => import("./pages/Messages"));
+const Login = lazy(() => import("./pages/Login"));
+const Account = lazy(() => import("./pages/Account"));
+const Password = lazy(() => import("./pages/Password"));
+const Transactions = lazy(() => import("./pages/Transactions"));
+const Landing = lazy(() => import("./pages/Landing"));
+const ReviewCart = lazy(() => import("./pages/ReviewCart"));
+const CreateGame = lazy(() => import("./pages/CreateGame"));
 const App: React.FC = () => {
   const [navbarColor, setNavbarColor] = useState("#66d3fa");
   const [bgColor, setBgColor] = useState("");
+  const [contactOpen, setContactOpen] = useState(false);
+  const [legalOpen, setLegalOpen] = useState(false);
+  const [legalSection, setLegalSection] = useState<string | null>(null);
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+
+  const openLegalModal = (section: string) => {
+    setLegalSection(section);
+    setLegalOpen(true);
+  };
 
   return (
-    <UserProvider>
+    <ErrorBoundary>
       <BrowserRouter future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
       }}>
-        <div className="flex flex-col min-h-screen" style={{ position: "relative", backgroundColor: bgColor }}>
-          <TopNavBar logoColor={navbarColor} />
-          <CenteredGraphic setNavbarColor={setNavbarColor} setBgColor={setBgColor} />
-          <div style={{ position: "relative", zIndex: 1, marginTop: "40px", paddingBottom: "100px" }}>
-            <Routes>
-              <Route path="/" element={<Landing theme={bgColor} />} />
-              <Route path="/Dashboard" element={<Dashboard theme={bgColor} />} />
-              <Route path="/Cart" element={<Cart theme={bgColor} />} />
-              <Route path="/Info" element={<Info theme={bgColor} />} />
-              <Route path="/Calendar" element={<Calendar theme={bgColor} />} />
-              <Route path="/Profile" element={<Profile theme={bgColor} />} />
-              <Route path="/Messages" element={<Messages theme={bgColor} />} />
-              <Route path="/Notifications" element={<Notifications theme={bgColor} />} />
-              <Route path="/Login" element={<Login theme={bgColor} />} />
-              <Route path="/Account" element={<Account theme={bgColor} />} />
-              <Route path="/Password" element={<Password theme={bgColor} />} />
-              <Route path="/Transactions" element={<Transactions theme={bgColor} />} />
-              <Route path="/ReviewCart" element={<ReviewCart theme={bgColor} />} />
-              <Route path="/CreateGame" element={<CreateGame theme={bgColor} />} />
-              <Route path="/MyEvents" element={<MyEvents theme={bgColor} />} />
-            </Routes>
+        <UserProvider>
+          <div className="flex flex-col min-h-screen pb-footer" style={{ position: "relative", backgroundColor: bgColor }}>
+            <TopNavBar logoColor={navbarColor} onCartClick={() => setCartDrawerOpen(true)} />
+            <CenteredGraphic setNavbarColor={setNavbarColor} setBgColor={setBgColor} />
+            <div style={{ position: "relative", zIndex: 1, marginTop: "40px" }}>
+              <Suspense fallback={<LoadingSpinner size="large" />}>
+                <Routes>
+                  <Route path="/" element={<Landing theme={bgColor} />} />
+                  <Route path="/Dashboard" element={<Dashboard theme={bgColor} />} />
+                  <Route path="/Info" element={<Info theme={bgColor} openLegalModal={openLegalModal} />} />
+                  <Route path="/Calendar" element={<Calendar theme={bgColor} />} />
+                  <Route path="/Profile" element={<Profile theme={bgColor} />} />
+                  <Route path="/Messages" element={<Messages theme={bgColor} />} />
+                  <Route path="/Notifications" element={<Notifications theme={bgColor} />} />
+                  <Route path="/Login" element={<Login theme={bgColor} />} />
+                  <Route path="/Account" element={<Account theme={bgColor} />} />
+                  <Route path="/Password" element={<Password theme={bgColor} />} />
+                  <Route path="/Transactions" element={<Transactions theme={bgColor} />} />
+                  <Route path="/ProfileEvents" element={<ProfileEvents theme={bgColor} />} />
+                  <Route path="/ReviewCart" element={<ReviewCart theme={bgColor} />} />
+                  <Route path="/CreateGame" element={<CreateGame theme={bgColor} />} />
+                </Routes>
+              </Suspense>
+            </div>
+            <CartDrawer open={cartDrawerOpen} onClose={() => setCartDrawerOpen(false)}>
+              <Cart theme={bgColor} />
+            </CartDrawer>
+            <BottomNavBar onContactClick={() => setContactOpen(true)} onLegalClick={() => setLegalOpen(true)} />
+            <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />
+            <LegalModal open={legalOpen} onClose={() => { setLegalOpen(false); setLegalSection(null); }} section={legalSection} />
+            <ToastContainer />
           </div>
-          <BottomNavBar />
-          <ToastContainer />
-        </div>
+        </UserProvider>
       </BrowserRouter>
-    </UserProvider>
+    </ErrorBoundary>
   );
 };
 

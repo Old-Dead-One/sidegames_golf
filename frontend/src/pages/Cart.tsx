@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { TrashIcon } from "@heroicons/react/20/solid";
 import Card from "../components/defaultcard"
 import { toast } from "react-toastify";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 interface CartProps {
     theme: string;
@@ -19,7 +20,7 @@ const getGridColumns = (itemCount: number) => {
 };
 
 const Cart: React.FC<CartProps> = ({ theme }) => {
-    const { cartItems, setCartItems } = useUser();
+    const { cartItems, setCartItems, user, loading } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -38,7 +39,13 @@ const Cart: React.FC<CartProps> = ({ theme }) => {
                     console.error("Error fetching user cart:", error);
                 } else {
                     if (userCart) {
-                        setCartItems(userCart.cartItems || []);
+                        setCartItems((userCart.cartItems || []).map((item: any) => ({
+                            ...item,
+                            sideGamesData: {
+                                ...item.sideGamesData,
+                                rows: Array.isArray(item.sideGamesData?.rows) ? item.sideGamesData.rows : [],
+                            },
+                        })));
                     } else {
                         setCartItems([]);
                     }
@@ -57,21 +64,10 @@ const Cart: React.FC<CartProps> = ({ theme }) => {
 
                 // Format the cart items for the database
                 const formattedCartItems = cartItems.map(item => ({
-                    eventSummary: {
-                        tourLabel: item.eventSummary.tourLabel,
-                        locationLabel: item.eventSummary.locationLabel,
-                        selectedEvent: {
-                            eventId: item.eventSummary.selectedEvent.eventId,
-                            name: item.eventSummary.selectedEvent.name,
-                            course: item.eventSummary.selectedEvent.course,
-                            date: item.eventSummary.selectedEvent.date
-                        },
-                    },
+                    eventSummary: item.eventSummary,
                     sideGamesData: {
-                        net: item.sideGamesData.net,
-                        superSkins: item.sideGamesData.superSkins,
-                        division: item.sideGamesData.division,
-                        totalCost: item.sideGamesData.totalCost
+                        ...item.sideGamesData,
+                        rows: Array.isArray(item.sideGamesData.rows) ? item.sideGamesData.rows : [],
                     },
                 }));
 
@@ -119,11 +115,19 @@ const Cart: React.FC<CartProps> = ({ theme }) => {
         }
     };
 
+    if (loading) {
+        return (
+            <Card title="Cart" theme={theme}>
+                <LoadingSpinner size="large" />
+            </Card>
+        );
+    }
+
     return (
         <Card
             title="Cart"
             theme={theme}
-            // footerContent={<button className="text-blue-600">Footer Action</button>}
+        // footerContent={<button className="text-blue-600">Footer Action</button>}
         >
 
             {/* Cart section */}
@@ -139,15 +143,15 @@ const Cart: React.FC<CartProps> = ({ theme }) => {
                                         <li><strong>Tour:</strong> {item.eventSummary.tourLabel}</li>
                                         <li><strong>Location:</strong> {item.eventSummary.locationLabel}</li>
                                         <li><strong>Event Name:</strong> {item.eventSummary.selectedEvent.name}</li>
-                                        <li><strong>Course:</strong> {item.eventSummary.selectedEvent.course}</li>
-                                        <li><strong>Date:</strong> {new Date(item.eventSummary.selectedEvent.date).toLocaleDateString()}</li>
+                                        <li><strong>Course:</strong> {item.eventSummary.selectedEvent.course_name}</li>
+                                        <li><strong>Date:</strong> {new Date(item.eventSummary.selectedEvent.event_date).toLocaleDateString()}</li>
                                     </ul>
 
                                     <div className="text-green-400">Selected Side Games:</div>
                                     <ul>
-                                        <li><strong>Net Game:</strong> {item.sideGamesData.net || "None"}</li>
-                                        <li><strong>Super Skins:</strong> {item.sideGamesData.superSkins ? "Yes" : "No"}</li>
-                                        <li><strong>Division Skins:</strong> {item.sideGamesData.division || "None"}</li>
+                                        {(Array.isArray(item.sideGamesData.rows) ? item.sideGamesData.rows : []).filter(row => row.selected).map((row, i) => (
+                                            <li key={i}><strong>{row.name}:</strong> ${row.cost}</li>
+                                        ))}
                                     </ul>
 
                                     <div className="text-yellow-400 text-right">

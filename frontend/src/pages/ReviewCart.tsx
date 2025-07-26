@@ -44,7 +44,6 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
                 }
             }
         };
-
         fetchUserCart();
     }, [setCartItems]);
 
@@ -53,21 +52,24 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
         if (session) {
             const userId = session.user.id;
 
-            // Prepare the purchases data
+            // Prepare the purchases data to match the purchases table schema
             const purchasesData = cartItems.map(item => ({
-                id: userId,
-                cartItems: item.eventSummary.selectedEvent.name,
-                totalCost: item.sideGamesData.totalCost,
-                eventDate: item.eventSummary.selectedEvent.date,
-                purchaseDate: new Date().toISOString()
+                user_id: userId,
+                event_id: item.eventSummary.selectedEvent.id,
+                side_games_data: item.sideGamesData,
+                total_cost: item.sideGamesData.totalCost,
+                purchase_date: new Date().toISOString(),
+                status: 'completed'
             }));
 
             try {
-                // Check if the purchases already exist
+                // Check for existing purchases for these events
+                const eventIds = cartItems.map(item => item.eventSummary.selectedEvent.id);
                 const { data: existingPurchases, error: fetchError } = await supabase
                     .from('purchases')
-                    .select('cartItems')
-                    .eq('id', userId);
+                    .select('event_id, side_games_data')
+                    .eq('user_id', userId)
+                    .in('event_id', eventIds);
 
                 if (fetchError) {
                     console.error("Error fetching existing purchases:", fetchError);
@@ -75,32 +77,114 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
                     return;
                 }
 
-                // Check for duplicates
-                const existingCartItems = existingPurchases.map(purchase => purchase.cartItems);
-                const duplicates = purchasesData.filter(purchase => existingCartItems.includes(purchase.cartItems));
+                // Build a map of event_id to set of purchased side game keys
+                const eventToPurchased: Record<string, Set<string>> = {};
+                (existingPurchases || []).forEach((purchase: any) => {
+                    const data = purchase.side_games_data || {};
+                    let keys: string[] = [];
+                    if (Array.isArray(data.rows) && data.rows.length > 0) {
+                        data.rows.forEach((row: any) => {
+                            if (row.selected) {
+                                const normalizedKey = ((row.key || row.name || '')
+                                    .toLowerCase()
+                                    .replace(/^[0-9]+_/, '')
+                                    .replace(/[^a-z0-9]/g, '_'));
+                                keys.push(normalizedKey);
+                            }
+                        });
+                    } else {
+                        if (data.net) {
+                            keys.push(
+                                (data.net || '')
+                                    .toLowerCase()
+                                    .replace(/^[0-9]+_/, '')
+                                    .replace(/[^a-z0-9]/g, '_')
+                            );
+                        }
+                        if (data.division) {
+                            keys.push(
+                                (data.division || '')
+                                    .toLowerCase()
+                                    .replace(/^[0-9]+_/, '')
+                                    .replace(/[^a-z0-9]/g, '_')
+                            );
+                        }
+                        if (data.superSkins) {
+                            keys.push('super_skins');
+                        }
+                    }
+                    eventToPurchased[purchase.event_id] = new Set(keys);
+                });
 
-                if (duplicates.length > 0) {
-                    toast.error("You have already purchased the following events: " + duplicates.map(d => d.cartItems).join(", "));
-                    return; // Exit the function to prevent further execution
+                // Filter purchasesData to only include new side games
+                const newPurchases: any[] = [];
+                const duplicateSideGamesByEvent: Record<string, string[]> = {};
+                const idToName = Object.fromEntries(cartItems.map(item => [item.eventSummary.selectedEvent.id, item.eventSummary.selectedEvent.name]));
+
+                purchasesData.forEach((purchase, idx) => {
+                    const cartItem = cartItems[idx];
+                    const purchasedSet = eventToPurchased[purchase.event_id] || new Set();
+                    const newRows = (purchase.side_games_data.rows || []).filter((row: any) => {
+                        const normalizedKey = ((row.key || row.name || '')
+                            .toLowerCase()
+                            .replace(/^[0-9]+_/, '')
+                            .replace(/[^a-z0-9]/g, '_'));
+                        return row.selected && !purchasedSet.has(normalizedKey);
+                    });
+                    const duplicateRows = (purchase.side_games_data.rows || []).filter((row: any) => {
+                        const normalizedKey = ((row.key || row.name || '')
+                            .toLowerCase()
+                            .replace(/^[0-9]+_/, '')
+                            .replace(/[^a-z0-9]/g, '_'));
+                        return row.selected && purchasedSet.has(normalizedKey);
+                    });
+                    if (duplicateRows.length > 0) {
+                        duplicateSideGamesByEvent[purchase.event_id] = duplicateRows.map((row: any) => row.name);
+                    }
+                    if (newRows.length > 0) {
+                        // Only include the new side games in the purchase
+                        newPurchases.push({
+                            ...purchase,
+                            side_games_data: {
+                                ...purchase.side_games_data,
+                                rows: newRows,
+                            },
+                            total_cost: newRows.reduce((sum: number, row: any) => sum + (row.cost || 0), 0),
+                        });
+                    }
+                });
+
+                // Show a toast for any duplicate side games
+                const duplicateMsgs = Object.entries(duplicateSideGamesByEvent).map(([eventId, names]) => {
+                    return `${idToName[eventId] || eventId}: ${names.join(", ")}`;
+                });
+                if (duplicateMsgs.length > 0) {
+                    toast.error("You have already purchased the following side games: " + duplicateMsgs.join("; "));
+                }
+                if (newPurchases.length === 0) {
+                    // All side games are duplicates, block purchase
+                    return;
                 }
 
-                // Insert the purchases into the purchases table
-                const { error: purchaseError } = await supabase
-                    .from('purchases')
-                    .insert(purchasesData);
+                // Insert only new purchases
+                if (newPurchases.length > 0) {
+                    const { error: purchaseError } = await supabase
+                        .from('purchases')
+                        .insert(newPurchases);
 
-                if (purchaseError) {
-                    console.error("Purchase Error:", purchaseError);
-                    // Handle specific error codes
-                    switch (purchaseError.code) {
-                        case '23505': // Unique violation error code
-                            toast.error("You have already purchased this event.");
-                            return; // Exit the function to prevent further execution
-                        default:
-                            toast.error("An error occurred while adding your purchases. Please try again.");
-                            break;
+                    if (purchaseError) {
+                        console.error("Purchase Error:", purchaseError);
+                        // Handle specific error codes
+                        switch (purchaseError.code) {
+                            case '23505': // Unique violation error code
+                                toast.error("You have already purchased this event.");
+                                return;
+                            default:
+                                toast.error("An error occurred while adding your purchases. Please try again.");
+                                break;
+                        }
+                        return; // Exit after handling the error
                     }
-                    return; // Exit after handling the error
                 }
 
                 // Clear the cart in the database
@@ -132,7 +216,7 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
         <Card
             title="Review Your Cart"
             theme={theme}
-            // footerContent={<button className="text-blue-600">Footer Action</button>}
+        // footerContent={<button className="text-blue-600">Footer Action</button>}
         >
             <div className="p-2 w-auto mx-auto text-xs text-left">
                 <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
@@ -146,15 +230,15 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
                                         <li><strong>Tour:</strong> {item.eventSummary.tourLabel}</li>
                                         <li><strong>Location:</strong> {item.eventSummary.locationLabel}</li>
                                         <li><strong>Event Name:</strong> {item.eventSummary.selectedEvent.name}</li>
-                                        <li><strong>Course:</strong> {item.eventSummary.selectedEvent.course}</li>
-                                        <li><strong>Date:</strong> {new Date(item.eventSummary.selectedEvent.date).toLocaleDateString()}</li>
+                                        <li><strong>Course:</strong> {item.eventSummary.selectedEvent.course_name}</li>
+                                        <li><strong>Date:</strong> {new Date(item.eventSummary.selectedEvent.event_date).toLocaleDateString()}</li>
                                     </ul>
 
                                     <div className="text-green-400">Selected Side Games:</div>
                                     <ul>
-                                        <li><strong>Net Game:</strong> {item.sideGamesData.net || "None"}</li>
-                                        <li><strong>Super Skins:</strong> {item.sideGamesData.superSkins ? "Yes" : "No"}</li>
-                                        <li><strong>Division Skins:</strong> {item.sideGamesData.division || "None"}</li>
+                                        {(Array.isArray(item.sideGamesData.rows) ? item.sideGamesData.rows : []).filter(row => row.selected).map((row, i) => (
+                                            <li key={i}><strong>{row.name}:</strong> ${row.cost}</li>
+                                        ))}
                                     </ul>
 
                                     <div className="text-yellow-400 text-right">

@@ -1,25 +1,28 @@
 import React from "react";
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, BellIcon, XMarkIcon, UserIcon, ShoppingCartIcon, FaceSmileIcon, ArrowRightStartOnRectangleIcon, ArrowRightEndOnRectangleIcon } from '@heroicons/react/24/outline';
 import find_a_game_logo from '../assets/find_a_game_logo.png'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useUser } from '../context/UserContext'
 
 interface TopNavBarProps {
     logoColor: string;
+    onCartClick?: () => void;
 }
 
-const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
+const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
     const location = useLocation();
     const { isLoggedIn, logout, user, cartItems } = useUser();
 
     const isActive = (path: string) => location.pathname === path;
 
+    const profilePic = user?.profilePictureUrl || '/default-avatar.png';
+
     return (
         <Disclosure as="nav" className="sticky top-0 z-50 h-12" style={{ backgroundColor: logoColor }}>
             <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-8 h-12 ">
                 <div className="relative flex h-12 items-center justify-between">
-                    <div className="flex items-center">
+                    <div className="flex items-center flex-1">
                         <NavLink to="/" className="flex-shrink-0"
                             onClick={() => {
                                 const disclosureButton = document.querySelector('[aria-expanded="true"]') as HTMLElement;
@@ -59,19 +62,6 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                                     Create a Game
                                 </NavLink>
                                 <NavLink
-                                    to="/Cart"
-                                    className={({ isActive }) =>
-                                        isActive
-                                            ? "rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                                            : "rounded-md px-3 py-2 text-base font-semibold hover:bg-gray-700 hover:text-white"
-                                    }
-                                >
-                                    Cart
-                                    {cartItems.length > 0 && (
-                                        <span className="ml-1 h-2.5 w-2.5 rounded-full align-text-top bg-red-500 inline-block" />
-                                    )}
-                                </NavLink>
-                                <NavLink
                                     to="/Info"
                                     className={({ isActive }) =>
                                         isActive
@@ -94,90 +84,122 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex lg:hidden">
-                        <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                            <span className="absolute -inset-0.5" />
-                            <span className="sr-only">Open main menu</span>
-                            <Bars3Icon aria-hidden="true" className="block h-8 w-8 group-data-[open]:hidden" />
-                            <XMarkIcon aria-hidden="true" className="hidden h-8 w-8 group-data-[open]:block" />
-                            {cartItems.length > 0 && (
-                                <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full bg-red-500" />
-                            )}
-                        </DisclosureButton>
-                    </div>
-                    <div className="hidden lg:ml-4 lg:block">
-                        <div className="flex items-center">
-                            <Link to="/Messages" onClick={() => {
-                                const disclosureButton = document.querySelector('[aria-expanded="true"]') as HTMLElement;
-                                if (disclosureButton) {
-                                    disclosureButton.click();
-                                }
-                            }}>
-                                <button
-                                    type="button"
-                                    className="relative flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                >
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">View messages</span>
-                                    <BellIcon aria-hidden="true" className="h-6 w-6" />
-                                </button>
-                            </Link>
-
-                            {/* Profile dropdown */}
-                            <Menu as="div" className="relative ml-4 flex-shrink-0">
+                    <div className="flex items-center flex-shrink-0">
+                        {/* All right-side icons in a single flex row */}
+                        {/* Bell icon removed from top navbar. */}
+                        {/* Profile dropdown (desktop only) */}
+                        <div className="hidden lg:flex order-2 lg:order-2 ml-4">
+                            <Menu as="div" className="relative flex-shrink-0">
                                 <div>
-                                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                                    <MenuButton className="relative flex rounded-full bg-gray-800 text-gray-400 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 group">
                                         <span className="absolute -inset-1.5" />
                                         <span className="sr-only">Open user menu</span>
-                                        <img
-                                            alt=""
-                                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                            className="h-8 w-8 rounded-full"
-                                        />
+                                        {user?.profilePictureUrl ? (
+                                            <span className="relative inline-block h-8 w-8">
+                                                <img
+                                                    alt=""
+                                                    src={user.profilePictureUrl}
+                                                    className="h-8 w-8 rounded-full object-cover"
+                                                    onError={e => {
+                                                        if (!e.currentTarget.src.endsWith('/default-avatar.png')) {
+                                                            e.currentTarget.src = '/default-avatar.png';
+                                                        }
+                                                    }}
+                                                />
+                                                <FaceSmileIcon
+                                                    className="h-8 w-8 text-gray-400 group-hover:text-white group-focus:text-white absolute inset-0 opacity-0 group-hover:opacity-100 group-focus:opacity-100 pointer-events-none transition-all duration-150"
+                                                />
+                                            </span>
+                                        ) : (
+                                            <span className="relative inline-block h-8 w-8">
+                                                <span className="absolute inset-0 flex items-center justify-center rounded-full bg-gray-800">
+                                                    <UserIcon className="h-8 w-8 text-gray-400" />
+                                                </span>
+                                            </span>
+                                        )}
                                     </MenuButton>
                                 </div>
                                 <MenuItems
                                     transition
-                                    className="absolute right-0 z-10 mt-3 w-32 origin-top-right rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 transition flex flex-col focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+                                    className="absolute right-0 z-10 mt-3 origin-top-right rounded-md bg-gray-300 shadow-lg ring-1 ring-black ring-opacity-5 flex flex-col focus:outline-none min-w-fit max-w-xs"
                                 >
                                     <MenuItem>
                                         <NavLink
-                                            to="/Profile" className={({ isActive }) =>
-                                                isActive
-                                                    ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                                                    : "rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 hover:text-white"}>
+                                            to="/Profile"
+                                            className={({ isActive }) =>
+                                            (isActive
+                                                ? "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md bg-gray-900 text-white"
+                                                : "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md hover:bg-gray-700 hover:text-white")
+                                            }
+                                        >
+                                            <UserIcon className="h-6 w-6 mr-3 flex-shrink-0" />
                                             Profile
                                         </NavLink>
                                     </MenuItem>
+                                    {isLoggedIn && (
+                                        <MenuItem>
+                                            <NavLink
+                                                to="/Messages"
+                                                className={({ isActive }) =>
+                                                (isActive
+                                                    ? "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md bg-gray-900 text-white"
+                                                    : "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md hover:bg-gray-700 hover:text-white")
+                                                }
+                                            >
+                                                <BellIcon className="h-6 w-6 mr-3 flex-shrink-0" />
+                                                Notifications
+                                                {/* TODO: Add red dot badge here for unread notifications/messages */}
+                                            </NavLink>
+                                        </MenuItem>
+                                    )}
                                     <MenuItem>
                                         <NavLink
-                                            to="/MyEvents" className={({ isActive }) =>
-                                                isActive
-                                                    ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                                                    : "rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 hover:text-white"}>
-                                            My Events
-                                        </NavLink>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <NavLink
-                                            to="/Messages" className={({ isActive }) =>
-                                                isActive
-                                                    ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                                                    : "rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 hover:text-white"}>
-                                            Messages
-                                        </NavLink>
-                                    </MenuItem>
-                                    <MenuItem>
-                                        <NavLink
-                                            to="/Login" className={({ isActive }) =>
-                                                isActive
-                                                    ? "rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-                                                    : "rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-700 hover:text-white"} onClick={isLoggedIn ? logout : undefined}>
-                                            {isLoggedIn ? "Logout" : "Login"}
+                                            to="/Login"
+                                            className={({ isActive }) =>
+                                            (isActive
+                                                ? "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md bg-gray-900 text-white"
+                                                : "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md hover:bg-gray-700 hover:text-white")
+                                            }
+                                            onClick={isLoggedIn ? logout : undefined}
+                                        >
+                                            {isLoggedIn ? (
+                                                <>
+                                                    <ArrowRightStartOnRectangleIcon className="h-6 w-6 mr-3 flex-shrink-0" />
+                                                    Logout
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ArrowRightEndOnRectangleIcon className="h-6 w-6 mr-3 flex-shrink-0" />
+                                                    Login
+                                                </>
+                                            )}
                                         </NavLink>
                                     </MenuItem>
                                 </MenuItems>
                             </Menu>
+                        </div>
+                        {/* Cart icon (always visible if present) */}
+                        {onCartClick && (
+                            <button
+                                type="button"
+                                className="order-2 lg:order-3 ml-2 self-start relative flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                onClick={onCartClick}
+                            >
+                                <span className="sr-only">Open cart</span>
+                                <ShoppingCartIcon className="h-6 w-6" />
+                                {cartItems.length > 0 && (
+                                    <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-red-500" />
+                                )}
+                            </button>
+                        )}
+                        {/* Hamburger menu (mobile only, always last) */}
+                        <div className="order-3 lg:order-4 lg:hidden">
+                            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                                <span className="absolute -inset-0.5" />
+                                <span className="sr-only">Open main menu</span>
+                                <Bars3Icon aria-hidden="true" className="block h-8 w-8 group-data-[open]:hidden" />
+                                <XMarkIcon aria-hidden="true" className="hidden h-8 w-8 group-data-[open]:block" />
+                            </DisclosureButton>
                         </div>
                     </div>
                 </div>
@@ -206,22 +228,40 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                                 : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                         }
                     >
-                        Create Game
+                        Create a Game
                     </DisclosureButton>
-                    <DisclosureButton
-                        as={NavLink}
-                        to="/Cart"
-                        className={() =>
-                            isActive("/Cart")
-                                ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                                : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
-                        }
-                    >
-                        Cart
-                        {cartItems.length > 0 && (
-                            <span className="ml-1 h-2.5 w-2.5 align-text-top rounded-full bg-red-500 inline-block" />
-                        )}
-                    </DisclosureButton>
+                    {onCartClick ? (
+                        <DisclosureButton
+                            as="button"
+                            type="button"
+                            className={() =>
+                                isActive("/Cart")
+                                    ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+                                    : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
+                            }
+                            onClick={onCartClick}
+                        >
+                            Cart
+                            {cartItems.length > 0 && (
+                                <span className="ml-1 h-2.5 w-2.5 align-text-top rounded-full bg-red-500 inline-block" />
+                            )}
+                        </DisclosureButton>
+                    ) : (
+                        <DisclosureButton
+                            as={NavLink}
+                            to="/Cart"
+                            className={() =>
+                                isActive("/Cart")
+                                    ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+                                    : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
+                            }
+                        >
+                            Cart
+                            {cartItems.length > 0 && (
+                                <span className="ml-1 h-2.5 w-2.5 align-text-top rounded-full bg-red-500 inline-block" />
+                            )}
+                        </DisclosureButton>
+                    )}
                     <DisclosureButton
                         as={NavLink}
                         to="/Info"
@@ -248,11 +288,20 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                 <div className="border-t border-gray-700 pb-3 pt-4">
                     <div className="flex items-center px-5">
                         <div className="flex-shrink-0">
-                            <img
-                                alt=""
-                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                className="h-10 w-10 rounded-full"
-                            />
+                            {user?.profilePictureUrl ? (
+                                <img
+                                    alt=""
+                                    src={user.profilePictureUrl}
+                                    className="h-10 w-10 rounded-full"
+                                    onError={e => {
+                                        if (!e.currentTarget.src.endsWith('/default-avatar.png')) {
+                                            e.currentTarget.src = '/default-avatar.png';
+                                        }
+                                    }}
+                                />
+                            ) : (
+                                <UserIcon className="h-10 w-10 text-gray-400" />
+                            )}
                         </div>
                         <div className="ml-3">
                             <div className="text-base font-medium text-white">{user?.displayName || "User Name"}</div>
@@ -270,7 +319,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor }) => {
                             >
                                 <span className="absolute -inset-1.5" />
                                 <span className="sr-only">View messages</span>
-                                <BellIcon aria-hidden="true" className="h-6 w-6" />
+                                <BellIcon aria-hidden="true" className="h-3 w-3" />
                             </button>
                         </Link>
                     </div>

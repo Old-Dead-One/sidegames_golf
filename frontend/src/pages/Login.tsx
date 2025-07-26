@@ -4,16 +4,20 @@ import { useNavigate } from "react-router-dom";
 import Card from "../components/defaultcard";
 import find_a_game_logo from "../assets/find_a_game_logo.png"
 import { toast } from "react-toastify";
+import { isValidPassword } from '../utils/validation';
+import LoadingSpinner from "../components/LoadingSpinner";
 interface LoginProps {
     theme: string;
 }
 
 const Login: React.FC<LoginProps> = ({ theme }) => {
-    const { login, signUp, isLoggedIn } = useUser();
+    const { login, signUp, isLoggedIn, loading } = useUser();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [displayName, setDisplayName] = useState<string>("");
     const [isSignUp, setIsSignUp] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState<string>("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,6 +25,14 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
             navigate("/");
         }
     }, [isLoggedIn, navigate]);
+
+    if (loading) {
+        return (
+            <Card title="Login" theme={theme}>
+                <LoadingSpinner size="large" />
+            </Card>
+        );
+    }
 
     const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -30,10 +42,16 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
                     toast.error("Please enter a displayName");
                     return;
                 }
+                if (!isValidPassword(password) || password.length > 32) {
+                    setError("Password must be 8-32 characters, include a number and a special character.");
+                    toast.error("Password must be 8-32 characters, include a number and a special character.");
+                    return;
+                }
                 await signUp(email, password, displayName);
             } else {
                 await login(email, password);
             }
+            setError("");
         } catch (error) {
             toast.error(isSignUp ? "Sign Up failed" : "Login failed");
         }
@@ -43,7 +61,7 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
         <Card
             title="Login"
             theme={theme}
-            // footerContent={<button className="text-blue-500">Footer Action</button>}
+        // footerContent={<button className="text-blue-500">Footer Action</button>}
         >
             <div className="p-2 flex justify-center">
                 <div className="px-4 pb-4 text-xs bg-neutral-500 bg-opacity-95 rounded-lg w-80">
@@ -83,17 +101,26 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
                                 <label htmlFor="password" className="">
                                     Password
                                 </label>
-                                <div className="mt-2">
+                                <div className="mt-2 relative">
                                     <input
                                         id="password"
                                         name="password"
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         required
                                         autoComplete="current-password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="w-full rounded-lg py-1.5 focus:ring-1 focus:ring-indigo-600"
+                                        className="w-full rounded-lg py-1.5 focus:ring-1 focus:ring-indigo-600 pr-8"
                                     />
+                                    <button
+                                        type="button"
+                                        className="absolute right-2 top-2 text-lg"
+                                        tabIndex={-1}
+                                        onClick={() => setShowPassword((v) => !v)}
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? '🙈' : '👁️'}
+                                    </button>
                                 </div>
                             </div>
 
@@ -114,6 +141,15 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
                                         />
                                     </div>
                                 </div>
+                            )}
+
+                            {isSignUp && (
+                                <p className="text-xs text-yellow-300 mt-1">
+                                    Password must be 8-32 characters, include a number and a special character.
+                                </p>
+                            )}
+                            {error && (
+                                <p className="text-xs text-red-400 mt-1">{error}</p>
                             )}
 
                             <div>
@@ -164,7 +200,7 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
                                         fill="#FBBC05"
                                     />
                                     <path
-                                        d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.2654 14.29L1.27539 17.385C3.25539 21.31 7.3104 24.0001 12.0004 24.0001Z"
+                                        d="M12.0004 24.0001C15.2404 24.0001 17.9654 22.935 19.9454 21.095L16.0804 18.095C15.0054 18.82 13.6204 19.245 12.0004 19.245C8.8704 19.245 6.21537 17.135 5.26540 14.29L1.27539 17.385C3.25539 21.31 7.31040 24.0001 12.0004 24.0001Z"
                                         fill="#34A853"
                                     />
                                 </svg>

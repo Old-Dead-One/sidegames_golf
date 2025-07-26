@@ -2,6 +2,8 @@ import React from 'react';
 
 interface BottomNavBarProps {
     className?: string;
+    onContactClick?: () => void;
+    onLegalClick?: () => void;
 }
 
 const navigation = [
@@ -68,21 +70,41 @@ const navigation = [
     },
 ]
 
-const BottomNavBar: React.FC<BottomNavBarProps> = ({ className }) => {
+const BottomNavBar: React.FC<BottomNavBarProps> = ({ className, onContactClick, onLegalClick }) => {
     return (
-        <footer className={`fixed bottom-0 w-full bg-black z-50 ${className || ''}`} style={{ height: '80px' }}>
-            <div className="mx-auto max-w-7xl p-4 md:p-6 md:flex md:items-center md:justify-between">
-                <div className="flex justify-center gap-x-6 md:order-2">
+        <footer className={`fixed bottom-0 w-full bg-black z-50 min-h-[40px] ${className || ''}`}>
+            {/* Add 'footer-row-on-landscape' for landscape orientation support */}
+            <div className="mx-auto max-w-7xl p-2 flex flex-col md:flex-row items-center md:justify-between gap-y-1 footer-row-on-landscape w-full relative">
+                {/* Left: Copyright */}
+                <p className="order-last md:order-1 text-center text-xs text-primary w-auto">
+                    &copy; 2024 Your sidegames.golf, Inc. All rights reserved.
+                </p>
+                {/* Center: Contact Us and Legal */}
+                <div className="flex gap-x-2 justify-center md:order-2 w-auto md:absolute md:left-1/2 md:transform md:-translate-x-1/2 md:top-1/2 md:-translate-y-1/2 md:my-0">
+                    <button
+                        onClick={onContactClick}
+                        className="text-gray-400 hover:text-white text-xs font-medium focus:outline-none"
+                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                    >
+                        Contact Us
+                    </button>
+                    <button
+                        onClick={onLegalClick}
+                        className="text-gray-400 hover:text-white text-xs font-medium focus:outline-none"
+                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                    >
+                        Legal
+                    </button>
+                </div>
+                {/* Right: Social Icons */}
+                <div className="flex gap-x-2 justify-center md:order-3 w-auto">
                     {navigation.map((item) => (
-                        <a key={item.name} href={item.href} className="text-gray-400 hover:text-white">
+                        <a key={item.name} href={item.href} className="text-gray-400 hover:text-white text-xs">
                             <span className="sr-only">{item.name}</span>
-                            <item.icon aria-hidden="true" className="size-6" />
+                            <item.icon aria-hidden="true" className="w-5 h-5" />
                         </a>
                     ))}
                 </div>
-                <p className="mt-2 text-center text-sm/6 text-primary md:order-1 md:mt-0">
-                    &copy; 2024 Your sidegames.golf, Inc. All rights reserved.
-                </p>
             </div>
         </footer>
     );

@@ -2,6 +2,7 @@ import React from "react";
 import { Checkbox, Typography, Button, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, FormControlLabel } from "@mui/material";
 import useTheme from "@mui/material/styles/useTheme";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import { toast } from 'react-toastify';
 
 interface SideGamesTableProps {
     rows: Array<{ name: string; key: string; value: number; selected: boolean }>;
@@ -14,6 +15,7 @@ interface SideGamesTableProps {
     onAddToCart: () => void;
     totalCost: number;
     disabled: boolean;
+    purchasedSideGames: Set<string>;
 }
 
 const SideGamesTable: React.FC<SideGamesTableProps> = ({
@@ -25,33 +27,56 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
     onDivisionChange,
     onSuperSkinsChange,
     onAddToCart,
-    disabled
+    disabled,
+    totalCost,
+    purchasedSideGames
 }) => {
     const theme = useTheme();
 
-    const totalCost = rows.reduce((acc: number, row) => {
-        if (row.key === "Super Skins" && superSkins) {
-            return acc + row.value;
-        } else if (row.key === net || row.key === division) {
-            return acc + row.value;
-        }
-        return acc;
-    }, 0);
-
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
+        console.log('Checkbox clicked:', value);
 
-        if (value === "Super Skins") {
+        // If already purchased, do nothing (should be disabled anyway)
+        if (purchasedSideGames.has(value)) {
+            console.log('Already purchased:', value);
+            return;
+        }
+
+        // If this is a net game and user already purchased a net game, prevent selection
+        if (/net/i.test(value) && Array.from(purchasedSideGames).some(key => /net/i.test(key))) {
+            console.log('Net game already purchased, blocking:', value);
+            toast.error("You have already purchased a net game for this event.");
+            return;
+        }
+
+        // If this is a division game and user already purchased a division game, prevent selection
+        if (/d[1-5][_ ]skins/i.test(value) && Array.from(purchasedSideGames).some(key => /d[1-5][_ ]skins/i.test(key))) {
+            console.log('Division game already purchased, blocking:', value);
+            toast.error("You have already purchased a division skins game for this event.");
+            return;
+        }
+
+        // Otherwise, proceed as before
+        if (/super[_ ]skins/i.test(value)) {
+            console.log('Super Skins handler:', value);
             onSuperSkinsChange(event);
-        } else if (value.startsWith("D")) {
+        } else if (/d[1-5][_ ]skins/i.test(value)) {
+            console.log('Division handler:', value);
             onDivisionChange(event);
+        } else if (/net/i.test(value)) {
+            console.log('Net handler:', value);
+            onNetChange(event);
         } else {
+            console.log('Fallback net handler:', value);
             onNetChange(event);
         }
     };
 
+    const isSuperSkins = (key: string) => /super[_ ]skins/i.test(key);
+
     const getLabelColor = (key: string) => {
-        if (key === "Super Skins") {
+        if (isSuperSkins(key)) {
             return superSkins ? theme.palette.primary.main : theme.palette.text.disabled;
         } else if (key === net || key === division) {
             return theme.palette.primary.main;
@@ -88,37 +113,44 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <TableRow key={row.key}>
-                            <TableCell>
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            size="small"
-                                            checked={row.key === "Super Skins"
-                                                ? superSkins
-                                                : (row.key === net || row.key === division)}
-                                            onChange={handleCheckboxChange}
-                                            value={row.key}
-                                            sx={{ color: getLabelColor(row.key), padding: 0 }}
-                                            disabled={disabled}
-                                        />
-                                    }
-                                    label=""
-                                />
-                            </TableCell>
-                            <TableCell component="th" scope="row">
-                                <Typography sx={{ color: getLabelColor(row.key) }}>
-                                    {row.name}
-                                </Typography>
-                            </TableCell>
-                            <TableCell align="right">
-                                <Typography sx={{ color: getLabelColor(row.key) }}>
-                                    ${row.value.toFixed(2)}
-                                </Typography>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {rows.map((row) => {
+                        const normalizedKey = (row.key || '')
+                            .toLowerCase()
+                            .replace(/^[0-9]+_/, '')
+                            .replace(/[^a-z0-9]/g, '_');
+                        return (
+                            <TableRow key={row.key}>
+                                <TableCell>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                size="small"
+                                                checked={
+                                                    purchasedSideGames.has(normalizedKey) ||
+                                                    (isSuperSkins(row.key) ? superSkins : (row.key === net || row.key === division))
+                                                }
+                                                onChange={handleCheckboxChange}
+                                                value={row.key}
+                                                sx={{ color: getLabelColor(row.key), padding: 0 }}
+                                                disabled={disabled || purchasedSideGames.has(normalizedKey)}
+                                            />
+                                        }
+                                        label=""
+                                    />
+                                </TableCell>
+                                <TableCell component="th" scope="row">
+                                    <Typography sx={{ color: getLabelColor(row.key) }}>
+                                        {row.name}
+                                    </Typography>
+                                </TableCell>
+                                <TableCell align="right">
+                                    <Typography sx={{ color: getLabelColor(row.key) }}>
+                                        ${row.value.toFixed(2)}
+                                    </Typography>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                     <TableRow>
                         <TableCell component="th" scope="row"><strong>Total</strong></TableCell>
                         <TableCell colSpan={3} align="right">

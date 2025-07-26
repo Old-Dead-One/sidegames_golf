@@ -1,11 +1,11 @@
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { LocationDetail } from "./Types";
+import { LocationDetail } from "../types";
 
 interface LocationAutoCompleteProps {
     locations: LocationDetail[];
-    tour_id: number | null;
+    tour_id: string | null;
     value: LocationDetail | null;
     onSelectLocation: (location: LocationDetail | null) => void;
 }
@@ -19,7 +19,7 @@ const LocationAutoComplete: React.FC<LocationAutoCompleteProps> = ({ locations, 
         <Autocomplete
             size="small"
             options={locations}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option.name}
             value={value}
             onChange={handleSelect}
             renderInput={(params) => <TextField {...params} placeholder="Select a Location" />}
@@ -28,6 +28,12 @@ const LocationAutoComplete: React.FC<LocationAutoCompleteProps> = ({ locations, 
             clearOnBlur={false}
             clearOnEscape
             clearText="Clear selection"
+            sx={{
+                '& .MuiInputBase-root': {
+                    fontSize: '14px',
+                    borderRadius: '8px'
+                },
+            }}
         />
     );
 };

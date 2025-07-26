@@ -17,3 +17,40 @@
         content: url('../assets/find_a_game_logo_black.svg');
     }
 }
+
+html, body {
+    background: #000000;
+  }
+
+html {
+    scrollbar-gutter: stable;
+  }
+
+html {
+  scrollbar-color: #a0aec0 #000000; /* thumb color, track color */
+  scrollbar-width: thin; /* or 'auto' or 'none' */
+}
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .footer-row-on-landscape {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0.25rem 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+  .footer-row-on-landscape button,
+  .footer-row-on-landscape a,
+  .footer-row-on-landscape p {
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+  }
+  .footer-row-on-landscape .size-6 {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+}
+
+.pb-footer {
+  padding-bottom: 120px;
+}

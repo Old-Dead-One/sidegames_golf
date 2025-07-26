@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { supabase } from "../services/supabaseClient";
 import AutoCompleteForm from "../components/AutoCompleteForm";
-import { Tour, LocationDetail, EventItem, SideGames } from "../components/Types";
+import { Tour, LocationDetail, EventItem, SideGames } from "../types";
 import Card from "../components/defaultcard";
 import { toast } from 'react-toastify';
+import LoadingSpinner from "../components/LoadingSpinner";
+import EventSummary from "../components/EventSummary";
 
 interface DashboardProps {
     theme: string;
@@ -14,14 +16,14 @@ interface DashboardProps {
 const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
-    const event_id = Number(query.get("event_id"));
-    const tour_id = Number(query.get("tour_id"));
-    const location_id = Number(query.get("location_id"));
+    const event_id = query.get("event_id");
+    const tour_id = query.get("tour_id");
+    const location_id = query.get("location_id");
     const [tours, setTours] = useState<Tour[]>([]);
     const [locations, setLocations] = useState<LocationDetail[]>([]);
     const [events, setEvents] = useState<EventItem[]>([]);
-    const [selectedtour_id, setSelectedtour_id] = useState<number | null>(null);
-    const [selectedlocation_id, setSelectedlocation_id] = useState<number | null>(null);
+    const [selectedtour_id, setSelectedtour_id] = useState<string | null>(null);
+    const [selectedlocation_id, setSelectedlocation_id] = useState<string | null>(null);
     const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
     const [tourValue, setTourValue] = useState<Tour | null>(null);
     const [locationValue, setLocationValue] = useState<LocationDetail | null>(null);
@@ -33,8 +35,11 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const [superSkins, setSuperSkins] = useState<boolean>(false);
     const [totalCost, setTotalCost] = useState<number>(0);
     const [loading, setLoading] = useState(false);
-
-    const { addToCart, isEventInCart } = useUser();
+    const [tourLocations, setTourLocations] = useState<any[]>([]);
+    const { addToCart, isEventInCart, joinedTours, user } = useUser();
+    const [showMyToursOnly, setShowMyToursOnly] = useState(false);
+    const [enabledSideGames, setEnabledSideGames] = useState<{ key: string; name: string; fee: number | null }[]>([]);
+    const [purchasedSideGames, setPurchasedSideGames] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         const fetchData = async () => {
@@ -43,8 +48,9 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 const { data: locationsData, error: locationsError } = await supabase.from('locations').select('*');
                 const { data: eventsData, error: eventsError } = await supabase.from('events').select('*');
                 const { data: sideGamesData, error: sideGamesError } = await supabase.from('side_games').select('*');
+                const { data: tourLocationsData, error: tourLocationsError } = await supabase.from('tour_locations').select('*');
 
-                if (toursError || locationsError || eventsError || sideGamesError) {
+                if (toursError || locationsError || eventsError || sideGamesError || tourLocationsError) {
                     throw new Error("Error fetching data from Supabase");
                 }
 
@@ -52,18 +58,19 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 setLocations(locationsData);
                 setEvents(eventsData);
                 setSideGamesRows(sideGamesData);
+                setTourLocations(tourLocationsData || []);
 
                 // Pre-select event, tour, and location based on query params
                 if (event_id && toursData.length > 0 && locationsData.length > 0 && eventsData.length > 0) {
-                    const event = eventsData.find((e: EventItem) => e.event_id === event_id);
+                    const event = eventsData.find((e: EventItem) => e.id === event_id);
                     if (event) {
                         setSelectedEvent(event);
                         setEventValue(event);
 
-                        const tour = toursData.find((tour: Tour) => tour.tour_id === event.tour_id);
+                        const tour = toursData.find((tour: Tour) => tour.id === event.tour_id);
                         setTourValue(tour || null);
 
-                        const locationDetail = locationsData.find((loc: LocationDetail) => loc.location_id === event.location_id) || null;
+                        const locationDetail = locationsData.find((loc: LocationDetail) => loc.id === event.location_id) || null;
                         setLocationValue(locationDetail);
                     }
                 }
@@ -82,36 +89,17 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         if (loading) return; // Prevent running this effect while loading
 
         if (event_id && tours.length > 0 && locations.length > 0 && Array.isArray(events)) {
-            const flattenedEvents = events.flatMap(tour => {
-                if (!tour.events) {
-                    console.warn("Tour events are undefined for tour:", tour);
-                    return [];
-                }
-                return tour.events.flatMap(location => {
-                    if (!location.events) {
-                        console.warn("Location events are undefined for location:", location);
-                        return [];
-                    }
-                    return location.events.map(event => ({
-                        ...event,
-                        tour_id: tour.tour_id,
-                        location_id: location.location_id,
-                    }));
-                });
-            });
-
-            const event = flattenedEvents.find(e => e.event_id === event_id);
+            const event = events.find(e => e.id === event_id);
             if (event) {
                 setSelectedEvent(event);
                 setEventValue(event);
-                setSelectedtour_id(event.tour_id);
-                setSelectedlocation_id(event.location_id);
+                setSelectedtour_id(event.tour_id || null);
+                setSelectedlocation_id(event.location_id || null);
 
-                const tour = tours.find(tour => tour.tour_id === event.tour_id);
+                const tour = tours.find(tour => tour.id === event.tour_id);
                 setTourValue(tour || null);
 
-                // Update the logic to find the location correctly
-                const locationDetail = locations.find(loc => loc.location_id === event.location_id) || null;
+                const locationDetail = locations.find(loc => loc.id === event.location_id) || null;
                 setLocationValue(locationDetail);
             } else {
                 console.warn("No event found for event_id:", event_id);
@@ -120,9 +108,9 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
 
         // Set the selected tour and location based on the URL parameters
         if (tour_id) {
-            const matchedTour = tours.find(tour => tour.tour_id === tour_id);
+            const matchedTour = tours.find(tour => tour.id === tour_id);
             if (matchedTour) {
-                setSelectedtour_id(matchedTour.tour_id);
+                setSelectedtour_id(matchedTour.id);
             }
         }
         if (location_id) {
@@ -130,13 +118,159 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         }
     }, [event_id, tours, locations, tour_id, location_id, events, loading]);
 
-    const filteredLocationDetails: LocationDetail[] = selectedtour_id
-        ? locations.find(location => location.tour_id === selectedtour_id)?.locations || []
-        : [];
+    useEffect(() => {
+        if (tourValue && tours.length > 0) {
+            const match = tours.find(t => t.id === tourValue.id) || null;
+            if (match !== tourValue) setTourValue(match);
+        }
+    }, [tours]);
 
-    const handleSelectTour = (tour_id: number | null, selectedTour: Tour | null) => {
-        setSelectedtour_id(tour_id);
-        setTourValue(selectedTour);
+    // Since locations are now global, we show all locations
+    // In the future, you might want to filter by events that exist for the selected tour
+    const filteredLocationDetails: LocationDetail[] = React.useMemo(() => {
+        if (!selectedtour_id) return [];
+        const tourLocationIds = tourLocations
+            .filter((tl) => tl.tour_id === selectedtour_id)
+            .map((tl) => tl.location_id);
+        return locations.filter((loc) => tourLocationIds.includes(loc.id));
+    }, [selectedtour_id, locations, tourLocations]);
+
+    const filteredEvents = React.useMemo(() => {
+        if (!selectedlocation_id) return [];
+        return events.filter(ev => ev.location_id === selectedlocation_id && ev.tour_id === selectedtour_id);
+    }, [selectedlocation_id, selectedtour_id, events]);
+
+    useEffect(() => {
+        // If the current locationValue is not in the filtered list, reset it
+        if (
+            locationValue &&
+            !filteredLocationDetails.some(loc => loc.id === locationValue.id)
+        ) {
+            setLocationValue(null);
+            setSelectedlocation_id(null);
+        }
+    }, [filteredLocationDetails, locationValue]);
+
+    // Control which accordion is expanded: only expand event summary if eventValue is not null
+    useEffect(() => {
+        if (eventValue) {
+            setExpanded("eventsummarypanel");
+        } else {
+            setExpanded("tourpanel");
+        }
+    }, [eventValue]);
+
+    // Reset side games selections when the event changes
+    useEffect(() => {
+        setNet(null);
+        setDivision(null);
+        setSuperSkins(false);
+        // Optionally, reset sideGamesRows selection state if needed
+        setSideGamesRows(prevRows => prevRows.map(row => ({ ...row, selected: false })));
+        setTotalCost(0);
+    }, [eventValue]);
+
+    useEffect(() => {
+        const fetchEnabledSideGames = async () => {
+            if (!selectedEvent) {
+                setEnabledSideGames([]);
+                return;
+            }
+            const { data: row, error } = await supabase
+                .from('event_side_games')
+                .select('*')
+                .eq('event_id', selectedEvent.id)
+                .single();
+            if (error || !row) {
+                setEnabledSideGames([]);
+                return;
+            }
+            const allSideGameKeys = [
+                { key: 'open_net', label: 'Open Net' },
+                { key: 'sr_net', label: 'Sr Net' },
+                { key: 'super_skins', label: 'Super Skins' },
+                { key: 'd1_skins', label: 'Division 1 Skins' },
+                { key: 'd2_skins', label: 'Division 2 Skins' },
+                { key: 'd3_skins', label: 'Division 3 Skins' },
+                { key: 'd4_skins', label: 'Division 4 Skins' },
+                { key: 'd5_skins', label: 'Division 5 Skins' },
+                { key: 'ctp', label: 'Closest to the Pin' },
+                { key: 'long_drive', label: 'Long Drive' },
+                { key: 'best_drive', label: 'Best Drive' },
+                { key: 'nassau', label: 'Nassau' },
+            ];
+            const enabled = allSideGameKeys
+                .filter(sg => row[sg.key])
+                .map(sg => ({ key: sg.key, name: sg.label, fee: row[`${sg.key}_fee`] }));
+            setEnabledSideGames(enabled);
+        };
+        fetchEnabledSideGames();
+    }, [selectedEvent]);
+
+    useEffect(() => {
+        const fetchPurchasedSideGames = async () => {
+            if (!selectedEvent || !user) {
+                setPurchasedSideGames(new Set());
+                return;
+            }
+            const { data: purchases, error } = await supabase
+                .from('purchases')
+                .select('side_games_data')
+                .eq('user_id', user.id)
+                .eq('event_id', selectedEvent.id);
+            console.log('Purchases response:', purchases, 'Error:', error);
+            if (error) {
+                setPurchasedSideGames(new Set());
+                return;
+            }
+            const purchased: Set<string> = new Set();
+            purchases?.forEach((purchase: any) => {
+                let keys: string[] = [];
+                const data = purchase.side_games_data || {};
+                if (Array.isArray(data.rows) && data.rows.length > 0) {
+                    data.rows.forEach((row: any) => {
+                        if (row.selected) {
+                            const normalizedKey = ((row.key || row.name || '')
+                                .toLowerCase()
+                                .replace(/^[0-9]+_/, '')
+                                .replace(/[^a-z0-9]/g, '_'));
+                            keys.push(normalizedKey);
+                        }
+                    });
+                } else {
+                    // Fallback for old purchases: infer from high-level fields
+                    if (data.net) {
+                        keys.push(
+                            (data.net || '')
+                                .toLowerCase()
+                                .replace(/^[0-9]+_/, '')
+                                .replace(/[^a-z0-9]/g, '_')
+                        );
+                    }
+                    if (data.division) {
+                        keys.push(
+                            (data.division || '')
+                                .toLowerCase()
+                                .replace(/^[0-9]+_/, '')
+                                .replace(/[^a-z0-9]/g, '_')
+                        );
+                    }
+                    if (data.superSkins) {
+                        keys.push('super_skins');
+                    }
+                }
+                keys.forEach(k => purchased.add(k));
+            });
+            setPurchasedSideGames(purchased);
+        };
+        fetchPurchasedSideGames();
+    }, [selectedEvent, user]);
+
+    const handleSelectTour = (tour: Tour | null) => {
+        setTourValue(tour);
+        setSelectedtour_id(tour ? tour.id : null);
+
+        // Reset location and event
         setSelectedlocation_id(null);
         setLocationValue(null);
         setSelectedEvent(null);
@@ -144,8 +278,10 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     };
 
     const handleSelectLocation = (location: LocationDetail | null) => {
-        setSelectedlocation_id(location ? location.location_id : null);
+        setSelectedlocation_id(location ? location.id : null);
         setLocationValue(location);
+
+        // Reset event
         setSelectedEvent(null);
         setEventValue(null);
     };
@@ -153,7 +289,6 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const handleSelectEvent = (event: EventItem | null) => {
         setSelectedEvent(event);
         setEventValue(event);
-        setExpanded("eventsummarypanel");
     };
 
     const handleExpanded = (panel: string | false) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -163,7 +298,9 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const updateSideGamesData = (newNet: string | null, newDivision: string | null, newSuperSkins: boolean) => {
         const updatedRows = sideGamesRows.map(row => ({
             ...row,
-            selected: (row.key === newNet) || (row.key === newDivision) || (row.key === "Super Skins" && newSuperSkins)
+            selected:
+                (/super[_ ]skins/i.test(row.key) && newSuperSkins) ||
+                (row.key === newNet || row.key === newDivision)
         }));
 
         const updatedTotalCost = updatedRows.reduce((acc: number, row: SideGames) => {
@@ -195,13 +332,15 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         updateSideGamesData(net, division, newSuperSkins);
     };
 
+    const autoCompleteFormRef = useRef<any>(null);
+
     const handleAddToCart = () => {
         if (!selectedEvent) {
             toast.error("Please select an event");
             return;
         }
 
-        if (isEventInCart && isEventInCart(selectedEvent.event_id)) {
+        if (isEventInCart && isEventInCart(selectedEvent.id)) {
             toast.error("Event is already in cart");
             return;
         }
@@ -211,10 +350,13 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
             return;
         }
 
+        const selectedTour = tours.find(tour => tour.id === selectedtour_id);
+        const tourLabel = selectedTour ? selectedTour.name : null;
+
         const eventSummary = {
             selectedEvent,
-            tourLabel: tours.find(tour => tour.tour_id === selectedtour_id)?.label || null,
-            locationLabel: filteredLocationDetails.find(loc => loc.location_id === selectedlocation_id)?.label || null,
+            tourLabel,
+            locationLabel: filteredLocationDetails.find(loc => loc.id === selectedlocation_id)?.name || null,
         };
 
         const sideGamesData = {
@@ -222,64 +364,128 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
             division,
             superSkins,
             rows: sideGamesRows.map(row => ({
+                key: row.key, // ensure key is present
                 name: row.name,
                 cost: row.value,
-                selected: (row.key === "SuperSkins" && superSkins) || (row.key === net || row.key === division),
+                selected:
+                    (/super[_ ]skins/i.test(row.key) && superSkins) ||
+                    (row.key === net || row.key === division),
             })),
             totalCost,
         };
 
         addToCart(eventSummary, sideGamesData);
 
+        // Reset the Find a Game form after adding to cart
+        if (autoCompleteFormRef.current && autoCompleteFormRef.current.resetForm) {
+            autoCompleteFormRef.current.resetForm();
+        }
+
         setTimeout(() => {
             toast.success("Event added to cart");
         }, 1000);
     };
 
+    const filteredTours = showMyToursOnly && joinedTours.length > 0
+        ? tours.filter(tour => joinedTours.includes(tour.id))
+        : tours;
+
     // Render loading state or the main content
     if (loading) {
-        return <div>Loading...</div>;
+        return (
+            <Card title="Dashboard" theme={theme}>
+                <LoadingSpinner size="large" />
+            </Card>
+        );
     }
 
     return (
-            <Card
-                title="Find a Game"
-                theme={theme}
-                className="min-w-[380px]"
-            // footerContent={<button className="text-blue-600">Footer Action</button>}
-            >
-
-                {/* Dashboard section */}
-                <div className="p-2 text-left max-w-sm mx-auto">
-                    <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                        <AutoCompleteForm
-                            tours={tours}
-                            locations={locations}
-                            events={events}
-                            selectedTourId={selectedtour_id}
-                            selectedLocationId={selectedlocation_id}
-                            selectedEvent={selectedEvent}
-                            tourValue={tourValue}
-                            locationValue={locationValue}
-                            eventValue={eventValue}
-                            onSelectTour={handleSelectTour}
-                            onSelectLocation={handleSelectLocation}
-                            onSelectEvent={handleSelectEvent}
-                            expanded={expanded}
-                            onAccordionChange={handleExpanded}
-                            sideGamesRows={sideGamesRows}
-                            net={net}
-                            division={division}
-                            superSkins={superSkins}
-                            totalCost={totalCost}
-                            onNetChange={handleNetChange}
-                            onDivisionChange={handleDivisionChange}
-                            onSuperSkinsChange={handleSuperSkinsChange}
-                            onAddToCart={handleAddToCart}
-                        />
+        <Card
+            title="Find a Game"
+            theme={theme}
+            className=""
+        >
+            <div className="p-2 text-left flex justify-center mx-auto w-full">
+                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
+                    <div className="flex items-center justify-end w-full mb-2">
+                        <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
+                            My Tours:
+                        </label>
+                        <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
+                            <span
+                                className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
+                                    ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
+                                `}
+                            />
+                            <span
+                                className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
+                                    ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
+                                `}
+                            />
+                            <input
+                                id="my-tours-switch"
+                                name="my-tours-switch"
+                                type="checkbox"
+                                aria-label="My Tours"
+                                checked={showMyToursOnly}
+                                onChange={() => setShowMyToursOnly(v => !v)}
+                                className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                            />
+                        </div>
                     </div>
+                    <AutoCompleteForm
+                        ref={autoCompleteFormRef}
+                        tours={filteredTours}
+                        locations={filteredLocationDetails}
+                        events={filteredEvents}
+                        selectedLocationId={selectedlocation_id}
+                        selectedEvent={selectedEvent}
+                        tourValue={tourValue}
+                        locationValue={locationValue}
+                        eventValue={eventValue}
+                        onSelectTour={handleSelectTour}
+                        onSelectLocation={handleSelectLocation}
+                        onSelectEvent={handleSelectEvent}
+                        expanded={expanded}
+                        onAccordionChange={handleExpanded}
+                        sideGamesRows={sideGamesRows.filter(row =>
+                            enabledSideGames.some(sg => {
+                                const rowKey = row.key
+                                    .toLowerCase()
+                                    .replace(/^[0-9]+_/, '') // remove leading number and underscore
+                                    .replace(/[^a-z0-9]/g, '_');
+                                const sgKey = sg.key
+                                    ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                                    : '';
+                                return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
+                            })
+                        ).map(row => {
+                            const sg = enabledSideGames.find(sg => {
+                                const rowKey = row.key
+                                    .toLowerCase()
+                                    .replace(/^[0-9]+_/, '')
+                                    .replace(/[^a-z0-9]/g, '_');
+                                const sgKey = sg.key
+                                    ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                                    : '';
+                                return rowKey === sgKey;
+                            });
+                            return sg ? { ...row, value: sg.fee ?? row.value } : row;
+                        })}
+                        net={net}
+                        division={division}
+                        superSkins={superSkins}
+                        totalCost={totalCost}
+                        onNetChange={handleNetChange}
+                        onDivisionChange={handleDivisionChange}
+                        onSuperSkinsChange={handleSuperSkinsChange}
+                        onAddToCart={handleAddToCart}
+                        enabledSideGames={enabledSideGames}
+                        purchasedSideGames={purchasedSideGames}
+                    />
                 </div>
-            </Card>
+            </div>
+        </Card>
     );
 };
 

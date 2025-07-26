@@ -3,7 +3,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { supabase } from "../services/supabaseClient";
 import Card from "../components/defaultcard";
-import { Tour, Location, EventItem } from "../components/Types";
+import { Tour, EventItem } from "../types";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { useUser } from "../context/UserContext";
 
 interface CalendarProps {
     theme: string;
@@ -13,18 +15,23 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
     const [_tours, setTours] = useState<Tour[]>([]);
     const [_locations, setLocations] = useState<Location[]>([]);
     const [events, setEvents] = useState<EventItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showMyToursOnly, setShowMyToursOnly] = useState(false);
+
+    const { loading: userLoading, joinedTours } = useUser();
 
     const [tooltip, setTooltip] = useState<{
         title: string;
         date: string;
-        location_id: number;
+        location_id: string;
         location_label: string;
-        tour_id: number;
+        tour_id: string;
         tour_label: string;
-        event_id: number;
+        event_id: string;
+        course_name: string; // <-- ad
         link: string;
         visible: boolean
-    }>({ title: "", date: "", location_id: 0, location_label: "", tour_id: 0, tour_label: "", event_id: 0, link: "", visible: false });
+    }>({ title: "", date: "", location_id: "", location_label: "", tour_id: "", tour_label: "", event_id: "", course_name: "", link: "", visible: false });
     const tooltipRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -33,13 +40,13 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                 const { data: toursData, error: toursError } = await supabase.from('tours').select('*');
                 const { data: locationsData, error: locationsError } = await supabase.from('locations').select('*');
 
-                // Fetch events with joined location and tour labels
+                // Fetch events with joined location and tour data
                 const { data: eventsData, error: eventsError } = await supabase
                     .from('events')
                     .select(`
                         *,
-                        location:locations(location_id, label),
-                        tour:tours(tour_id, label)
+                        location:locations(id, name),
+                        tour:tours(id, name)
                     `);
 
                 if (toursError || locationsError || eventsError) {
@@ -51,39 +58,47 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
 
                 // Transform eventsData to match the structure required by FullCalendar
                 const formattedEvents = eventsData.map(event => ({
-                    event_id: event.event_id,
+                    id: event.id,
                     name: event.name,
-                    course: event.course,
                     event_date: event.event_date,
                     title: event.name,
                     start: event.event_date,
-                    location_id: event.location.location_id,
-                    tour_id: event.tour.tour_id,
-                    tour_label: event.tour.label,
-                    year: new Date(event.event_date).getFullYear(),
-                    events: [],
+                    location_id: event.location?.id,
+                    tour_id: event.tour?.id,
+                    tour_label: event.tour?.name,
+                    year: event.year,
+                    description: event.description,
+                    max_participants: event.max_participants,
+                    current_participants: event.current_participants,
+                    price: event.price,
+                    created_at: event.created_at,
+                    updated_at: event.updated_at,
+                    course_name: event.course_name, // <-- add this
                     extendedProps: {
                         location: {
-                            id: event.location.location_id,
-                            label: event.location.label
+                            id: event.location?.id,
+                            name: event.location?.name
                         },
                         tour: {
-                            id: event.tour.tour_id,
-                            label: event.tour.label
+                            id: event.tour?.id,
+                            name: event.tour?.name
                         },
-                        event_id: event.event_id
+                        event_id: event.id,
+                        course_name: event.course_name // <-- add this
                     }
                 }));
 
                 setEvents(formattedEvents);
+                setLoading(false);
 
             } catch (error) {
                 console.error("Error fetching data:", error);
+                setLoading(false);
             }
         };
 
         fetchData();
-    }, [events]);
+    }, []);
 
     const handleEventClick = (event: any) => {
         const eventDate = new Date(event.event.start).toLocaleDateString();
@@ -91,17 +106,18 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
             title: event.event.title,
             date: eventDate,
             location_id: event.event.extendedProps.location.id,
-            location_label: event.event.extendedProps.location.label,
+            location_label: event.event.extendedProps.location.name,
             tour_id: event.event.extendedProps.tour.id,
-            tour_label: event.event.extendedProps.tour.label,
+            tour_label: event.event.extendedProps.tour.name,
             event_id: event.event.extendedProps.event_id,
+            course_name: event.event.extendedProps.course_name, // <-- add this
             link: `/Dashboard?event_id=${event.event.extendedProps.event_id}&tour_id=${event.event.extendedProps.tour.id}&location_id=${event.event.extendedProps.location.id}`,
             visible: true,
         });
     };
 
     const closeTooltip = () => {
-        setTooltip({ title: "", date: "", location_id: 0, location_label: "", tour_id: 0, tour_label: "", event_id: 0, link: "", visible: false });
+        setTooltip({ title: "", date: "", location_id: "", location_label: "", tour_id: "", tour_label: "", event_id: "", course_name: "", link: "", visible: false });
     };
 
     const handleClickOutside = (event: MouseEvent) => {
@@ -117,6 +133,19 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
         };
     }, []);
 
+    // Filter tours based on toggle
+    const filteredEvents = showMyToursOnly && joinedTours.length > 0
+        ? events.filter(event => event.tour_id && joinedTours.includes(event.tour_id))
+        : events;
+
+    if (userLoading || loading) {
+        return (
+            <Card title="Calendar" theme={theme}>
+                <LoadingSpinner size="large" />
+            </Card>
+        );
+    }
+
     return (
         <Card
             title="Event Calendar"
@@ -124,12 +153,36 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
             className="mx-4"
         // footerContent={<button className="text-blue-600">Footer Action</button>}
         >
+            <div className="flex items-center justify-end w-full mb-2">
+                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">My Tours</label>
+                <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full">
+                    <span
+                        className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
+                            ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
+                        `}
+                    />
+                    <span
+                        className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
+                            ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
+                        `}
+                    />
+                    <input
+                        id="my-tours-switch"
+                        name="my-tours-switch"
+                        type="checkbox"
+                        aria-label="My Tours"
+                        checked={showMyToursOnly}
+                        onChange={() => setShowMyToursOnly(v => !v)}
+                        className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                    />
+                </div>
+            </div>
             <div className="p-2 text-left flex justify-center max-w-4xl mx-auto">
                 <div className="p-4 text-xs text-white bg-neutral-500 bg-opacity-95 rounded-lg">
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
-                        events={events}
+                        events={filteredEvents}
                         headerToolbar={{
                             center: "title",
                             left: "prev,next",
@@ -171,9 +224,10 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                         className="bg-white border border-gray-300 rounded p-2 text-opacity-100"
                     >
                         <span className="font-bold">{tooltip.title}</span>
-                        <div className="text-sm">Date: {tooltip.date}</div>
-                        <div className="text-sm">Location: {tooltip.location_label}</div>
-                        <div className="text-sm">Tour: {tooltip.tour_label}</div>
+                        <div className="text-sm">{tooltip.tour_label}</div>
+                        <div className="text-sm">{tooltip.location_label}</div>
+                        <div className="text-sm">{tooltip.course_name}</div>
+                        <div className="text-sm">{tooltip.date}</div>
                         <a
                             href={tooltip.link}
                             className="text-blue-500 underline"

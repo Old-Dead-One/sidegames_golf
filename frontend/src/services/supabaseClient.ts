@@ -1,9 +1,23 @@
 import { createClient } from "@supabase/supabase-js";
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { config } from "../config/environment";
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Missing Supabase URL or Key in environment variables");
-}
+export const supabase = createClient(config.supabase.url, config.supabase.anonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+  },
+});
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Error handling utility
+export const handleSupabaseError = (error: unknown, context: string) => {
+  const message = error instanceof Error ? error.message : 'Unknown error occurred';
+  console.error(`${context}:`, error);
+
+  // In production, you might want to send this to a logging service
+  if (config.app.environment === 'production') {
+    // TODO: Add error reporting service (Sentry, LogRocket, etc.)
+  }
+
+  return message;
+};
