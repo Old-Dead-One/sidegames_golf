@@ -567,148 +567,146 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
     }
 
     return (
-        <Card
-            key={formKey}
-            title="Create a Game"
-            theme={theme}
-            className=""
-        >
-            <div className="p-2 text-left flex justify-center mx-auto w-full">
-                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    {canCreate ? (
-                        isProfileComplete ? (
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-end w-full">
-                                    <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
-                                        My Tours:
-                                    </label>
-                                    <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
-                                        <span
-                                            className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
+        <>
+            <Card
+                key={formKey}
+                title="Create a Game"
+                theme={theme}
+                includeInnerCard={true}
+            >
+                {canCreate ? (
+                    isProfileComplete ? (
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-end w-full mb-4 rounded">
+                                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
+                                    My Tours:
+                                </label>
+                                <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
+                                    <span
+                                        className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
                                                 ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
                                             `}
-                                        />
-                                        <span
-                                            className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
+                                    />
+                                    <span
+                                        className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
                                                 ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
                                             `}
-                                        />
-                                        <input
-                                            id="my-tours-switch"
-                                            name="my-tours-switch"
-                                            type="checkbox"
-                                            aria-label="My Tours"
-                                            checked={showMyToursOnly}
-                                            onChange={() => setShowMyToursOnly(v => !v)}
-                                            className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-                                        />
-                                    </div>
+                                    />
+                                    <input
+                                        id="my-tours-switch"
+                                        name="my-tours-switch"
+                                        type="checkbox"
+                                        aria-label="My Tours"
+                                        checked={showMyToursOnly}
+                                        onChange={() => setShowMyToursOnly(v => !v)}
+                                        className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="bg-white rounded">
+                                    <AutoCompleteForm
+                                        ref={autoCompleteFormRef}
+                                        tours={filteredTours}
+                                        locations={filteredLocationDetails}
+                                        events={filteredEvents}
+                                        selectedLocationId={selectedlocation_id}
+                                        selectedEvent={selectedEvent}
+                                        tourValue={tourValue}
+                                        locationValue={locationValue}
+                                        eventValue={eventValue}
+                                        onSelectTour={handleSelectTour}
+                                        onSelectLocation={handleSelectLocation}
+                                        onSelectEvent={handleSelectEvent}
+                                        expanded={expanded}
+                                        onAccordionChange={handleExpanded}
+                                        sideGamesRows={[]}
+                                        net={null}
+                                        division={null}
+                                        superSkins={false}
+                                        totalCost={0}
+                                        onNetChange={() => { }}
+                                        onDivisionChange={() => { }}
+                                        onSuperSkinsChange={() => { }}
+                                        onAddToCart={() => { }}
+                                        enabledSideGames={[]}
+                                        purchasedSideGames={new Set()}
+                                        showEventSummary={false}
+                                        showNewEventOption={true}
+                                        onNewEventSelect={handleNewEventSelect}
+                                        tourPanelTitle="Create, Update, or Cancel an Event"
+                                    />
                                 </div>
 
-                                <div className="space-y-4">
-                                    <div className="bg-white rounded-md">
-                                        <AutoCompleteForm
-                                            ref={autoCompleteFormRef}
-                                            tours={filteredTours}
-                                            locations={filteredLocationDetails}
-                                            events={filteredEvents}
-                                            selectedLocationId={selectedlocation_id}
-                                            selectedEvent={selectedEvent}
-                                            tourValue={tourValue}
-                                            locationValue={locationValue}
-                                            eventValue={eventValue}
-                                            onSelectTour={handleSelectTour}
-                                            onSelectLocation={handleSelectLocation}
-                                            onSelectEvent={handleSelectEvent}
-                                            expanded={expanded}
-                                            onAccordionChange={handleExpanded}
-                                            sideGamesRows={[]}
-                                            net={null}
-                                            division={null}
-                                            superSkins={false}
-                                            totalCost={0}
-                                            onNetChange={() => { }}
-                                            onDivisionChange={() => { }}
-                                            onSuperSkinsChange={() => { }}
-                                            onAddToCart={() => { }}
-                                            enabledSideGames={[]}
-                                            purchasedSideGames={new Set()}
-                                            showEventSummary={false}
-                                            showNewEventOption={true}
-                                            onNewEventSelect={handleNewEventSelect}
-                                            tourPanelTitle="Create, Update, or Cancel an Event"
-                                        />
-                                    </div>
-
-                                    <div className="bg-white rounded-md">
-                                        <Accordion
-                                            expanded={expanded === "eventdetailspanel"}
-                                            onChange={handleExpanded("eventdetailspanel")}
-                                            elevation={0}
-                                            className="w-full"
+                                <div className="bg-white rounded-md">
+                                    <Accordion
+                                        expanded={expanded === "eventdetailspanel"}
+                                        onChange={handleExpanded("eventdetailspanel")}
+                                        elevation={0}
+                                        className="w-full"
+                                    >
+                                        <AccordionSummary
+                                            expandIcon={<ExpandMoreIcon />}
+                                            aria-controls="eventdetails-content"
+                                            id="eventdetails-header"
                                         >
-                                            <AccordionSummary
-                                                expandIcon={<ExpandMoreIcon />}
-                                                aria-controls="eventdetails-content"
-                                                id="eventdetails-header"
-                                            >
-                                                <Typography>Event Details</Typography>
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                <div className="space-y-3">
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Event Name"
-                                                        value={eventName}
-                                                        onChange={(e) => setEventName(e.target.value)}
-                                                        className="border w-full p-2 rounded-md"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Course Name"
-                                                        value={courseDetails.course_name}
-                                                        onChange={(e) => setCourseDetails({ course_name: e.target.value })}
-                                                        className="border w-full p-2 rounded-md"
-                                                    />
-                                                    <input
-                                                        type="date"
-                                                        value={eventDate}
-                                                        min={new Date().toISOString().split("T")[0]}
-                                                        max="2030time-12-31"
-                                                        onChange={(e) => setEventDate(e.target.value)}
-                                                        className="border w-full p-2 rounded-lg"
-                                                    />
-                                                </div>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    </div>
+                                            <Typography>Event Details</Typography>
+                                        </AccordionSummary>
+                                        <AccordionDetails>
+                                            <div className="space-y-3">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Event Name"
+                                                    value={eventName}
+                                                    onChange={(e) => setEventName(e.target.value)}
+                                                    className="border w-full p-2 rounded-md"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Course Name"
+                                                    value={courseDetails.course_name}
+                                                    onChange={(e) => setCourseDetails({ course_name: e.target.value })}
+                                                    className="border w-full p-2 rounded-md"
+                                                />
+                                                <input
+                                                    type="date"
+                                                    value={eventDate}
+                                                    min={new Date().toISOString().split("T")[0]}
+                                                    max="2030time-12-31"
+                                                    onChange={(e) => setEventDate(e.target.value)}
+                                                    className="border w-full p-2 rounded-lg"
+                                                />
+                                            </div>
+                                        </AccordionDetails>
+                                    </Accordion>
                                 </div>
+                            </div>
 
-                                <div className="space-x-2 flex justify-center">
-                                    <button onClick={handleCreateEvent} className="bg-blue-500 text-white p-1.5 rounded-lg w-1/3 hover:bg-blue-600 transition-colors">
-                                        Create Event
-                                    </button>
-                                    <button onClick={handleEditEvent} className="bg-yellow-500 text-white p-1.5 rounded-lg w-1/3 hover:bg-yellow-600 transition-colors">
-                                        Update Event
-                                    </button>
-                                    <button onClick={handleDeleteEvent} className="bg-red-500 text-white p-1.5 rounded-lg w-1/3 hover:bg-red-600 transition-colors">
-                                        Cancel Event
-                                    </button>
-                                </div>
+                            <div className="space-x-2 flex justify-center">
+                                <button onClick={handleCreateEvent} className="bg-blue-500 text-white p-1.5 rounded-lg w-1/3 hover:bg-blue-600 transition-colors">
+                                    Create Event
+                                </button>
+                                <button onClick={handleEditEvent} className="bg-yellow-500 text-white p-1.5 rounded-lg w-1/3 hover:bg-yellow-600 transition-colors">
+                                    Update Event
+                                </button>
+                                <button onClick={handleDeleteEvent} className="bg-red-500 text-white p-1.5 rounded-lg w-1/3 hover:bg-red-600 transition-colors">
+                                    Cancel Event
+                                </button>
                             </div>
-                        ) : (
-                            <div className="text-yellow-600 font-semibold text-center">
-                                <p>You must have an address and phone number in your profile to create, update, or cancel events.</p>
-                                <Link to="/Profile" className="underline text-blue-700">Go to Profile</Link>
-                            </div>
-                        )
+                        </div>
                     ) : (
-                        <p className="text-yellow-600 font-semibold text-center">
-                            You must be logged in and have a verified email to create, update, or cancel events.
-                        </p>
-                    )}
-                </div>
-            </div>
+                        <div className="text-yellow-600 font-semibold text-center">
+                            <p>You must have an address and phone number in your profile to create, update, or cancel events.</p>
+                            <Link to="/Profile" className="underline text-blue-700">Go to Profile</Link>
+                        </div>
+                    )
+                ) : (
+                    <p className="text-yellow-600 font-semibold text-center">
+                        You must be logged in and have a verified email to create, update, or cancel events.
+                    </p>
+                )}
+            </Card>
             <SideGamesModal
                 open={sideGamesModalOpen}
                 onClose={() => setSideGamesModalOpen(false)}
@@ -790,7 +788,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Card>
+        </>
     );
 };
 

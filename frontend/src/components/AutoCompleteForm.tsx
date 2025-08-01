@@ -97,59 +97,56 @@ const AutoCompleteForm = forwardRef<any, AutoCompleteFormProps>(({
     // Use locations prop directly
 
     return (
-        <div className="space-y-4">
-            <div className="bg-white rounded">
-                <Accordion
-                    expanded={expanded === "tourpanel"}
-                    onChange={onAccordionChange("tourpanel")}
-                    elevation={0}
-                    className="w-full"
+        <div className="space-y-4 rounded">
+            <Accordion
+                expanded={expanded === "tourpanel"}
+                onChange={onAccordionChange("tourpanel")}
+                elevation={0}
+                className=""
+            >
+                <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
                 >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                        className="pb-3"
-                    >
-                        <Typography>{tourPanelTitle}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <div className="p-4">
-                            <div className="mb-3">
-                                <TourAutoComplete
-                                    tours={tours}
-                                    value={tourValue}
-                                    onSelect={selected => {
-                                        if (Array.isArray(selected)) return;
-                                        onSelectTour(selected);
-                                    }}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <LocationAutoComplete
-                                    key={tourValue ? tourValue.id : "no-tour"}
-                                    locations={locations} // Use prop directly
-                                    tour_id={tourValue ? tourValue.id : null}
-                                    value={locationValue}
-                                    onSelectLocation={onSelectLocation}
-                                />
-                            </div>
-                            <div>
-                                <EventAutoComplete
-                                    key={(tourValue ? tourValue.id : "no-tour") + "-" + (locationValue ? locationValue.id : "no-location")}
-                                    events={events}
-                                    tourId={tourValue ? tourValue.id : null}
-                                    locationId={selectedLocationId}
-                                    value={eventValue}
-                                    onSelect={onSelectEvent}
-                                    showNewEventOption={showNewEventOption}
-                                    onNewEventSelect={onNewEventSelect}
-                                />
-                            </div>
+                    <Typography>{tourPanelTitle}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <div>
+                        <div className="mb-2">
+                            <TourAutoComplete
+                                tours={tours}
+                                value={tourValue}
+                                onSelect={selected => {
+                                    if (Array.isArray(selected)) return;
+                                    onSelectTour(selected);
+                                }}
+                            />
                         </div>
-                    </AccordionDetails>
-                </Accordion>
-            </div>
+                        <div className="mb-2">
+                            <LocationAutoComplete
+                                key={tourValue ? tourValue.id : "no-tour"}
+                                locations={locations} // Use prop directly
+                                tour_id={tourValue ? tourValue.id : null}
+                                value={locationValue}
+                                onSelectLocation={onSelectLocation}
+                            />
+                        </div>
+                        <div>
+                            <EventAutoComplete
+                                key={(tourValue ? tourValue.id : "no-tour") + "-" + (locationValue ? locationValue.id : "no-location")}
+                                events={events}
+                                tourId={tourValue ? tourValue.id : null}
+                                locationId={selectedLocationId}
+                                value={eventValue}
+                                onSelect={onSelectEvent}
+                                showNewEventOption={showNewEventOption}
+                                onNewEventSelect={onNewEventSelect}
+                            />
+                        </div>
+                    </div>
+                </AccordionDetails>
+            </Accordion>
             {showEventSummary && (
                 <div className="bg-white rounded">
                     <Accordion

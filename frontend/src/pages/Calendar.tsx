@@ -150,11 +150,13 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
         <Card
             title="Event Calendar"
             theme={theme}
-            className="mx-4"
+            includeInnerCard={true}
         // footerContent={<button className="text-blue-600">Footer Action</button>}
         >
-            <div className="flex items-center justify-end w-full mb-2">
-                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">My Tours</label>
+            <div className="flex items-center justify-end w-full mb-4">
+                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
+                    My Tours:
+                </label>
                 <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full">
                     <span
                         className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
@@ -177,8 +179,8 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                     />
                 </div>
             </div>
-            <div className="p-2 text-left flex justify-center max-w-4xl mx-auto">
-                <div className="p-4 text-xs text-white bg-neutral-500 bg-opacity-95 rounded-lg">
+            <div className="text-left flex justify-center max-w-4xl mx-auto">
+                <div className="p-4 text-xs bg-white bg-opacity-95 rounded-lg">
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"
@@ -188,7 +190,7 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                             left: "prev,next",
                             right: "today",
                         }}
-                        dayHeaderClassNames="bg-gray-100 text-gray-700 font-semibold"
+                        dayHeaderClassNames="bg-gray-400 font-semibold"
                         dayCellClassNames="border border-gray-700"
                         eventContent={(arg) => (
                             <div

@@ -201,198 +201,199 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
         <Card
             title="Profile"
             theme={theme}
+            includeInnerCard={true}
         >
             <div className="p-2 text-left flex justify-center mx-auto">
-                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
-                        <Profilenav />
+                {/* <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg"> */}
+                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+                    <Profilenav />
 
-                        {/* Profile section */}
-                        <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
-                            <form onSubmit={handleSave} method="POST">
-                                <div className="py-1">
-                                    {error && <p className="text-red-500">{error}</p>}
-                                    <div className="mb-1">
-                                        <p className="text-xs text-yellow-300">
-                                            Information will be displayed publicly. Be careful what you share!
-                                        </p>
+                    {/* Profile section */}
+                    <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
+                        <form onSubmit={handleSave} method="POST">
+                            <div className="py-1">
+                                {error && <p className="text-red-500">{error}</p>}
+                                <div className="mb-1">
+                                    <p className="text-xs text-yellow-300">
+                                        Information will be displayed publicly. Be careful what you share!
+                                    </p>
+                                </div>
+                                <div className="text-xs flex flex-col">
+                                    <div className="flex rounded-lg">
+                                        <label htmlFor="username" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2">
+                                            Display Name:
+                                        </label>
+                                        <input
+                                            value={displayName}
+                                            onChange={(e) => setDisplayName(e.target.value)}
+                                            id="username"
+                                            name="username"
+                                            type="text"
+                                            autoComplete="username"
+                                            required
+                                            placeholder="Display Name"
+                                            className="w-full grow rounded-r-lg border-0 py-1 placeholder:text-neutral-500 placeholder:text-sm focus:ring-2 focus:ring-indigo-600"
+                                        />
                                     </div>
-                                    <div className="text-xs flex flex-col">
-                                        <div className="flex rounded-lg">
-                                            <label htmlFor="username" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2">
-                                                Display Name:
-                                            </label>
-                                            <input
-                                                value={displayName}
-                                                onChange={(e) => setDisplayName(e.target.value)}
-                                                id="username"
-                                                name="username"
-                                                type="text"
-                                                autoComplete="username"
-                                                required
-                                                placeholder="Display Name"
-                                                className="w-full grow rounded-r-lg border-0 py-1 placeholder:text-neutral-500 placeholder:text-sm focus:ring-2 focus:ring-indigo-600"
+                                    <div className="mt-2">
+                                        <label htmlFor="about">
+                                            About you:
+                                        </label>
+                                        <div className="">
+                                            <textarea
+                                                id="about"
+                                                name="about"
+                                                rows={4}
+                                                maxLength={100}
+                                                className="w-full rounded-lg py-1.5 focus:ring-1 focus:ring-indigo-600"
+                                                value={about}
+                                                onChange={(e) => setAbout(e.target.value)}
                                             />
                                         </div>
-                                        <div className="mt-2">
-                                            <label htmlFor="about">
-                                                About you:
-                                            </label>
-                                            <div className="">
-                                                <textarea
-                                                    id="about"
-                                                    name="about"
-                                                    rows={4}
-                                                    maxLength={100}
-                                                    className="w-full rounded-lg py-1.5 focus:ring-1 focus:ring-indigo-600"
-                                                    value={about}
-                                                    onChange={(e) => setAbout(e.target.value)}
-                                                />
-                                            </div>
-                                            <p className="text-xs text-right">{about.length} / 100 characters</p>
-                                        </div>
-                                        {/* other profile info */}
-                                        <div className="pb-4 grow lg:ml-2 lg:mt-0 lg:shrink-0 lg:grow-0">
-                                            <div className="lg:hidden">
-                                                <div className="flex items-center">
-                                                    <div
-                                                        aria-hidden="true"
-                                                        className="inline-block size-20 shrink-0 rounded-full"
-                                                    >
-                                                        <img alt="" src={profilePictureUrl || "/default-avatar.png"} className="size-full rounded-full" />
-                                                    </div>
-                                                    <div className="ml-4">
-                                                        <input
-                                                            id="mobile-user-photo"
-                                                            name="user-photo"
-                                                            type="file"
-                                                            className="absolute rounded-lg opacity-0 w-32 h-8"
-                                                            onChange={handleFileChange}
-                                                            accept="image/*"
-                                                        />
-                                                        <label
-                                                            htmlFor="mobile-user-photo"
-                                                            className="pointer-events-none block rounded-lg px-3 py-1 ring-1 ring-white peer-hover:ring-neutral-500 peer-focus:ring-2 peer-focus:ring-indigo-600"
-                                                        >
-                                                            <h1>Change</h1>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div className="m-2 relative hidden overflow-hidden rounded-full lg:block">
-                                                <img alt="" src={profilePictureUrl || "/default-avatar.png"} className="relative size-28 rounded-full" />
-                                                <label
-                                                    htmlFor="desktop-user-photo"
-                                                    className="absolute inset-0 flex size-full items-center justify-center bg-black/60 text-white opacity-0 focus-within:opacity-100 hover:opacity-100"
+                                        <p className="text-xs text-right">{about.length} / 100 characters</p>
+                                    </div>
+                                    {/* other profile info */}
+                                    <div className="pb-4 grow lg:ml-2 lg:mt-0 lg:shrink-0 lg:grow-0">
+                                        <div className="lg:hidden">
+                                            <div className="flex items-center">
+                                                <div
+                                                    aria-hidden="true"
+                                                    className="inline-block size-20 shrink-0 rounded-full"
                                                 >
-                                                    <span>Change</span>
+                                                    <img alt="" src={profilePictureUrl || "/default-avatar.png"} className="size-full rounded-full" />
+                                                </div>
+                                                <div className="ml-4">
                                                     <input
-                                                        id="desktop-user-photo"
+                                                        id="mobile-user-photo"
                                                         name="user-photo"
                                                         type="file"
-                                                        className="absolute size-full cursor-pointer rounded-lg border-white opacity-0"
+                                                        className="absolute rounded-lg opacity-0 w-32 h-8"
                                                         onChange={handleFileChange}
                                                         accept="image/*"
                                                     />
-                                                </label>
+                                                    <label
+                                                        htmlFor="mobile-user-photo"
+                                                        className="pointer-events-none block rounded-lg px-3 py-1 ring-1 ring-white peer-hover:ring-neutral-500 peer-focus:ring-2 peer-focus:ring-indigo-600"
+                                                    >
+                                                        <h1>Change</h1>
+                                                    </label>
+                                                </div>
                                             </div>
-                                            {uploading && <LoadingSpinner size="medium" className="absolute top-0 left-0 right-0 bottom-0 m-auto z-10" />}
                                         </div>
-                                    </div>
-                                    <div className="grid grid-cols-12 gap-2">
-                                        <div className="col-span-12 flex items-center gap-2">
-                                            <input
-                                                id="show-first-name"
-                                                name="show-first-name"
-                                                type="checkbox"
-                                                checked={showFirstName}
-                                                onChange={(e) => setShowFirstName(e.target.checked)}
-                                                className="mr-2"
-                                            />
-                                            <label htmlFor="show-first-name" className="mb-0">Show first name on public profile</label>
-                                            {showFirstName && firstName && (
-                                                <span className="ml-4 text-xs text-neutral-700">{firstName}</span>
-                                            )}
-                                        </div>
-                                        <div className="col-span-12 flex items-center gap-2">
-                                            <input
-                                                id="show-last-name"
-                                                name="show-last-name"
-                                                type="checkbox"
-                                                checked={showLastName}
-                                                onChange={(e) => setShowLastName(e.target.checked)}
-                                                className="mr-2"
-                                            />
-                                            <label htmlFor="show-last-name" className="mb-0">Show last name on public profile</label>
-                                            {showLastName && lastName && (
-                                                <span className="ml-4 text-xs text-neutral-700">{lastName}</span>
-                                            )}
-                                        </div>
-                                        <div className="col-span-12 flex items-center gap-2">
-                                            <input
-                                                id="show-email"
-                                                name="show-email"
-                                                type="checkbox"
-                                                checked={showEmail}
-                                                onChange={(e) => setShowEmail(e.target.checked)}
-                                                className="mr-2"
-                                            />
-                                            <label htmlFor="show-email" className="mb-0">Show email on public profile</label>
-                                            {showEmail && email && (
-                                                <span className="ml-4 text-xs text-neutral-700">{email}</span>
-                                            )}
-                                        </div>
-                                        <div className="col-span-12 flex items-center gap-2">
-                                            <input
-                                                id="show-phone"
-                                                name="show-phone"
-                                                type="checkbox"
-                                                checked={showPhone}
-                                                onChange={(e) => setShowPhone(e.target.checked)}
-                                                className="mr-2"
-                                            />
-                                            <label htmlFor="show-phone" className="mb-0">Show phone on public profile</label>
-                                            {showPhone && phone && (
-                                                <span className="ml-4 text-xs text-neutral-700">{phone}</span>
-                                            )}
-                                        </div>
-                                        {/* Tour/League(s) section */}
-                                        <div className="col-span-12 mb-2">
-                                            <label htmlFor="tour" className="">
-                                                Tour/League(s):
+
+                                        <div className="m-2 relative hidden overflow-hidden rounded-full lg:block">
+                                            <img alt="" src={profilePictureUrl || "/default-avatar.png"} className="relative size-28 rounded-full" />
+                                            <label
+                                                htmlFor="desktop-user-photo"
+                                                className="absolute inset-0 flex size-full items-center justify-center bg-black/60 text-white opacity-0 focus-within:opacity-100 hover:opacity-100"
+                                            >
+                                                <span>Change</span>
+                                                <input
+                                                    id="desktop-user-photo"
+                                                    name="user-photo"
+                                                    type="file"
+                                                    className="absolute size-full cursor-pointer rounded-lg border-white opacity-0"
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                />
                                             </label>
-                                            <TourAutoComplete
-                                                tours={allTours}
-                                                value={joinedTours}
-                                                onSelect={(newValue) => {
-                                                    setJoinedTours(newValue as Tour[]);
-                                                }}
-                                                multiple
-                                                renderInput={(params) => (
-                                                    <TextField
-                                                        {...params}
-                                                        placeholder="Select Tours/Leagues"
-                                                        sx={{ backgroundColor: 'white' }}
-                                                        className="w-full rounded-lg text-sm focus:ring-1 focus:ring-indigo-600"
-                                                    />
-                                                )}
-                                            />
                                         </div>
+                                        {uploading && <LoadingSpinner size="medium" className="absolute top-0 left-0 right-0 bottom-0 m-auto z-10" />}
                                     </div>
                                 </div>
-                                <div className="mt-2 flex justify-center">
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className="w-full rounded-lg bg-indigo-600 p-1.5 text-sm font-semibold text-white hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {loading ? "Saving..." : "Save"}
-                                    </button>
+                                <div className="grid grid-cols-12 gap-2">
+                                    <div className="col-span-12 flex items-center gap-2">
+                                        <input
+                                            id="show-first-name"
+                                            name="show-first-name"
+                                            type="checkbox"
+                                            checked={showFirstName}
+                                            onChange={(e) => setShowFirstName(e.target.checked)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor="show-first-name" className="mb-0">Show first name on public profile</label>
+                                        {showFirstName && firstName && (
+                                            <span className="ml-4 text-xs text-neutral-700">{firstName}</span>
+                                        )}
+                                    </div>
+                                    <div className="col-span-12 flex items-center gap-2">
+                                        <input
+                                            id="show-last-name"
+                                            name="show-last-name"
+                                            type="checkbox"
+                                            checked={showLastName}
+                                            onChange={(e) => setShowLastName(e.target.checked)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor="show-last-name" className="mb-0">Show last name on public profile</label>
+                                        {showLastName && lastName && (
+                                            <span className="ml-4 text-xs text-neutral-700">{lastName}</span>
+                                        )}
+                                    </div>
+                                    <div className="col-span-12 flex items-center gap-2">
+                                        <input
+                                            id="show-email"
+                                            name="show-email"
+                                            type="checkbox"
+                                            checked={showEmail}
+                                            onChange={(e) => setShowEmail(e.target.checked)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor="show-email" className="mb-0">Show email on public profile</label>
+                                        {showEmail && email && (
+                                            <span className="ml-4 text-xs text-neutral-700">{email}</span>
+                                        )}
+                                    </div>
+                                    <div className="col-span-12 flex items-center gap-2">
+                                        <input
+                                            id="show-phone"
+                                            name="show-phone"
+                                            type="checkbox"
+                                            checked={showPhone}
+                                            onChange={(e) => setShowPhone(e.target.checked)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor="show-phone" className="mb-0">Show phone on public profile</label>
+                                        {showPhone && phone && (
+                                            <span className="ml-4 text-xs text-neutral-700">{phone}</span>
+                                        )}
+                                    </div>
+                                    {/* Tour/League(s) section */}
+                                    <div className="col-span-12 mb-2">
+                                        <label htmlFor="tour" className="">
+                                            Tour/League(s):
+                                        </label>
+                                        <TourAutoComplete
+                                            tours={allTours}
+                                            value={joinedTours}
+                                            onSelect={(newValue) => {
+                                                setJoinedTours(newValue as Tour[]);
+                                            }}
+                                            multiple
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    placeholder="Select Tours/Leagues"
+                                                    sx={{ backgroundColor: 'white' }}
+                                                    className="w-full rounded-lg text-sm focus:ring-1 focus:ring-indigo-600"
+                                                />
+                                            )}
+                                        />
+                                    </div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div className="mt-2 flex justify-center">
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full rounded-lg bg-indigo-600 p-1.5 text-sm font-semibold text-white hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {loading ? "Saving..." : "Save"}
+                                </button>
+                            </div>
+                        </form>
                     </div>
+                    {/* </div> */}
                 </div>
             </div>
         </Card>

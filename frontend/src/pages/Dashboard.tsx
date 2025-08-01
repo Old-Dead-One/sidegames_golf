@@ -403,88 +403,84 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         <Card
             title="Find a Game"
             theme={theme}
-            className=""
+            includeInnerCard={true}
         >
-            <div className="p-2 text-left flex justify-center mx-auto w-full">
-                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <div className="flex items-center justify-end w-full mb-2">
-                        <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
-                            My Tours:
-                        </label>
-                        <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
-                            <span
-                                className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
-                                    ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
-                                `}
-                            />
-                            <span
-                                className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
-                                    ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
-                                `}
-                            />
-                            <input
-                                id="my-tours-switch"
-                                name="my-tours-switch"
-                                type="checkbox"
-                                aria-label="My Tours"
-                                checked={showMyToursOnly}
-                                onChange={() => setShowMyToursOnly(v => !v)}
-                                className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-                            />
-                        </div>
-                    </div>
-                    <AutoCompleteForm
-                        ref={autoCompleteFormRef}
-                        tours={filteredTours}
-                        locations={filteredLocationDetails}
-                        events={filteredEvents}
-                        selectedLocationId={selectedlocation_id}
-                        selectedEvent={selectedEvent}
-                        tourValue={tourValue}
-                        locationValue={locationValue}
-                        eventValue={eventValue}
-                        onSelectTour={handleSelectTour}
-                        onSelectLocation={handleSelectLocation}
-                        onSelectEvent={handleSelectEvent}
-                        expanded={expanded}
-                        onAccordionChange={handleExpanded}
-                        sideGamesRows={sideGamesRows.filter(row =>
-                            enabledSideGames.some(sg => {
-                                const rowKey = row.key
-                                    .toLowerCase()
-                                    .replace(/^[0-9]+_/, '') // remove leading number and underscore
-                                    .replace(/[^a-z0-9]/g, '_');
-                                const sgKey = sg.key
-                                    ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
-                                    : '';
-                                return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
-                            })
-                        ).map(row => {
-                            const sg = enabledSideGames.find(sg => {
-                                const rowKey = row.key
-                                    .toLowerCase()
-                                    .replace(/^[0-9]+_/, '')
-                                    .replace(/[^a-z0-9]/g, '_');
-                                const sgKey = sg.key
-                                    ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
-                                    : '';
-                                return rowKey === sgKey;
-                            });
-                            return sg ? { ...row, value: sg.fee ?? row.value } : row;
-                        })}
-                        net={net}
-                        division={division}
-                        superSkins={superSkins}
-                        totalCost={totalCost}
-                        onNetChange={handleNetChange}
-                        onDivisionChange={handleDivisionChange}
-                        onSuperSkinsChange={handleSuperSkinsChange}
-                        onAddToCart={handleAddToCart}
-                        enabledSideGames={enabledSideGames}
-                        purchasedSideGames={purchasedSideGames}
+            <div className="flex items-center justify-end w-full mb-4 rounded">
+                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
+                    My Tours:
+                </label>
+                <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
+                    <span
+                        className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
+                            ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
+                        `}
+                    />
+                    <span
+                        className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
+                            ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
+                        `}
+                    />
+                    <input
+                        id="my-tours-switch"
+                        name="my-tours-switch"
+                        type="checkbox"
+                        aria-label="My Tours"
+                        checked={showMyToursOnly}
+                        onChange={() => setShowMyToursOnly(v => !v)}
+                        className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
                     />
                 </div>
             </div>
+            <AutoCompleteForm
+                ref={autoCompleteFormRef}
+                tours={filteredTours}
+                locations={filteredLocationDetails}
+                events={filteredEvents}
+                selectedLocationId={selectedlocation_id}
+                selectedEvent={selectedEvent}
+                tourValue={tourValue}
+                locationValue={locationValue}
+                eventValue={eventValue}
+                onSelectTour={handleSelectTour}
+                onSelectLocation={handleSelectLocation}
+                onSelectEvent={handleSelectEvent}
+                expanded={expanded}
+                onAccordionChange={handleExpanded}
+                sideGamesRows={sideGamesRows.filter(row =>
+                    enabledSideGames.some(sg => {
+                        const rowKey = row.key
+                            .toLowerCase()
+                            .replace(/^[0-9]+_/, '') // remove leading number and underscore
+                            .replace(/[^a-z0-9]/g, '_');
+                        const sgKey = sg.key
+                            ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                            : '';
+                        return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
+                    })
+                ).map(row => {
+                    const sg = enabledSideGames.find(sg => {
+                        const rowKey = row.key
+                            .toLowerCase()
+                            .replace(/^[0-9]+_/, '')
+                            .replace(/[^a-z0-9]/g, '_');
+                        const sgKey = sg.key
+                            ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                            : '';
+                        return rowKey === sgKey;
+                    });
+                    return sg ? { ...row, value: sg.fee ?? row.value } : row;
+                })}
+                net={net}
+                division={division}
+                superSkins={superSkins}
+                totalCost={totalCost}
+                onNetChange={handleNetChange}
+                onDivisionChange={handleDivisionChange}
+                onSuperSkinsChange={handleSuperSkinsChange}
+                onAddToCart={handleAddToCart}
+                enabledSideGames={enabledSideGames}
+                purchasedSideGames={purchasedSideGames}
+            />
         </Card>
     );
 };

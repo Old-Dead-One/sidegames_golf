@@ -79,6 +79,7 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
         <Card
             title="Password"
             theme={theme}
+            includeInnerCard={true}
         >
             {forgotting ? (
                 <form onSubmit={handleForgotPassword} className="w-full max-w-md mx-auto p-8 flex flex-col items-center bg-neutral-700 rounded-lg mt-4">
@@ -98,126 +99,126 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
                 </form>
             ) : (
                 <div className="p-2 text-left flex justify-center mx-auto">
-                    <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                        <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
-                            <Profilenav />
+                    {/* <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg"> */}
+                    <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+                        <Profilenav />
 
-                            {/* Password section */}
-                            <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
-                                <form onSubmit={handleSave} method="POST">
-                                    <div className="py-1">
-                                        {error && <p className="text-red-500">{error}</p>}
-                                        <div className="mb-1">
-                                            <p className="text-xs text-yellow-300">
-                                                Password must be 8-32 characters with at least one number and one special character.
-                                            </p>
-                                        </div>
-                                        <div className="flex justify-end">
+                        {/* Password section */}
+                        <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
+                            <form onSubmit={handleSave} method="POST">
+                                <div className="py-1">
+                                    {error && <p className="text-red-500">{error}</p>}
+                                    <div className="mb-1">
+                                        <p className="text-xs text-yellow-300">
+                                            Password must be 8-32 characters with at least one number and one special character.
+                                        </p>
+                                    </div>
+                                    <div className="flex justify-end">
+                                        <button
+                                            type="button"
+                                            className="text-xs text-blue-200 underline mb-1"
+                                            onClick={() => setForgotting(true)}
+                                        >
+                                            Forgot password?
+                                        </button>
+                                    </div>
+                                    <div className="text-xs flex flex-col gap-2">
+                                        <div className="flex rounded-lg relative">
+                                            <label htmlFor="current-password" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[120px]">
+                                                Current Password:
+                                            </label>
+                                            <input
+                                                value={currentPassword}
+                                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                                id="current-password"
+                                                name="current-password"
+                                                type={showCurrent ? "text" : "password"}
+                                                autoComplete="current-password"
+                                                required
+                                                placeholder="Current Password"
+                                                className="grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600 text-xs"
+                                            />
                                             <button
                                                 type="button"
-                                                className="text-xs text-blue-200 underline mb-1"
-                                                onClick={() => setForgotting(true)}
+                                                className="text-sm absolute right-2 top-1/2 -translate-y-1/2"
+                                                tabIndex={-1}
+                                                onClick={() => setShowCurrent((v) => !v)}
+                                                aria-label={showCurrent ? "Hide password" : "Show password"}
                                             >
-                                                Forgot password?
+                                                {showCurrent ? '🙈' : '👁️'}
                                             </button>
                                         </div>
-                                        <div className="text-xs flex flex-col">
-                                            <div className="flex rounded-lg relative">
-                                                <label htmlFor="current-password" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[120px]">
-                                                    Current Password:
-                                                </label>
-                                                <input
-                                                    value={currentPassword}
-                                                    onChange={(e) => setCurrentPassword(e.target.value)}
-                                                    id="current-password"
-                                                    name="current-password"
-                                                    type={showCurrent ? "text" : "password"}
-                                                    autoComplete="current-password"
-                                                    required
-                                                    placeholder="Current Password"
-                                                    className="grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="text-sm absolute right-2 top-1/2 -translate-y-1/2"
-                                                    tabIndex={-1}
-                                                    onClick={() => setShowCurrent((v) => !v)}
-                                                    aria-label={showCurrent ? "Hide password" : "Show password"}
-                                                >
-                                                    {showCurrent ? '🙈' : '👁️'}
-                                                </button>
-                                            </div>
 
-                                            <div className="mt-2 flex rounded-lg relative">
-                                                <label htmlFor="new-password" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[120px]">
-                                                    New Password:
-                                                </label>
-                                                <input
-                                                    value={newPassword}
-                                                    onChange={(e) => setNewPassword(e.target.value)}
-                                                    id="new-password"
-                                                    name="new-password"
-                                                    type={showNew ? "text" : "password"}
-                                                    autoComplete="new-password"
-                                                    required
-                                                    placeholder="New Password"
-                                                    className="grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="text-sm absolute right-2 top-1/2 -translate-y-1/2"
-                                                    tabIndex={-1}
-                                                    onClick={() => setShowNew((v) => !v)}
-                                                    aria-label={showNew ? "Hide password" : "Show password"}
-                                                >
-                                                    {showNew ? '🙈' : '👁️'}
-                                                </button>
-                                            </div>
-
-                                            <div className="mt-2 flex rounded-lg relative">
-                                                <label htmlFor="confirm-password" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[120px]">
-                                                    Confirm Password:
-                                                </label>
-                                                <input
-                                                    id="confirm-password"
-                                                    name="confirm-password"
-                                                    type={showConfirm ? "text" : "password"}
-                                                    required
-                                                    value={confirmPassword}
-                                                    onChange={(e) => setConfirmPassword(e.target.value)}
-                                                    className="grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="text-sm absolute right-2 top-1/2 -translate-y-1/2"
-                                                    tabIndex={-1}
-                                                    onClick={() => setShowConfirm((v) => !v)}
-                                                    aria-label={showConfirm ? "Hide password" : "Show password"}
-                                                >
-                                                    {showConfirm ? '🙈' : '👁️'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                        {error && <p className="text-red-500">{error}</p>}
-                                        <div className="mt-2 flex justify-center gap-2">
+                                        <div className="mt-2 flex rounded-lg relative">
+                                            <label htmlFor="new-password" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[120px]">
+                                                New Password:
+                                            </label>
+                                            <input
+                                                value={newPassword}
+                                                onChange={(e) => setNewPassword(e.target.value)}
+                                                id="new-password"
+                                                name="new-password"
+                                                type={showNew ? "text" : "password"}
+                                                autoComplete="new-password"
+                                                required
+                                                placeholder="New Password"
+                                                className="grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600 text-xs"
+                                            />
                                             <button
                                                 type="button"
-                                                onClick={handleReset}
-                                                className="w-full rounded-lg bg-white p-1.5 text-sm font-semibold hover:bg-neutral-200"
+                                                className="text-sm absolute right-2 top-1/2 -translate-y-1/2"
+                                                tabIndex={-1}
+                                                onClick={() => setShowNew((v) => !v)}
+                                                aria-label={showNew ? "Hide password" : "Show password"}
                                             >
-                                                Cancel
+                                                {showNew ? '🙈' : '👁️'}
                                             </button>
+                                        </div>
+
+                                        <div className="mt-2 flex rounded-lg relative">
+                                            <label htmlFor="confirm-password" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[120px]">
+                                                Confirm Password:
+                                            </label>
+                                            <input
+                                                id="confirm-password"
+                                                name="confirm-password"
+                                                type={showConfirm ? "text" : "password"}
+                                                required
+                                                value={confirmPassword}
+                                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                                className="grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600 text-xs"
+                                            />
                                             <button
-                                                type="submit"
-                                                className="w-full rounded-lg bg-indigo-600 p-1.5 text-sm font-semibold text-white hover:bg-primary"
+                                                type="button"
+                                                className="text-sm absolute right-2 top-1/2 -translate-y-1/2"
+                                                tabIndex={-1}
+                                                onClick={() => setShowConfirm((v) => !v)}
+                                                aria-label={showConfirm ? "Hide password" : "Show password"}
                                             >
-                                                Save
+                                                {showConfirm ? '🙈' : '👁️'}
                                             </button>
                                         </div>
                                     </div>
-                                </form>
-                            </div>
+                                    {error && <p className="text-red-500">{error}</p>}
+                                    <div className="mt-2 gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={handleReset}
+                                            className="w-full rounded-lg bg-white p-1.5 text-sm font-semibold hover:bg-neutral-200"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="w-full rounded-lg bg-indigo-600 p-1.5 text-sm font-semibold text-white hover:bg-primary"
+                                        >
+                                            Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
+                        {/* </div> */}
                     </div>
                 </div>
             )}

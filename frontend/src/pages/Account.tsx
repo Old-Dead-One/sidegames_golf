@@ -164,236 +164,237 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
         <Card
             title="Account"
             theme={theme}
+            includeInnerCard={true}
         >
             <div className="p-2 text-left flex justify-center mx-auto">
-                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
-                        <Profilenav />
+                {/* <div className="p-4 bg-blue-500 bg-opacity-95 rounded-lg"> */}
+                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+                    <Profilenav />
 
-                        {/* Account section */}
-                        <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
-                            <form onSubmit={handleSave} method="POST">
-                                <div className="py-1">
-                                    {error && <p className="text-red-500">{error}</p>}
-                                    <div className="mb-1">
-                                        <p className="text-xs text-yellow-300">
-                                            Required for financial transactions and used to verify your account.
-                                        </p>
+                    {/* Account section */}
+                    <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
+                        <form onSubmit={handleSave} method="POST">
+                            <div className="py-1">
+                                {error && <p className="text-red-500">{error}</p>}
+                                <div className="mb-1">
+                                    <p className="text-xs text-yellow-300">
+                                        Required for financial transactions and used to verify your account.
+                                    </p>
+                                </div>
+                                <div className="text-xs flex flex-col">
+                                    <div className="flex rounded-lg">
+                                        <label htmlFor="first-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-1/4">
+                                            First Name:
+                                        </label>
+                                        <input
+                                            value={firstName}
+                                            onChange={(e) => setFirstName(e.target.value)}
+                                            id="first-name"
+                                            name="first-name"
+                                            type="text"
+                                            autoComplete="given-name"
+                                            required
+                                            placeholder="First Name"
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        />
                                     </div>
-                                    <div className="text-xs flex flex-col">
-                                        <div className="flex rounded-lg">
-                                            <label htmlFor="first-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-1/4">
-                                                First Name:
-                                            </label>
-                                            <input
-                                                value={firstName}
-                                                onChange={(e) => setFirstName(e.target.value)}
-                                                id="first-name"
-                                                name="first-name"
-                                                type="text"
-                                                autoComplete="given-name"
-                                                required
-                                                placeholder="First Name"
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            />
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="last-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Last Name:
-                                            </label>
-                                            <input
-                                                id="last-name"
-                                                name="last-name"
-                                                type="text"
-                                                value={lastName}
-                                                onChange={(e) => setLastName(e.target.value)}
-                                                autoComplete="family-name"
-                                                required
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600 "
-                                            />
-                                        </div>
-                                        {/* Email field */}
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="email" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Email:
-                                            </label>
-                                            {editingEmail ? (
-                                                <div className="flex gap-2 items-center w-full grow">
-                                                    <input
-                                                        id="email"
-                                                        name="email"
-                                                        type="email"
-                                                        value={newEmail}
-                                                        onChange={e => setNewEmail(e.target.value)}
-                                                        autoComplete="email"
-                                                        required
-                                                        className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="rounded-lg bg-indigo-600 text-white px-2 py-1 text-xs font-semibold hover:bg-indigo-700"
-                                                        onClick={handleEmailSave}
-                                                        disabled={newEmail === email || !isValidEmail(newEmail)}
-                                                    >
-                                                        Save
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="rounded-lg bg-white text-black px-2 py-1 text-xs font-semibold hover:bg-neutral-200"
-                                                        onClick={handleEmailCancel}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex gap-2 items-center w-full grow">
-                                                    <input
-                                                        id="email"
-                                                        name="email"
-                                                        type="email"
-                                                        value={email}
-                                                        readOnly
-                                                        className="w-full grow rounded-r-lg border-0 py-1 bg-neutral-200 text-neutral-700 cursor-not-allowed"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        className="rounded-lg bg-white text-black px-2 py-2 text-xs font-semibold hover:bg-neutral-200"
-                                                        onClick={() => setEditingEmail(true)}
-                                                    >
-                                                        Edit
-                                                    </button>
-                                                </div>
-                                            )}
-                                            {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="phone" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Phone:
-                                            </label>
-                                            <input
-                                                id="phone"
-                                                name="phone"
-                                                type="tel"
-                                                value={phone}
-                                                onChange={(e) => setPhone(formatPhone(e.target.value))}
-                                                autoComplete="tel"
-                                                placeholder="Phone"
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            />
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="address" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Address:
-                                            </label>
-                                            <input
-                                                id="address"
-                                                name="address"
-                                                type="text"
-                                                value={address}
-                                                onChange={(e) => setAddress(e.target.value)}
-                                                autoComplete="street-address"
-                                                required
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            />
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="apartment" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Apt, Suite:
-                                            </label>
-                                            <input
-                                                id="apartment"
-                                                name="apartment"
-                                                type="text"
-                                                value={apartment}
-                                                onChange={(e) => setApartment(e.target.value)}
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            />
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="country" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Country:
-                                            </label>
-                                            <select
-                                                id="country"
-                                                name="country"
-                                                value={country}
-                                                onChange={(e) => setCountry(e.target.value)}
-                                                required
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            >
-                                                <option value="">Select a country</option>
-                                                <option value="United States">United States</option>
-                                                <option value="Canada">Canada</option>
-                                            </select>
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="region" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                State:
-                                            </label>
-                                            <input
-                                                id="region"
-                                                name="region"
-                                                type="text"
-                                                value={region}
-                                                onChange={(e) => setRegion(e.target.value)}
-                                                autoComplete="address-level1"
-                                                required
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            />
-                                        </div>
-                                        <div className="mt-2 flex rounded-lg">
-                                            <label htmlFor="postal-code" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
-                                                Zip Code:
-                                            </label>
-                                            <input
-                                                id="postal-code"
-                                                name="postal-code"
-                                                type="text"
-                                                value={postalCode}
-                                                onChange={(e) => setPostalCode(e.target.value)}
-                                                autoComplete="postal-code"
-                                                required
-                                                className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                            />
-                                        </div>
-                                        {/* </div> */}
-                                        <div className="mt-2 flex justify-center gap-2 w-full">
-                                            <button
-                                                type="button"
-                                                onClick={handleReset}
-                                                className="w-full rounded-lg bg-white p-1.5 text-sm font-semibold hover:bg-neutral-200"
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                className="w-full rounded-lg bg-indigo-600 p-1.5 text-sm font-semibold text-white hover:bg-primary"
-                                            >
-                                                Save
-                                            </button>
-                                        </div>
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="last-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Last Name:
+                                        </label>
+                                        <input
+                                            id="last-name"
+                                            name="last-name"
+                                            type="text"
+                                            value={lastName}
+                                            onChange={(e) => setLastName(e.target.value)}
+                                            autoComplete="family-name"
+                                            required
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600 "
+                                        />
                                     </div>
-                                    <div>
-                                        <h2 className="text-center">Delete My Account</h2>
-                                        <p className="text-xs text-center text-yellow-300">
-                                            All information related to this account will be deleted permanently.
-                                            <br />
-                                            This action is not reversible.
-                                        </p>
+                                    {/* Email field */}
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="email" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Email:
+                                        </label>
+                                        {editingEmail ? (
+                                            <div className="flex gap-2 items-center w-full grow">
+                                                <input
+                                                    id="email"
+                                                    name="email"
+                                                    type="email"
+                                                    value={newEmail}
+                                                    onChange={e => setNewEmail(e.target.value)}
+                                                    autoComplete="email"
+                                                    required
+                                                    className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg bg-indigo-600 text-white px-2 py-1 text-xs font-semibold hover:bg-indigo-700"
+                                                    onClick={handleEmailSave}
+                                                    disabled={newEmail === email || !isValidEmail(newEmail)}
+                                                >
+                                                    Save
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg bg-white text-black px-2 py-1 text-xs font-semibold hover:bg-neutral-200"
+                                                    onClick={handleEmailCancel}
+                                                >
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex gap-2 items-center w-full grow">
+                                                <input
+                                                    id="email"
+                                                    name="email"
+                                                    type="email"
+                                                    value={email}
+                                                    readOnly
+                                                    className="w-full grow rounded-r-lg border-0 py-1 bg-neutral-200 text-neutral-700 cursor-not-allowed"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="rounded-lg bg-white text-black px-2 py-2 text-xs font-semibold hover:bg-neutral-200"
+                                                    onClick={() => setEditingEmail(true)}
+                                                >
+                                                    Edit
+                                                </button>
+                                            </div>
+                                        )}
+                                        {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
                                     </div>
-                                    <div className="mt-2 flex justify-center">
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="phone" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Phone:
+                                        </label>
+                                        <input
+                                            id="phone"
+                                            name="phone"
+                                            type="tel"
+                                            value={phone}
+                                            onChange={(e) => setPhone(formatPhone(e.target.value))}
+                                            autoComplete="tel"
+                                            placeholder="Phone"
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="address" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Address:
+                                        </label>
+                                        <input
+                                            id="address"
+                                            name="address"
+                                            type="text"
+                                            value={address}
+                                            onChange={(e) => setAddress(e.target.value)}
+                                            autoComplete="street-address"
+                                            required
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="apartment" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Apt, Suite:
+                                        </label>
+                                        <input
+                                            id="apartment"
+                                            name="apartment"
+                                            type="text"
+                                            value={apartment}
+                                            onChange={(e) => setApartment(e.target.value)}
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="country" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Country:
+                                        </label>
+                                        <select
+                                            id="country"
+                                            name="country"
+                                            value={country}
+                                            onChange={(e) => setCountry(e.target.value)}
+                                            required
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        >
+                                            <option value="">Select a country</option>
+                                            <option value="United States">United States</option>
+                                            <option value="Canada">Canada</option>
+                                        </select>
+                                    </div>
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="region" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            State:
+                                        </label>
+                                        <input
+                                            id="region"
+                                            name="region"
+                                            type="text"
+                                            value={region}
+                                            onChange={(e) => setRegion(e.target.value)}
+                                            autoComplete="address-level1"
+                                            required
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+                                    <div className="mt-2 flex rounded-lg">
+                                        <label htmlFor="postal-code" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                            Zip Code:
+                                        </label>
+                                        <input
+                                            id="postal-code"
+                                            name="postal-code"
+                                            type="text"
+                                            value={postalCode}
+                                            onChange={(e) => setPostalCode(e.target.value)}
+                                            autoComplete="postal-code"
+                                            required
+                                            className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
+                                        />
+                                    </div>
+                                    {/* </div> */}
+                                    <div className="mt-2 flex justify-center gap-2 w-full">
                                         <button
                                             type="button"
-                                            onClick={handleDeleteAccount}
-                                            className="w-full rounded-lg bg-red-500 py-1.5 text-sm font-semibold text-white hover:bg-red-400"
+                                            onClick={handleReset}
+                                            className="w-full rounded-lg bg-white p-1.5 text-sm font-semibold hover:bg-neutral-200"
                                         >
-                                            Yes, Delete My Account
+                                            Cancel
+                                        </button>
+                                        <button
+                                            type="submit"
+                                            className="w-full rounded-lg bg-indigo-600 p-1.5 text-sm font-semibold text-white hover:bg-primary"
+                                        >
+                                            Save
                                         </button>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                                <div>
+                                    <h2 className="text-center">Delete My Account</h2>
+                                    <p className="text-xs text-center text-yellow-300">
+                                        All information related to this account will be deleted permanently.
+                                        <br />
+                                        This action is not reversible.
+                                    </p>
+                                </div>
+                                <div className="mt-2 flex justify-center">
+                                    <button
+                                        type="button"
+                                        onClick={handleDeleteAccount}
+                                        className="w-full rounded-lg bg-red-500 py-1.5 text-sm font-semibold text-white hover:bg-red-400"
+                                    >
+                                        Yes, Delete My Account
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
+                    {/* </div> */}
                 </div>
             </div>
         </Card>

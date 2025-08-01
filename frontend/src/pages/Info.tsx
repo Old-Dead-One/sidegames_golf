@@ -10,7 +10,7 @@ const faqs = [
             "We use your email to identify you and maintain your play history. Additionally, use your name and address for financial transactions, and compliance with local laws.",
     },
     {
-        question: "Why do you add the prcessing fees to my entrance fee?",
+        question: "Why are the processing costs added to the entrance fee?",
         answer:
             "To simplify the prize pool and payout. We could take the processing fees from your entrance fees but the prize pool would be a random number based on the remaining entrance money after processing.",
     },
@@ -87,63 +87,59 @@ const FaqPage: React.FC<InfoProps & { openLegalModal: (section: string) => void 
         <Card
             title="Frequently Asked Questions"
             theme={theme}
-            className="mx-4"
-        // footerContent={<button className="text-blue-600">Footer Action</button>}
+            includeInnerCard={true}
         >
 
             {/* FAQ section */}
-            <div className="p-2 w-auto mx-auto text-xs text-left max-w-lg">
-                <div className="p-2 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <div className="space-y-px divide-y divide-white">
-                        {faqs.map((faq) => (
-                            <Disclosure key={faq.question} as="div" className="p-2 text-left">
-                                <dt>
-                                    <DisclosureButton className="group flex justify-between w-full">
-                                        <span className="pr-2 text-left text-sm text-wrap font-semibold">{faq.question}</span>
-                                        <span>
-                                            <PlusIcon aria-hidden="true" className="h-4 group-data-[open]:hidden" />
-                                            <MinusIcon aria-hidden="true" className="h-4 [.group:not([data-open])_&]:hidden" />
-                                        </span>
-                                    </DisclosureButton>
-                                </dt>
-                                <DisclosurePanel className="mt-2">
-                                    {/* Add links to legal sections in relevant answers */}
-                                    {faq.question.includes('payout') ? (
-                                        <span>
-                                            {faq.answer} For more details, see our{' '}
-                                            <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('payout')}>
-                                                payout policy
-                                            </button>.
-                                        </span>
-                                    ) : faq.question.includes('canceled') ? (
-                                        <span>
-                                            {faq.answer} For more details, see our{' '}
-                                            <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('canceled')}>
-                                                canceled events policy
-                                            </button>.
-                                        </span>
-                                    ) : faq.question.includes('unclosed') ? (
-                                        <span>
-                                            {faq.answer} For more details, see our{' '}
-                                            <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('unclosed')}>
-                                                unclosed events policy
-                                            </button>.
-                                        </span>
-                                    ) : faq.question.includes('fee') ? (
-                                        <span>
-                                            {faq.answer} For more details, see our{' '}
-                                            <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('fees')}>
-                                                refund policy for fees
-                                            </button>.
-                                        </span>
-                                    ) : (
-                                        <span>{faq.answer}</span>
-                                    )}
-                                </DisclosurePanel>
-                            </Disclosure>
-                        ))}
-                    </div>
-                </div>
+            <div></div>
+            <div className="space-y-px divide-y divide-black bg-white bg-opacity-95 rounded-lg px-2">
+                {faqs.map((faq) => (
+                    <Disclosure key={faq.question} as="div" className="p-2 text-left">
+                        <dt>
+                            <DisclosureButton className="group flex justify-between w-full">
+                                <span className="text-left text-wrap font-semibold">{faq.question}</span>
+                                <span>
+                                    <PlusIcon aria-hidden="true" className="h-4 group-data-[open]:hidden" />
+                                    <MinusIcon aria-hidden="true" className="h-4 [.group:not([data-open])_&]:hidden" />
+                                </span>
+                            </DisclosureButton>
+                        </dt>
+                        <DisclosurePanel className="mt-2 text-sm">
+                            {/* Add links to legal sections in relevant answers */}
+                            {faq.question.includes('payout') ? (
+                                <span>
+                                    {faq.answer} For more details, see our{' '}
+                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('payout')}>
+                                        payout policy
+                                    </button>
+                                </span>
+                            ) : faq.question.includes('canceled') ? (
+                                <span>
+                                    {faq.answer} For more details, see our{' '}
+                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('canceled')}>
+                                        canceled events policy
+                                    </button>
+                                </span>
+                            ) : faq.question.includes('unclosed') ? (
+                                <span>
+                                    {faq.answer} For more details, see our{' '}
+                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('unclosed')}>
+                                        unclosed events policy
+                                    </button>
+                                </span>
+                            ) : faq.question.includes('fee') ? (
+                                <span>
+                                    {faq.answer} For more details, see our{' '}
+                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('fees')}>
+                                        refund policy for fees
+                                    </button>
+                                </span>
+                            ) : (
+                                <span>{faq.answer}</span>
+                            )}
+                        </DisclosurePanel>
+                    </Disclosure>
+                ))}
             </div>
         </Card>
     );
