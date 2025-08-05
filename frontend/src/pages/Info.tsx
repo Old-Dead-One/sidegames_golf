@@ -80,57 +80,81 @@ const faqs = [
 
 interface InfoProps {
     theme: string;
+    openLegalModal: (section: string) => void;
+    onContactClick?: () => void;
 }
 
-const FaqPage: React.FC<InfoProps & { openLegalModal: (section: string) => void }> = ({ theme, openLegalModal }) => {
+const FaqPage: React.FC<InfoProps> = ({ theme, openLegalModal, onContactClick }) => {
     return (
         <Card
             title="Frequently Asked Questions"
             theme={theme}
             includeInnerCard={true}
+            topPaddingClassName=""
         >
+            {/* Contact prompt section */}
+
+            <div className="flex items-center justify-end w-full mb-4">
+                <label className="text-xs text-gray-700 select-none mr-1">
+                    Need Help?
+                </label>
+                <div className="group relative inline-flex w-[30px] h-[20px] shrink-0 items-center justify-center rounded-[5px] bg-neutral-200 hover:bg-indigo-600">
+                    <button
+                        onClick={onContactClick}
+                    >
+                        <svg
+                            className="w-[40px] h-[32px] text-gray-700 group-hover:text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            preserveAspectRatio="none"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
 
             {/* FAQ section */}
-            <div></div>
-            <div className="space-y-px divide-y divide-black bg-white bg-opacity-95 rounded-lg px-2">
+            <div className="space-y-px divide-y divide-black bg-neutral-700 rounded-[4px] px-2">
                 {faqs.map((faq) => (
                     <Disclosure key={faq.question} as="div" className="p-2 text-left">
                         <dt>
                             <DisclosureButton className="group flex justify-between w-full">
-                                <span className="text-left text-wrap font-semibold">{faq.question}</span>
+                                <span className="text-left text-wrap text-neutral-200">{faq.question}</span>
                                 <span>
                                     <PlusIcon aria-hidden="true" className="h-4 group-data-[open]:hidden" />
                                     <MinusIcon aria-hidden="true" className="h-4 [.group:not([data-open])_&]:hidden" />
                                 </span>
                             </DisclosureButton>
                         </dt>
-                        <DisclosurePanel className="mt-2 text-sm">
+                        <DisclosurePanel className="text-xs bg-neutral-200 bg-opacity-95 rounded-[4px] p-2">
                             {/* Add links to legal sections in relevant answers */}
                             {faq.question.includes('payout') ? (
                                 <span>
                                     {faq.answer} For more details, see our{' '}
-                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('payout')}>
+                                    <button className="text-primary underline" type="button" onClick={() => openLegalModal('payout')}>
                                         payout policy
                                     </button>
                                 </span>
                             ) : faq.question.includes('canceled') ? (
                                 <span>
                                     {faq.answer} For more details, see our{' '}
-                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('canceled')}>
+                                    <button className="text-primary underline" type="button" onClick={() => openLegalModal('canceled')}>
                                         canceled events policy
                                     </button>
                                 </span>
                             ) : faq.question.includes('unclosed') ? (
                                 <span>
                                     {faq.answer} For more details, see our{' '}
-                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('unclosed')}>
+                                    <button className="text-primary underline" type="button" onClick={() => openLegalModal('unclosed')}>
                                         unclosed events policy
                                     </button>
                                 </span>
                             ) : faq.question.includes('fee') ? (
                                 <span>
                                     {faq.answer} For more details, see our{' '}
-                                    <button className="text-indigo-400 underline" type="button" onClick={() => openLegalModal('fees')}>
+                                    <button className="text-primary underline" type="button" onClick={() => openLegalModal('fees')}>
                                         refund policy for fees
                                     </button>
                                 </span>

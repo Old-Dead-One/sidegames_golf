@@ -202,16 +202,16 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
             title="Profile"
             theme={theme}
             includeInnerCard={true}
+            paddingClassName="p-0"
         >
-            <div className="p-2 text-left flex justify-center mx-auto">
-                {/* <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg"> */}
-                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+            <div className="p-2 text-left flex justify-center mx-auto w-full">
+                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0 w-full">
                     <Profilenav />
 
                     {/* Profile section */}
-                    <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <div className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
                         <form onSubmit={handleSave} method="POST">
-                            <div className="py-1">
+                            <div>
                                 {error && <p className="text-red-500">{error}</p>}
                                 <div className="mb-1">
                                     <p className="text-xs text-yellow-300">
@@ -393,7 +393,6 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                             </div>
                         </form>
                     </div>
-                    {/* </div> */}
                 </div>
             </div>
         </Card>

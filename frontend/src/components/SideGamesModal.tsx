@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Checkbox, TextField, Typography, Box, IconButton, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Checkbox, TextField, Typography, Box, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { supabase } from '../services/supabaseClient';
 import { toast } from 'react-toastify';
 

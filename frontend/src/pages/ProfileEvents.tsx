@@ -63,7 +63,16 @@ const ProfileEvents: React.FC<ProfileEventsProps> = ({ theme }) => {
                 if (enteredError) {
                     toast.error("Error fetching entered events");
                 } else {
-                    setEnteredEvents(entered || []);
+                    // Deduplicate events by event_id to show each event only once
+                    const uniqueEvents = (entered || []).reduce((acc: any[], current: any) => {
+                        const eventId = current.event_id;
+                        const exists = acc.find(item => item.event_id === eventId);
+                        if (!exists) {
+                            acc.push(current);
+                        }
+                        return acc;
+                    }, []);
+                    setEnteredEvents(uniqueEvents);
                 }
 
                 // Events created (from events table)
@@ -100,80 +109,80 @@ const ProfileEvents: React.FC<ProfileEventsProps> = ({ theme }) => {
         <Card
             title="My Events"
             theme={theme}
+            includeInnerCard={true}
+            paddingClassName="p-0"
         >
-            <div className="p-2 text-left flex justify-center mx-auto">
-                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
-                        <Profilenav />
+            <div className="p-2 text-left flex justify-center mx-auto w-full">
+                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0 w-full">
+                    <Profilenav />
 
-                        {/* Events you have entered */}
-                        <form className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9">
-                            <div className="py-1">
-                                <p className="text-xs text-yellow-300 mb-1">
-                                    Events you have entered:
-                                </p>
-                                <table role="table" className="text-xs divide-y divide-white w-full table-fixed lg:table-auto">
-                                    <thead>
-                                        <tr className="w-full">
-                                            <th className="w-1/3">Event</th>
-                                            <th className="w-1/4">Course</th>
-                                            <th className="w-1/4">Date</th>
-                                            <th className="w-1/4">Tour</th>
-                                            <th className="w-1/4">Location</th>
-                                            {/* <th>Cost</th> */}
+                    {/* Events you have entered */}
+                    <form className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                        <div className="py-1">
+                            <p className="text-xs text-yellow-300 mb-1">
+                                Events you have entered:
+                            </p>
+                            <table role="table" className="text-xs divide-y divide-white w-full table-fixed lg:table-auto w-full">
+                                <thead>
+                                    <tr className="w-full">
+                                        <th className="w-1/3">Event</th>
+                                        <th className="w-1/4">Course</th>
+                                        <th className="w-1/4">Date</th>
+                                        <th className="w-1/4">Tour</th>
+                                        <th className="w-1/4">Location</th>
+                                        {/* <th>Cost</th> */}
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-400">
+                                    {enteredEvents.map((entry) => (
+                                        <tr key={entry.event_id} className="w-full">
+                                            <td className="py-1 pr-1">{entry.events?.name || 'Unknown Event'}</td>
+                                            <td>{entry.events?.course_name || ''}</td>
+                                            <td>
+                                                {entry.events?.event_date
+                                                    ? (() => {
+                                                        const d = new Date(entry.events.event_date);
+                                                        const mm = String(d.getMonth() + 1).padStart(2, '0');
+                                                        const dd = String(d.getDate()).padStart(2, '0');
+                                                        const yy = d.getFullYear().toString().slice(-2);
+                                                        return `${mm}/${dd}/${yy}`;
+                                                    })()
+                                                    : ''}
+                                            </td>
+                                            <td>{tourMap[entry.events?.tour_id] || ''}</td>
+                                            <td>{locationMap[entry.events?.location_id] || ''}</td>
+                                            {/* <td>${entry.total_cost}</td> */}
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-neutral-400">
-                                        {enteredEvents.map((entry) => (
-                                            <tr key={entry.id} className="w-full">
-                                                <td className="py-1 pr-1">{entry.events?.name || 'Unknown Event'}</td>
-                                                <td>{entry.events?.course_name || ''}</td>
-                                                <td>
-                                                    {entry.events?.event_date
-                                                        ? (() => {
-                                                            const d = new Date(entry.events.event_date);
-                                                            const mm = String(d.getMonth() + 1).padStart(2, '0');
-                                                            const dd = String(d.getDate()).padStart(2, '0');
-                                                            const yy = d.getFullYear().toString().slice(-2);
-                                                            return `${mm}/${dd}/${yy}`;
-                                                        })()
-                                                        : ''}
-                                                </td>
-                                                <td>{tourMap[entry.events?.tour_id] || ''}</td>
-                                                <td>{locationMap[entry.events?.location_id] || ''}</td>
-                                                {/* <td>${entry.total_cost}</td> */}
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                <p className="text-xs text-yellow-300 mb-2">
-                                    Events you have created:
-                                </p>
-                                <table role="table" className="text-xs divide-y divide-white w-full table-fixed w-full table-fixed lg:table-auto">
-                                    <thead>
-                                        <tr>
-                                            <th>Event</th>
-                                            <th>Course</th>
-                                            <th>Date</th>
-                                            <th>Tour</th>
-                                            <th>Location</th>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <p className="text-xs text-yellow-300 mb-2">
+                                Events you have created:
+                            </p>
+                            <table role="table" className="text-xs divide-y divide-white w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Event</th>
+                                        <th>Course</th>
+                                        <th>Date</th>
+                                        <th>Tour</th>
+                                        <th>Location</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-400">
+                                    {createdEvents.map((event) => (
+                                        <tr key={event.id}>
+                                            <td className="py-1 pr-1">{event.name}</td>
+                                            <td>{event.course_name || ''}</td>
+                                            <td>{event.event_date ? new Date(event.event_date).toLocaleDateString() : ''}</td>
+                                            <td>{tourMap[event.tour_id] || ''}</td>
+                                            <td>{locationMap[event.location_id] || ''}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-neutral-400">
-                                        {createdEvents.map((event) => (
-                                            <tr key={event.id}>
-                                                <td className="py-1 pr-1">{event.name}</td>
-                                                <td>{event.course_name || ''}</td>
-                                                <td>{event.event_date ? new Date(event.event_date).toLocaleDateString() : ''}</td>
-                                                <td>{tourMap[event.tour_id] || ''}</td>
-                                                <td>{locationMap[event.location_id] || ''}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
-                    </div>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
                 </div>
             </div>
         </Card>

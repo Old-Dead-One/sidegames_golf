@@ -21,8 +21,8 @@ const Profilenav: React.FC = () => {
     const { isLoggedIn } = useUser();
 
     return (
-        <aside className="lg:col-span-3 w-full">
-            <nav className="p-2 space-y-2">
+        <aside className="lg:col-span-3">
+            <nav className="space-y-2">
                 {navigation.map((item) =>
                     isLoggedIn ? (
                         <NavLink
@@ -33,7 +33,7 @@ const Profilenav: React.FC = () => {
                                 location.pathname === item.href
                                     ? 'bg-white rounded-lg'
                                     : 'rounded-lg hover:bg-neutral-300',
-                                'group flex items-center p-1',
+                                'group flex items-center p-2 w-full',
                             )}
                         >
                             <item.icon
@@ -42,7 +42,7 @@ const Profilenav: React.FC = () => {
                                     location.pathname === item.href
                                         ? 'text-blue-500'
                                         : 'text-gray-400 group-hover:text-blue-500',
-                                    'mr-3 size-6 ',
+                                    'mr-4 size-6',
                                 )}
                             />
                             <span className="truncate">{item.name}</span>
@@ -52,7 +52,7 @@ const Profilenav: React.FC = () => {
                             key={item.name}
                             type="button"
                             disabled
-                            className="group flex items-center p-2 rounded-lg opacity-50 cursor-not-allowed w-full"
+                            className="group flex items-center rounded-lg p-2 opacity-50 cursor-not-allowed w-full"
                             title="Please log in to access this feature"
                             style={{ textAlign: "left" }}
                             tabIndex={-1}

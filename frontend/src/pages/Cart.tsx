@@ -9,6 +9,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 
 interface CartProps {
     theme: string;
+    onClose?: () => void;
 }
 
 const getGridColumns = (itemCount: number) => {
@@ -19,8 +20,8 @@ const getGridColumns = (itemCount: number) => {
     return "lg:grid-cols-3";
 };
 
-const Cart: React.FC<CartProps> = ({ theme }) => {
-    const { cartItems, setCartItems, user, loading } = useUser();
+const Cart: React.FC<CartProps> = ({ theme, onClose }) => {
+    const { cartItems, setCartItems, loading } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -180,6 +181,7 @@ const Cart: React.FC<CartProps> = ({ theme }) => {
                                 if (cartItems.length === 0) {
                                     toast.warn("There are no items in the cart.");
                                 } else {
+                                    onClose?.();
                                     navigate('/ReviewCart');
                                 }
                             }}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import AutoCompleteForm from "../components/AutoCompleteForm";
-import { Tour, LocationDetail, EventItem, SideGames } from "../types";
+import { Tour, LocationDetail, EventItem } from "../types";
 import Card from "../components/defaultcard";
 import { supabase } from "../services/supabaseClient";
 import { toast } from 'react-toastify';
@@ -34,7 +34,6 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
         course_name: ""
     });
     const [eventDate, setEventDate] = useState<string>(new Date().toISOString().split("T")[0]);
-    const [filteredLocations, setFilteredLocations] = useState<LocationDetail[]>(locations);
     const [showMyToursOnly, setShowMyToursOnly] = useState(false);
     const [sideGamesModalOpen, setSideGamesModalOpen] = useState(false);
     const [selectedSideGames, setSelectedSideGames] = useState<any[]>([]);
@@ -43,8 +42,9 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
     const [pendingUpdate, setPendingUpdate] = useState<PendingConfirmation | null>(null);
     const [updateLoading, setUpdateLoading] = useState(false);
     const [updateSideGamesModalOpen, setUpdateSideGamesModalOpen] = useState(false);
-    const [pendingUpdateSideGames, setPendingUpdateSideGames] = useState<any[]>([]);
     const [formKey, setFormKey] = useState(0);
+    const [showAdminRequest, setShowAdminRequest] = useState(false);
+    const [adminRequestLoading, setAdminRequestLoading] = useState(false);
 
     // AutoCompleteForm state variables
     const [selectedtour_id, setSelectedtour_id] = useState<string | null>(null);
@@ -53,14 +53,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
     const [locationValue, setLocationValue] = useState<LocationDetail | null>(null);
     const [eventValue, setEventValue] = useState<EventItem | null>(null);
     const [expanded, setExpanded] = useState<string | false>("tourpanel");
-    const [sideGamesRows, setSideGamesRows] = useState<SideGames[]>([]);
-    const [net, setNet] = useState<string | null>(null);
-    const [division, setDivision] = useState<string | null>(null);
-    const [superSkins, setSuperSkins] = useState<boolean>(false);
-    const [totalCost, setTotalCost] = useState<number>(0);
     const [tourLocations, setTourLocations] = useState<any[]>([]);
-    const [enabledSideGames, setEnabledSideGames] = useState<{ key: string; name: string; fee: number | null }[]>([]);
-    const [purchasedSideGames, setPurchasedSideGames] = useState<Set<string>>(new Set());
 
     const autoCompleteFormRef = useRef<any>(null);
 
@@ -135,7 +128,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
             try {
                 const { data: toursData, error: toursError } = await supabase.from('tours').select('*');
                 const { data: locationsData, error: locationsError } = await supabase.from('locations').select('*');
-                const { data: sideGamesData, error: sideGamesError } = await supabase.from('side_games').select('*');
+                const { error: sideGamesError } = await supabase.from('side_games').select('*');
                 const { data: tourLocationsData, error: tourLocationsError } = await supabase.from('tour_locations').select('*');
 
                 if (toursError || locationsError || sideGamesError || tourLocationsError) {
@@ -144,7 +137,6 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
 
                 setTours(toursData);
                 setLocations(locationsData);
-                setSideGamesRows(sideGamesData);
                 setTourLocations(tourLocationsData || []);
                 await fetchEvents();
             } catch (error) {
@@ -162,29 +154,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
         }
     }, [tours]);
 
-    useEffect(() => {
-        const fetchTourLocations = async () => {
-            if (!selectedTour) {
-                setFilteredLocations([]);
-                return;
-            }
-            const { data, error } = await supabase
-                .from('tour_locations')
-                .select('location_id')
-                .eq('tour_id', selectedTour.id);
-            if (error) {
-                setFilteredLocations([]);
-                return;
-            }
-            if (!data) {
-                setFilteredLocations([]);
-                return;
-            }
-            const locationIds = data.map((row: { location_id: string }) => row.location_id);
-            setFilteredLocations(locations.filter(loc => locationIds.includes(loc.id)));
-        };
-        fetchTourLocations();
-    }, [selectedTour, locations]);
+
 
     const handleSideGamesSave = (sideGames: any[]) => {
         // Only keep selected side games
@@ -204,11 +174,85 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
         });
     };
 
-    const handleCreateEvent = () => {
+    const checkAdminPrivileges = async (tourId: string) => {
+        if (!user) return false;
+
+        try {
+            // Check if user has admin privileges for this tour
+            const { data: adminData, error } = await supabase
+                .from('admin_privileges')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('tour_id', tourId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') { // PGRST116: No rows found
+                // If table doesn't exist yet, return false (no admin privileges)
+                if (error.message?.includes('relation "admin_privileges" does not exist')) {
+                    console.log('Admin privileges table does not exist yet');
+                    return false;
+                }
+                console.error('Error checking admin privileges:', error);
+                return false;
+            }
+
+            return !!adminData;
+        } catch (error) {
+            console.error('Error checking admin privileges:', error);
+            return false;
+        }
+    };
+
+    const handleAdminRequest = async () => {
+        if (!user || !selectedTour) return;
+
+        setAdminRequestLoading(true);
+        try {
+            // For demo purposes, directly grant admin privileges
+            const { error } = await supabase
+                .from('admin_privileges')
+                .upsert({
+                    user_id: user.id,
+                    tour_id: selectedTour.id,
+                    granted_at: new Date().toISOString(),
+                    granted_by: user.id // Self-granted for demo
+                });
+
+            if (error) {
+                // If table doesn't exist, show a message about setting up the database
+                if (error.message?.includes('relation "admin_privileges" does not exist')) {
+                    toast.error('Admin privileges table not set up. Please run the admin_privileges.sql script in your database.');
+                    console.error('Admin privileges table does not exist:', error);
+                } else {
+                    toast.error('Failed to grant admin privileges');
+                    console.error('Error granting admin privileges:', error);
+                }
+            } else {
+                toast.success('Admin privileges granted! You can now create events for this tour.');
+                setShowAdminRequest(false);
+            }
+        } catch (error) {
+            toast.error('Failed to grant admin privileges');
+            console.error('Error granting admin privileges:', error);
+        } finally {
+            setAdminRequestLoading(false);
+        }
+    };
+
+    const handleCreateEvent = async () => {
         if (!selectedTour || !selectedLocation || !eventName || !eventDate || !courseDetails.course_name) {
             toast.error("Please fill in Tour, Location, Event Name, Course Name, and Date.");
             return;
         }
+
+        // Check admin privileges for the selected tour
+        const hasAdminPrivileges = await checkAdminPrivileges(selectedTour.id);
+
+        if (!hasAdminPrivileges) {
+            setShowAdminRequest(true);
+            return;
+        }
+
         setSideGamesModalOpen(true);
     };
 
@@ -393,7 +437,6 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
             return;
         }
         // Always open the side games modal for editing
-        setPendingUpdateSideGames(selectedSideGames);
         setUpdateSideGamesModalOpen(true);
     };
 
@@ -521,7 +564,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
             }
 
             // 2. Now delete the event
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('events')
                 .delete()
                 .eq('id', selectedEvent.id)
@@ -605,46 +648,43 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                             </div>
 
                             <div className="space-y-4">
-                                <div className="bg-white rounded">
-                                    <AutoCompleteForm
-                                        ref={autoCompleteFormRef}
-                                        tours={filteredTours}
-                                        locations={filteredLocationDetails}
-                                        events={filteredEvents}
-                                        selectedLocationId={selectedlocation_id}
-                                        selectedEvent={selectedEvent}
-                                        tourValue={tourValue}
-                                        locationValue={locationValue}
-                                        eventValue={eventValue}
-                                        onSelectTour={handleSelectTour}
-                                        onSelectLocation={handleSelectLocation}
-                                        onSelectEvent={handleSelectEvent}
-                                        expanded={expanded}
-                                        onAccordionChange={handleExpanded}
-                                        sideGamesRows={[]}
-                                        net={null}
-                                        division={null}
-                                        superSkins={false}
-                                        totalCost={0}
-                                        onNetChange={() => { }}
-                                        onDivisionChange={() => { }}
-                                        onSuperSkinsChange={() => { }}
-                                        onAddToCart={() => { }}
-                                        enabledSideGames={[]}
-                                        purchasedSideGames={new Set()}
-                                        showEventSummary={false}
-                                        showNewEventOption={true}
-                                        onNewEventSelect={handleNewEventSelect}
-                                        tourPanelTitle="Create, Update, or Cancel an Event"
-                                    />
-                                </div>
+                                <AutoCompleteForm
+                                    ref={autoCompleteFormRef}
+                                    tours={filteredTours}
+                                    locations={filteredLocationDetails}
+                                    events={filteredEvents}
+                                    selectedLocationId={selectedlocation_id}
+                                    selectedEvent={selectedEvent}
+                                    tourValue={tourValue}
+                                    locationValue={locationValue}
+                                    eventValue={eventValue}
+                                    onSelectTour={handleSelectTour}
+                                    onSelectLocation={handleSelectLocation}
+                                    onSelectEvent={handleSelectEvent}
+                                    expanded={expanded}
+                                    onAccordionChange={handleExpanded}
+                                    sideGamesRows={[]}
+                                    net={null}
+                                    division={null}
+                                    superSkins={false}
+                                    totalCost={0}
+                                    onNetChange={() => { }}
+                                    onDivisionChange={() => { }}
+                                    onSuperSkinsChange={() => { }}
+                                    onAddToCart={() => { }}
+                                    enabledSideGames={[]}
+                                    purchasedSideGames={new Set()}
+                                    showEventSummary={false}
+                                    showNewEventOption={true}
+                                    onNewEventSelect={handleNewEventSelect}
+                                    tourPanelTitle="Create, Update, or Cancel an Event"
+                                />
 
-                                <div className="bg-white rounded-md">
+                                <div>
                                     <Accordion
                                         expanded={expanded === "eventdetailspanel"}
                                         onChange={handleExpanded("eventdetailspanel")}
                                         elevation={0}
-                                        className="w-full"
                                     >
                                         <AccordionSummary
                                             expandIcon={<ExpandMoreIcon />}
@@ -660,14 +700,14 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                                                     placeholder="Event Name"
                                                     value={eventName}
                                                     onChange={(e) => setEventName(e.target.value)}
-                                                    className="border w-full p-2 rounded-md"
+                                                    className="border w-full p-2 rounded-[4px]"
                                                 />
                                                 <input
                                                     type="text"
                                                     placeholder="Course Name"
                                                     value={courseDetails.course_name}
                                                     onChange={(e) => setCourseDetails({ course_name: e.target.value })}
-                                                    className="border w-full p-2 rounded-md"
+                                                    className="border w-full p-2 rounded-[4px]"
                                                 />
                                                 <input
                                                     type="date"
@@ -675,7 +715,7 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                                                     min={new Date().toISOString().split("T")[0]}
                                                     max="2030time-12-31"
                                                     onChange={(e) => setEventDate(e.target.value)}
-                                                    className="border w-full p-2 rounded-lg"
+                                                    className="border w-full p-2 rounded-[4px]"
                                                 />
                                             </div>
                                         </AccordionDetails>
@@ -785,6 +825,34 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                         disabled={updateLoading}
                     >
                         Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Admin Request Dialog */}
+            <Dialog open={showAdminRequest} onClose={() => setShowAdminRequest(false)}>
+                <DialogTitle>Admin Privileges Required</DialogTitle>
+                <DialogContent>
+                    <div className="space-y-3">
+                        <p>
+                            You need admin privileges to create events for the <strong>{selectedTour?.name}</strong> tour.
+                        </p>
+                        <p className="text-sm text-gray-600">
+                            For demo purposes, you can request admin access which will be granted immediately.
+                            In production, this would require approval from a tour administrator.
+                        </p>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setShowAdminRequest(false)} color="secondary">
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleAdminRequest}
+                        color="primary"
+                        disabled={adminRequestLoading}
+                    >
+                        {adminRequestLoading ? 'Granting Access...' : 'Confirm Request'}
                     </Button>
                 </DialogActions>
             </Dialog>

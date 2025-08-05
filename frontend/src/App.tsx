@@ -56,7 +56,7 @@ const App: React.FC = () => {
                 <Routes>
                   <Route path="/" element={<Landing theme={bgColor} />} />
                   <Route path="/Dashboard" element={<Dashboard theme={bgColor} />} />
-                  <Route path="/Info" element={<Info theme={bgColor} openLegalModal={openLegalModal} />} />
+                  <Route path="/Info" element={<Info theme={bgColor} openLegalModal={openLegalModal} onContactClick={() => setContactOpen(true)} />} />
                   <Route path="/Calendar" element={<Calendar theme={bgColor} />} />
                   <Route path="/Profile" element={<Profile theme={bgColor} />} />
                   <Route path="/Messages" element={<Messages theme={bgColor} />} />
@@ -66,13 +66,13 @@ const App: React.FC = () => {
                   <Route path="/Password" element={<Password theme={bgColor} />} />
                   <Route path="/Transactions" element={<Transactions theme={bgColor} />} />
                   <Route path="/ProfileEvents" element={<ProfileEvents theme={bgColor} />} />
-                  <Route path="/ReviewCart" element={<ReviewCart theme={bgColor} />} />
+                  <Route path="/ReviewCart" element={<ReviewCart theme={bgColor} onOpenCart={() => setCartDrawerOpen(true)} />} />
                   <Route path="/CreateGame" element={<CreateGame theme={bgColor} />} />
                 </Routes>
               </Suspense>
             </div>
             <CartDrawer open={cartDrawerOpen} onClose={() => setCartDrawerOpen(false)}>
-              <Cart theme={bgColor} />
+              <Cart theme={bgColor} onClose={() => setCartDrawerOpen(false)} />
             </CartDrawer>
             <BottomNavBar onContactClick={() => setContactOpen(true)} onLegalClick={() => setLegalOpen(true)} />
             <ContactModal open={contactOpen} onClose={() => setContactOpen(false)} />

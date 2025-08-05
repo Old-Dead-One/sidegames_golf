@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUser } from "../context/UserContext";
 import { supabase } from "../services/supabaseClient";
 import Card from "../components/defaultcard";
+import PaymentOptions from "../components/PaymentOptions";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 interface ReviewCartProps {
     theme: string;
+    onOpenCart?: () => void;
 }
 
 const getGridColumns = (itemCount: number) => {
@@ -17,9 +19,11 @@ const getGridColumns = (itemCount: number) => {
     return "lg:grid-cols-3";
 };
 
-const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
+const ReviewCart: React.FC<ReviewCartProps> = ({ theme, onOpenCart }) => {
     const { cartItems, setCartItems } = useUser();
     const navigate = useNavigate();
+    const [showPaymentOptions, setShowPaymentOptions] = useState(false);
+    const [processingPayment, setProcessingPayment] = useState(false);
 
     useEffect(() => {
         const fetchUserCart = async () => {
@@ -46,6 +50,37 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
         };
         fetchUserCart();
     }, [setCartItems]);
+
+    // Calculate subtotal amount
+    const subtotalAmount = cartItems.reduce((total, item) => {
+        return total + (item.sideGamesData.totalCost || 0);
+    }, 0);
+
+    // Calculate fee (3% + $0.60)
+    const feeAmount = (subtotalAmount * 0.03) + 0.60;
+
+    // Calculate total amount including fee
+    const totalAmount = subtotalAmount + feeAmount;
+
+    const handlePaymentSuccess = async () => {
+        setProcessingPayment(true);
+
+        try {
+            // Use existing checkout logic
+            await handleCheckout();
+            // Demo toast is handled in PaymentOptions component
+        } catch (error) {
+            toast.error("Payment completed but order processing failed. Please contact support.");
+        } finally {
+            setProcessingPayment(false);
+            setShowPaymentOptions(false);
+        }
+    };
+
+    const handlePaymentError = (error: string) => {
+        toast.error(`Payment failed: ${error}`);
+        setProcessingPayment(false);
+    };
 
     const handleCheckout = async () => {
         const { data: { session } } = await supabase.auth.getSession();
@@ -121,8 +156,8 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
                 const duplicateSideGamesByEvent: Record<string, string[]> = {};
                 const idToName = Object.fromEntries(cartItems.map(item => [item.eventSummary.selectedEvent.id, item.eventSummary.selectedEvent.name]));
 
-                purchasesData.forEach((purchase, idx) => {
-                    const cartItem = cartItems[idx];
+                purchasesData.forEach((purchase) => {
+
                     const purchasedSet = eventToPurchased[purchase.event_id] || new Set();
                     const newRows = (purchase.side_games_data.rows || []).filter((row: any) => {
                         const normalizedKey = ((row.key || row.name || '')
@@ -199,7 +234,7 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
 
                 // Clear the local state
                 setCartItems([]);
-                toast.success("Checkout successful! Your purchases have been recorded.");
+                // Demo toast is handled in PaymentOptions component
                 navigate('/Dashboard');
             } catch (error: unknown) {
                 console.error("Unexpected Error:", error);
@@ -245,7 +280,7 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
                                         Total Cost: ${item.sideGamesData.totalCost}
                                     </div>
                                     <div className="flex justify-center p-2">
-                                        <button className="w-max rounded-lg bg-yellow-400 p-2 hover:bg-primary hover:text-black" onClick={() => navigate('/Cart')}>
+                                        <button className="w-max rounded-lg bg-yellow-400 p-2 hover:bg-primary hover:text-black" onClick={() => onOpenCart?.()}>
                                             Return to Cart
                                         </button>
                                     </div>
@@ -253,8 +288,50 @@ const ReviewCart: React.FC<ReviewCartProps> = ({ theme }) => {
                             </li>
                         ))}
                     </ul>
+
+                    {/* Fee Breakdown */}
+                    <div className="border-t border-gray-400 mt-4 pt-4">
+                        <div className="text-sm space-y-1">
+                            <div className="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span>${subtotalAmount.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-yellow-400">
+                                <span>Processing Fee (3% + $0.60):</span>
+                                <span>${feeAmount.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between text-green-400 font-semibold border-t border-gray-400 pt-1">
+                                <span>Total:</span>
+                                <span>${totalAmount.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="flex justify-center p-2">
-                        <button className="w-full rounded-lg bg-indigo-600 py-2 text-white hover:bg-primary hover:text-black" onClick={() => handleCheckout()}>Confirm Checkout</button>
+                        {!showPaymentOptions ? (
+                            <button
+                                className="w-full rounded-lg bg-indigo-600 py-2 text-white hover:bg-primary hover:text-black disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() => setShowPaymentOptions(true)}
+                                disabled={processingPayment || cartItems.length === 0}
+                            >
+                                {processingPayment ? 'Processing...' : 'Proceed to Payment'}
+                            </button>
+                        ) : (
+                            <div className="w-full space-y-4">
+                                <button
+                                    className="w-full rounded-lg bg-gray-600 py-2 text-white hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    onClick={() => setShowPaymentOptions(false)}
+                                    disabled={processingPayment}
+                                >
+                                    ← Back to Review
+                                </button>
+                                <PaymentOptions
+                                    totalAmount={totalAmount}
+                                    onPaymentSuccess={handlePaymentSuccess}
+                                    onPaymentError={handlePaymentError}
+                                />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

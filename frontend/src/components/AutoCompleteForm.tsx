@@ -1,13 +1,12 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import TourAutoComplete from "./TourAutoComplete";
 import LocationAutoComplete from "./LocationAutoComplete";
 import EventAutoComplete from "./EventAutoComplete";
 import EventSummary from "./EventSummary";
 import SelectSideGames from "./SelectSideGames";
 import { Tour, LocationDetail, EventItem, SideGames } from "../types";
-import { Accordion, AccordionSummary, AccordionDetails, Box, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { supabase } from "../services/supabaseClient";
 
 interface AutoCompleteFormProps {
     tours: Tour[];
@@ -102,7 +101,6 @@ const AutoCompleteForm = forwardRef<any, AutoCompleteFormProps>(({
                 expanded={expanded === "tourpanel"}
                 onChange={onAccordionChange("tourpanel")}
                 elevation={0}
-                className=""
             >
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
@@ -148,7 +146,7 @@ const AutoCompleteForm = forwardRef<any, AutoCompleteFormProps>(({
                 </AccordionDetails>
             </Accordion>
             {showEventSummary && (
-                <div className="bg-white rounded">
+                <div className="rounded">
                     <Accordion
                         expanded={expanded === "eventsummarypanel"}
                         onChange={onAccordionChange("eventsummarypanel")}

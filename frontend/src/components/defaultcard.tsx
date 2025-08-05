@@ -8,6 +8,8 @@ interface CardProps {
     theme?: string | null;
     includeInnerCard?: boolean; // Optional prop to include inner grey card
     innerCardClassName?: string; // Optional className for inner card styling
+    paddingClassName?: string; // Optional className for padding (overrides default p-4)
+    topPaddingClassName?: string; // Optional className for top padding only
 }
 
 const Card: React.FC<CardProps> = ({
@@ -16,21 +18,36 @@ const Card: React.FC<CardProps> = ({
     footerContent,
     className,
     theme,
+    paddingClassName,
+    topPaddingClassName,
     includeInnerCard = false,
     innerCardClassName = ""
 }) => {
+    // Default padding is p-4, but can be overridden with paddingClassName
+    const defaultPadding = "p-4";
+    const finalPadding = paddingClassName || defaultPadding;
+
+    // If topPaddingClassName is provided, we need to construct custom padding
+    const getInnerCardPadding = () => {
+        if (topPaddingClassName) {
+            // If top padding is specified, use it for top and default p-4 for other sides
+            return `${topPaddingClassName} px-4 pb-4`;
+        }
+        return finalPadding;
+    };
+
     return (
         <div className='flex justify-center'>
             {/* Standardized width based on screen size instead of content */}
-            <div className='w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl'>
-                <div className={`shadow-[0_10px_50px_-10px_rgba(0,0,0,0.5)] text-center rounded-lg p-2 ${className}`} style={{ backgroundColor: theme || undefined }}>
+            <div className='w-full mx-4 max-w-xl sm:max-w-4xl md:max-w-4xl lg:max-w-4xl xl:max-w-4xl 2xl:max-w-4xl'>
+                <div className={`shadow-[0_10px_50px_-10px_rgba(0,0,0,0.5)] p-4 text-center rounded-lg ${className}`} style={{ backgroundColor: theme || undefined }}>
                     {/* Header Section */}
                     {title && <h2 className="text-lg font-semibold">{title}</h2>}
                     {/* Body Section */}
                     <div>
                         {includeInnerCard ? (
-                            <div className="p-2 text-left flex justify-center mx-auto w-full">
-                                <div className={`p-4 bg-neutral-500 bg-opacity-95 rounded-lg w-full ${innerCardClassName}`}>
+                            <div className="text-left flex justify-center mx-auto w-full">
+                                <div className={`bg-neutral-500 bg-opacity-90 rounded-lg w-full p-2 ${innerCardClassName} ${getInnerCardPadding()}`}>
                                     {children}
                                 </div>
                             </div>
@@ -40,7 +57,7 @@ const Card: React.FC<CardProps> = ({
                     </div>
                     {/* Footer Section */}
                     {footerContent && (
-                        <div className="p-2">
+                        <div className={finalPadding}>
                             {footerContent}
                         </div>
                     )}

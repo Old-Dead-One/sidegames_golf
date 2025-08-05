@@ -16,7 +16,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
 
     const isActive = (path: string) => location.pathname === path;
 
-    const profilePic = user?.profilePictureUrl || '/default-avatar.png';
+
 
     return (
         <Disclosure as="nav" className="sticky top-0 z-50 h-12" style={{ backgroundColor: logoColor }}>

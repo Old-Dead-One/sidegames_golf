@@ -8,6 +8,9 @@ import Card from "../components/defaultcard";
 import { toast } from 'react-toastify';
 import LoadingSpinner from "../components/LoadingSpinner";
 import EventSummary from "../components/EventSummary";
+import SelectSideGames from "../components/SelectSideGames";
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface DashboardProps {
     theme: string;
@@ -431,56 +434,122 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                     />
                 </div>
             </div>
-            <AutoCompleteForm
-                ref={autoCompleteFormRef}
-                tours={filteredTours}
-                locations={filteredLocationDetails}
-                events={filteredEvents}
-                selectedLocationId={selectedlocation_id}
-                selectedEvent={selectedEvent}
-                tourValue={tourValue}
-                locationValue={locationValue}
-                eventValue={eventValue}
-                onSelectTour={handleSelectTour}
-                onSelectLocation={handleSelectLocation}
-                onSelectEvent={handleSelectEvent}
-                expanded={expanded}
-                onAccordionChange={handleExpanded}
-                sideGamesRows={sideGamesRows.filter(row =>
-                    enabledSideGames.some(sg => {
-                        const rowKey = row.key
-                            .toLowerCase()
-                            .replace(/^[0-9]+_/, '') // remove leading number and underscore
-                            .replace(/[^a-z0-9]/g, '_');
-                        const sgKey = sg.key
-                            ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
-                            : '';
-                        return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
-                    })
-                ).map(row => {
-                    const sg = enabledSideGames.find(sg => {
-                        const rowKey = row.key
-                            .toLowerCase()
-                            .replace(/^[0-9]+_/, '')
-                            .replace(/[^a-z0-9]/g, '_');
-                        const sgKey = sg.key
-                            ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
-                            : '';
-                        return rowKey === sgKey;
-                    });
-                    return sg ? { ...row, value: sg.fee ?? row.value } : row;
-                })}
-                net={net}
-                division={division}
-                superSkins={superSkins}
-                totalCost={totalCost}
-                onNetChange={handleNetChange}
-                onDivisionChange={handleDivisionChange}
-                onSuperSkinsChange={handleSuperSkinsChange}
-                onAddToCart={handleAddToCart}
-                enabledSideGames={enabledSideGames}
-                purchasedSideGames={purchasedSideGames}
-            />
+            <div className="space-y-4">
+                <AutoCompleteForm
+                    ref={autoCompleteFormRef}
+                    tours={filteredTours}
+                    locations={filteredLocationDetails}
+                    events={filteredEvents}
+                    selectedLocationId={selectedlocation_id}
+                    selectedEvent={selectedEvent}
+                    tourValue={tourValue}
+                    locationValue={locationValue}
+                    eventValue={eventValue}
+                    onSelectTour={handleSelectTour}
+                    onSelectLocation={handleSelectLocation}
+                    onSelectEvent={handleSelectEvent}
+                    expanded={expanded}
+                    onAccordionChange={handleExpanded}
+                    sideGamesRows={sideGamesRows.filter(row =>
+                        enabledSideGames.some(sg => {
+                            const rowKey = row.key
+                                .toLowerCase()
+                                .replace(/^[0-9]+_/, '') // remove leading number and underscore
+                                .replace(/[^a-z0-9]/g, '_');
+                            const sgKey = sg.key
+                                ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                                : '';
+                            return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
+                        })
+                    ).map(row => {
+                        const sg = enabledSideGames.find(sg => {
+                            const rowKey = row.key
+                                .toLowerCase()
+                                .replace(/^[0-9]+_/, '')
+                                .replace(/[^a-z0-9]/g, '_');
+                            const sgKey = sg.key
+                                ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                                : '';
+                            return rowKey === sgKey;
+                        });
+                        return sg ? { ...row, value: sg.fee ?? row.value } : row;
+                    })}
+                    net={net}
+                    division={division}
+                    superSkins={superSkins}
+                    totalCost={totalCost}
+                    onNetChange={handleNetChange}
+                    onDivisionChange={handleDivisionChange}
+                    onSuperSkinsChange={handleSuperSkinsChange}
+                    onAddToCart={handleAddToCart}
+                    enabledSideGames={enabledSideGames}
+                    purchasedSideGames={purchasedSideGames}
+                    showEventSummary={false}
+                />
+
+                <div className="rounded">
+                    <Accordion
+                        expanded={expanded === "eventsummarypanel"}
+                        onChange={handleExpanded("eventsummarypanel")}
+                        elevation={0}
+                        className="w-full"
+                    >
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="panel2a-content"
+                            id="panel2a-header"
+                        >
+                            <Typography>Event Summary</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <EventSummary
+                                tourLabel={tourValue ? tourValue.name : null}
+                                locationLabel={selectedlocation_id
+                                    ? locations.find(loc => loc.id === selectedlocation_id)?.name || null
+                                    : null}
+                                selectedEvent={selectedEvent}
+                            />
+                            <SelectSideGames
+                                selectedEvent={selectedEvent}
+                                rows={sideGamesRows.filter(row =>
+                                    enabledSideGames.some(sg => {
+                                        const rowKey = row.key
+                                            .toLowerCase()
+                                            .replace(/^[0-9]+_/, '') // remove leading number and underscore
+                                            .replace(/[^a-z0-9]/g, '_');
+                                        const sgKey = sg.key
+                                            ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                                            : '';
+                                        return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
+                                    })
+                                ).map(row => {
+                                    const sg = enabledSideGames.find(sg => {
+                                        const rowKey = row.key
+                                            .toLowerCase()
+                                            .replace(/^[0-9]+_/, '')
+                                            .replace(/[^a-z0-9]/g, '_');
+                                        const sgKey = sg.key
+                                            ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
+                                            : '';
+                                        return rowKey === sgKey;
+                                    });
+                                    return sg ? { ...row, value: sg.fee ?? row.value } : row;
+                                })}
+                                net={net}
+                                division={division}
+                                superSkins={superSkins}
+                                totalCost={totalCost}
+                                onNetChange={handleNetChange}
+                                onDivisionChange={handleDivisionChange}
+                                onSuperSkinsChange={handleSuperSkinsChange}
+                                onAddToCart={handleAddToCart}
+                                disabled={!selectedEvent}
+                                purchasedSideGames={purchasedSideGames}
+                            />
+                        </AccordionDetails>
+                    </Accordion>
+                </div>
+            </div>
         </Card>
     );
 };

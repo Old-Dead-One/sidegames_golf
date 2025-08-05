@@ -165,14 +165,14 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
             title="Account"
             theme={theme}
             includeInnerCard={true}
+            paddingClassName="p-0"
         >
-            <div className="p-2 text-left flex justify-center mx-auto">
-                {/* <div className="p-4 bg-blue-500 bg-opacity-95 rounded-lg"> */}
-                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
+            <div className="p-2 text-left flex justify-center mx-auto w-full">
+                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0 w-full">
                     <Profilenav />
 
                     {/* Account section */}
-                    <div className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <div className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
                         <form onSubmit={handleSave} method="POST">
                             <div className="py-1">
                                 {error && <p className="text-red-500">{error}</p>}
@@ -183,7 +183,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                 </div>
                                 <div className="text-xs flex flex-col">
                                     <div className="flex rounded-lg">
-                                        <label htmlFor="first-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-1/4">
+                                        <label htmlFor="first-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
                                             First Name:
                                         </label>
                                         <input
@@ -394,7 +394,6 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                             </div>
                         </form>
                     </div>
-                    {/* </div> */}
                 </div>
             </div>
         </Card>

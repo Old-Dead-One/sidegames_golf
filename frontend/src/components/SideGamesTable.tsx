@@ -37,9 +37,15 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
         const { value } = event.target;
         console.log('Checkbox clicked:', value);
 
-        // If already purchased, do nothing (should be disabled anyway)
-        if (purchasedSideGames.has(value)) {
+        const normalizedKey = (value || '')
+            .toLowerCase()
+            .replace(/^[0-9]+_/, '')
+            .replace(/[^a-z0-9]/g, '_');
+
+        // If already purchased, show a message but allow the user to see their purchase
+        if (purchasedSideGames.has(normalizedKey)) {
             console.log('Already purchased:', value);
+            toast.info("You have already purchased this side game for this event.");
             return;
         }
 
@@ -76,6 +82,16 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
     const isSuperSkins = (key: string) => /super[_ ]skins/i.test(key);
 
     const getLabelColor = (key: string) => {
+        const normalizedKey = (key || '')
+            .toLowerCase()
+            .replace(/^[0-9]+_/, '')
+            .replace(/[^a-z0-9]/g, '_');
+
+        // If purchased, show as disabled/greyed out
+        if (purchasedSideGames.has(normalizedKey)) {
+            return theme.palette.text.disabled;
+        }
+
         if (isSuperSkins(key)) {
             return superSkins ? theme.palette.primary.main : theme.palette.text.disabled;
         } else if (key === net || key === division) {
@@ -131,8 +147,11 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
                                                 }
                                                 onChange={handleCheckboxChange}
                                                 value={row.key}
-                                                sx={{ color: getLabelColor(row.key), padding: 0 }}
-                                                disabled={disabled || purchasedSideGames.has(normalizedKey)}
+                                                sx={{
+                                                    color: purchasedSideGames.has(normalizedKey) ? theme.palette.text.disabled : getLabelColor(row.key),
+                                                    padding: 0
+                                                }}
+                                                disabled={disabled}
                                             />
                                         }
                                         label=""

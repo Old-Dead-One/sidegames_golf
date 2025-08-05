@@ -46,44 +46,44 @@ const Transactions: React.FC<TransactionsProps> = ({ theme }) => {
         <Card
             title="Transactions"
             theme={theme}
+            includeInnerCard={true}
+            paddingClassName="p-0"
         >
-            <div className="p-2 text-left flex justify-center mx-auto">
-                <div className="p-4 bg-neutral-500 bg-opacity-95 rounded-lg">
-                    <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0">
-                        <Profilenav />
+            <div className="p-2 text-left flex justify-center mx-auto w-full">
+                <div className="divide-y divide-white lg:grid lg:grid-cols-12 lg:divide-x lg:divide-y-0 w-full">
+                    <Profilenav />
 
-                        {/* Transactions section */}
-                        <form className="lg:pl-4 text-sm divide-y divide-white lg:col-span-9">
-                            <div className="py-1">
-                                <p className="text-xs text-yellow-300">
-                                    Your entrance fees and winnings can be found here.
-                                </p>
-                                <table role="table" className="text-xs divide-y divide-white w-full table-fixed lg:table-auto">
-                                    <thead>
-                                        <tr className="">
-                                            <th className="w-1/2">Event</th>
-                                            <th className="w-1/4">Type</th>
-                                            <th className="w-1/4">$$$</th>
-                                            <th className="w-1/4">Date</th>
+                    {/* Transactions section */}
+                    <form className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                        <div className="py-1">
+                            <p className="text-xs text-yellow-300">
+                                Your entrance fees and winnings can be found here.
+                            </p>
+                            <table role="table" className="text-xs divide-y divide-white w-full">
+                                <thead>
+                                    <tr className="">
+                                        <th className="w-1/2">Event</th>
+                                        <th className="w-1/4">Type</th>
+                                        <th className="w-1/4">$$$</th>
+                                        <th className="w-1/4">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-400">
+                                    {purchases.map((purchase) => (
+                                        <tr key={purchase.id} className="w-full">
+                                            <td className="py-1 pr-1">{purchase.events?.name || 'Unknown Event'}</td>
+                                            <td>Fee</td>
+                                            <td>${purchase.total_cost}</td>
+                                            <td>{purchase.events?.event_date ? new Date(purchase.events.event_date).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }) : ''}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-neutral-400">
-                                        {purchases.map((purchase) => (
-                                            <tr key={purchase.id} className="w-full">
-                                                <td className="py-1 pr-1">{purchase.events?.name || 'Unknown Event'}</td>
-                                                <td>Fee</td>
-                                                <td>${purchase.total_cost}</td>
-                                                <td>{purchase.events?.event_date ? new Date(purchase.events.event_date).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }) : ''}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </form>
-                    </div>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
                 </div>
-            </div >
-        </Card >
+            </div>
+        </Card>
     );
 };
 
