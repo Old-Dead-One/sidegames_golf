@@ -21,7 +21,7 @@ const Profilenav: React.FC = () => {
     const { isLoggedIn } = useUser();
 
     return (
-        <aside className="lg:col-span-3">
+        <aside className="lg:col-span-3 lg:pr-4">
             <nav className="space-y-2">
                 {navigation.map((item) =>
                     isLoggedIn ? (

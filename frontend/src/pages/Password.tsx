@@ -105,7 +105,7 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
                         <Profilenav />
 
                         {/* Password section */}
-                        <div className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                        <div className="text-sm divide-y divide-white lg:col-span-9 w-full lg:pl-4">
                             <form onSubmit={handleSave}>
                                 {/* Hidden username field for accessibility */}
                                 <input type="text" name="username" autoComplete="username" style={{ display: 'none' }} />
@@ -118,7 +118,8 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
                                             </p>
                                         </div>
                                     )}
-                                    <div className="flex justify-end">
+                                    <div className="flex justify-between">
+                                        <p className="text-xs text-yellow-300">Password must be 8-32 characters with at least one number and one special character.</p>
                                         <button
                                             type="button"
                                             className="text-xs text-blue-200 underline mb-1"

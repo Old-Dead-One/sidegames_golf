@@ -117,9 +117,9 @@ const ProfileEvents: React.FC<ProfileEventsProps> = ({ theme }) => {
                     <Profilenav />
 
                     {/* Events you have entered */}
-                    <form className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <form className="mt-2 text-sm divide-y divide-white lg:col-span-9 w-full lg:pl-4">
                         <div className="py-1">
-                            <p className="text-xs text-yellow-300 mb-1">
+                            <p className="text-xs text-yellow-300">
                                 Events you have entered:
                             </p>
                             <table role="table" className="text-xs divide-y divide-white w-full table-fixed lg:table-auto w-full">
@@ -156,23 +156,23 @@ const ProfileEvents: React.FC<ProfileEventsProps> = ({ theme }) => {
                                     ))}
                                 </tbody>
                             </table>
-                            <p className="text-xs text-yellow-300 mb-2">
+                            <p className="text-xs text-yellow-300">
                                 Events you have created:
                             </p>
-                            <table role="table" className="text-xs divide-y divide-white w-full">
+                            <table role="table" className="text-xs divide-y divide-white w-full table-fixed lg:table-auto w-full">
                                 <thead>
-                                    <tr>
-                                        <th>Event</th>
-                                        <th>Course</th>
-                                        <th>Date</th>
-                                        <th>Tour</th>
-                                        <th>Location</th>
+                                    <tr className="w-full">
+                                        <th className="w-1/3">Event</th>
+                                        <th className="w-1/4">Course</th>
+                                        <th className="w-1/4">Date</th>
+                                        <th className="w-1/4">Tour</th>
+                                        <th className="w-1/4">Location</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-neutral-400">
                                     {createdEvents.map((event) => (
-                                        <tr key={event.id}>
-                                            <td className="py-1 pr-1">{event.name}</td>
+                                        <tr key={event.id} className="w-full">
+                                            <td className="py-1">{event.name}</td>
                                             <td>{event.course_name || ''}</td>
                                             <td>{event.event_date ? new Date(event.event_date).toLocaleDateString() : ''}</td>
                                             <td>{tourMap[event.tour_id] || ''}</td>

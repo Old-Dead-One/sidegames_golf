@@ -201,11 +201,11 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                     <Profilenav />
 
                     {/* Profile section */}
-                    <div className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <div className="text-sm divide-y divide-white lg:col-span-9 w-full lg:pl-4">
                         <form onSubmit={handleSave} method="POST">
                             <div>
                                 {error && <p className="text-red-500">{error}</p>}
-                                <div className="mb-1">
+                                <div className="my-1">
                                     <p className="text-xs text-yellow-300">
                                         Information will be displayed publicly. Be careful what you share!
                                     </p>

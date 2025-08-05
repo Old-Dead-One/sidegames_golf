@@ -199,8 +199,25 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
                     </div>
                 </div>
             )}
-            <div className="text-left flex justify-center max-w-4xl mx-auto">
+            <div className="text-left flex justify-center mx-auto">
                 <div className="p-4 text-xs bg-white bg-opacity-95 rounded-lg">
+                    <style>
+                        {`
+                            @media (max-width: 768px) {
+                                .fc-toolbar-title {
+                                    font-size: 1.25rem !important;
+                                    line-height: 1 !important;
+                                }
+                                .fc-button {
+                                    font-size: .625rem !important;
+                                    min-height: 1rem !important;
+                                }
+                                .fc-toolbar-chunk {
+                                    gap: .25rem !important;
+                                }
+                            }
+                        `}
+                    </style>
                     <FullCalendar
                         plugins={[dayGridPlugin]}
                         initialView="dayGridMonth"

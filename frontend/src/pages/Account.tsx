@@ -174,7 +174,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                     <Profilenav />
 
                     {/* Account section */}
-                    <div className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <div className="text-sm divide-y divide-white lg:col-span-9 w-full lg:pl-4">
                         <form onSubmit={handleSave} method="POST">
                             <div className="py-1">
                                 {error && <p className="text-red-500">{error}</p>}

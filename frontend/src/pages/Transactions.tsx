@@ -54,7 +54,7 @@ const Transactions: React.FC<TransactionsProps> = ({ theme }) => {
                     <Profilenav />
 
                     {/* Transactions section */}
-                    <form className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <form className="text-sm divide-y divide-white lg:col-span-9 w-full lg:pl-4">
                         <div className="py-1">
                             <p className="text-xs text-yellow-300">
                                 Your entrance fees and winnings can be found here.
@@ -71,7 +71,7 @@ const Transactions: React.FC<TransactionsProps> = ({ theme }) => {
                                 <tbody className="divide-y divide-neutral-400">
                                     {purchases.map((purchase) => (
                                         <tr key={purchase.id} className="w-full">
-                                            <td className="py-1 pr-1">{purchase.events?.name || 'Unknown Event'}</td>
+                                            <td className="py-1">{purchase.events?.name || 'Unknown Event'}</td>
                                             <td>Fee</td>
                                             <td>${purchase.total_cost}</td>
                                             <td>{purchase.events?.event_date ? new Date(purchase.events.event_date).toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' }) : ''}</td>

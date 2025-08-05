@@ -67,9 +67,9 @@ const Notifications: React.FC<NotificationsProps> = ({ theme }) => {
                     <Profilenav />
 
                     {/* Notification preferences section */}
-                    <form onSubmit={handleSave} method="POST" className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
+                    <form onSubmit={handleSave} method="POST" className="text-sm divide-y divide-white lg:col-span-9 w-full lg:pl-4">
                         <div className="py-1">
-                            <div className="mb-1">
+                            <div className="">
                                 <p className="text-xs text-yellow-300">
                                     You can set your notification preferences here.
                                 </p>
