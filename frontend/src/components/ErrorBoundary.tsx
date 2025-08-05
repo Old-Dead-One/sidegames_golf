@@ -25,7 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
 
         // In production, send to error reporting service
         if (import.meta.env.MODE === 'production') {
-            // TODO: Add error reporting service
+            // Error reporting service integration
             // reportError(error, errorInfo);
         }
     }

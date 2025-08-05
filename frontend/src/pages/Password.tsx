@@ -106,14 +106,18 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
 
                         {/* Password section */}
                         <div className="px-2 ml-2 text-sm divide-y divide-white lg:col-span-9 w-full">
-                            <form onSubmit={handleSave} method="POST">
+                            <form onSubmit={handleSave}>
+                                {/* Hidden username field for accessibility */}
+                                <input type="text" name="username" autoComplete="username" style={{ display: 'none' }} />
                                 <div className="py-1">
                                     {error && <p className="text-red-500">{error}</p>}
-                                    <div className="mb-1">
-                                        <p className="text-xs text-yellow-300">
-                                            Password must be 8-32 characters with at least one number and one special character.
-                                        </p>
-                                    </div>
+                                    {newPassword && !isValidPassword(newPassword) && (
+                                        <div className="mb-1">
+                                            <p className="text-xs text-yellow-300">
+                                                Password must be 8-32 characters with at least one number and one special character.
+                                            </p>
+                                        </div>
+                                    )}
                                     <div className="flex justify-end">
                                         <button
                                             type="button"
@@ -142,7 +146,7 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
                                                     autoComplete="current-password"
                                                     required
                                                     placeholder="Current Password"
-                                                    className="w-full rounded-lg border border-white py-2 px-3 focus:ring-1 focus:ring-indigo-600 bg-transparent placeholder:text-neutral-400"
+                                                    className="w-full rounded-lg border border-white py-2 px-3 focus:ring-1 focus:ring-indigo-600 bg-transparent placeholder:text-neutral-400 text-xs"
                                                 />
                                                 <button
                                                     type="button"
@@ -174,7 +178,7 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
                                                     autoComplete="new-password"
                                                     required
                                                     placeholder="New Password"
-                                                    className="w-full rounded-lg border border-white py-2 px-3 focus:ring-1 focus:ring-indigo-600 bg-transparent placeholder:text-neutral-400"
+                                                    className="w-full rounded-lg border border-white py-2 px-3 focus:ring-1 focus:ring-indigo-600 bg-transparent placeholder:text-neutral-400 text-xs"
                                                 />
                                                 <button
                                                     type="button"
@@ -199,13 +203,14 @@ const Password: React.FC<PasswordProps> = ({ theme }) => {
                                                     id="confirm-password"
                                                     name="confirm-password"
                                                     type={showConfirm ? "text" : "password"}
+                                                    autoComplete="new-password"
                                                     required
                                                     value={confirmPassword}
                                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                                     onFocus={() => setFocusedField('confirm-password')}
                                                     onBlur={() => setFocusedField(null)}
                                                     placeholder="Confirm Password"
-                                                    className="w-full rounded-lg border border-white py-2 px-3 focus:ring-1 focus:ring-indigo-600 bg-transparent placeholder:text-neutral-400"
+                                                    className="w-full rounded-lg border border-white py-2 px-3 focus:ring-1 focus:ring-indigo-600 bg-transparent placeholder:text-neutral-400 text-xs"
                                                 />
                                                 <button
                                                     type="button"

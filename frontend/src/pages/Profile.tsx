@@ -43,7 +43,7 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
     useEffect(() => {
         if (!loading && !user) {
             toast.info("Please log in or create an account.");
-            navigate("/Login");
+            navigate("/login");
         }
     }, [user, loading, navigate]);
 
@@ -89,14 +89,6 @@ const Profile: React.FC<ProfileProps> = ({ theme }) => {
                     setShowLastName(!!profileData.show_last_name);
                     setShowPhone(!!profileData.show_phone);
                     setProfilePictureUrl(profileData.profile_picture_url || "");
-                    // setTourLeagues(profileData.tour_leagues || []); // Assuming tour_leagues is an array of strings
-
-                    // Set selected tours based on tourLeagues from database
-                    // if (profileData.tour_leagues && tours.length > 0) {
-                    //     const selectedTourNames = profileData.tour_leagues;
-                    //     const userTours = tours.filter(tour => selectedTourNames.includes(tour.name));
-                    //     setSelectedTours(userTours);
-                    // }
                 } catch (err) {
                     console.error("Error fetching user profile:", err);
                     setError("Failed to fetch user profile.");

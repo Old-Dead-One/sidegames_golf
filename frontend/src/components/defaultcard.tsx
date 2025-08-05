@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface CardProps {
     title?: string;
     children: React.ReactNode;
     footerContent?: React.ReactNode; // Optional footer content
+    footerTitle?: string; // Optional title for the footer toggle
     className?: string; // Optional className for additional styling
     theme?: string | null;
     includeInnerCard?: boolean; // Optional prop to include inner grey card
@@ -16,6 +17,7 @@ const Card: React.FC<CardProps> = ({
     title,
     children,
     footerContent,
+    footerTitle = "Help & Instructions",
     className,
     theme,
     paddingClassName,
@@ -23,6 +25,8 @@ const Card: React.FC<CardProps> = ({
     includeInnerCard = false,
     innerCardClassName = ""
 }) => {
+    const [footerOpen, setFooterOpen] = useState(false);
+
     // Default padding is p-4, but can be overridden with paddingClassName
     const defaultPadding = "p-4";
     const finalPadding = paddingClassName || defaultPadding;
@@ -57,8 +61,22 @@ const Card: React.FC<CardProps> = ({
                     </div>
                     {/* Footer Section */}
                     {footerContent && (
-                        <div className={finalPadding}>
-                            {footerContent}
+                        <div className="mt-4">
+                            <button
+                                onClick={() => setFooterOpen(!footerOpen)}
+                                className="w-full flex items-center justify-between text-xs text-gray-300 hover:text-white transition-colors p-2 rounded-lg bg-gray-800 bg-opacity-80"
+                            >
+                                <span className="font-semibold">{footerTitle}</span>
+                                <span className={`transition-transform duration-200 ${footerOpen ? 'rotate-180' : ''}`}>
+                                    ▼
+                                </span>
+                            </button>
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${footerOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                                }`}>
+                                <div className="pt-2">
+                                    {footerContent}
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>

@@ -18,7 +18,7 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
     const [loading, setLoading] = useState(true);
     const [showMyToursOnly, setShowMyToursOnly] = useState(false);
 
-    const { loading: userLoading, joinedTours } = useUser();
+    const { joinedTours, isLoggedIn } = useUser();
 
     const [tooltip, setTooltip] = useState<{
         title: string;
@@ -138,7 +138,7 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
         ? events.filter(event => event.tour_id && joinedTours.includes(event.tour_id))
         : events;
 
-    if (userLoading || loading) {
+    if (loading) {
         return (
             <Card title="Calendar" theme={theme}>
                 <LoadingSpinner size="large" />
@@ -151,34 +151,54 @@ const Calendar: React.FC<CalendarProps> = ({ theme }) => {
             title="Event Calendar"
             theme={theme}
             includeInnerCard={true}
-        // footerContent={<button className="text-blue-600">Footer Action</button>}
-        >
-            <div className="flex items-center justify-end w-full mb-4">
-                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
-                    My Tours:
-                </label>
-                <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full">
-                    <span
-                        className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
-                            ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
-                        `}
-                    />
-                    <span
-                        className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
-                            ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
-                        `}
-                    />
-                    <input
-                        id="my-tours-switch"
-                        name="my-tours-switch"
-                        type="checkbox"
-                        aria-label="My Tours"
-                        checked={showMyToursOnly}
-                        onChange={() => setShowMyToursOnly(v => !v)}
-                        className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-                    />
+            footerTitle="📅 Calendar Features"
+            footerContent={
+                <div className="text-xs text-gray-300 bg-gray-800 bg-opacity-80 rounded-lg p-3">
+                    <ul className="list-disc list-inside space-y-1 text-left">
+                        <li>Click on any event to see details and go to Find a Game</li>
+                        <li>Use "My Tours" toggle to filter events (when logged in)</li>
+                        <li>Navigate between months with arrow buttons</li>
+                        <li>Click "Today" to return to current month</li>
+                    </ul>
+                    <div className="mt-2 text-yellow-300">
+                        💡 <strong>Tip:</strong> Events link to the Find a Game page where you can join tournaments.
+                    </div>
+                    {!isLoggedIn && (
+                        <div className="mt-2 text-blue-300">
+                            🔍 <strong>Browse freely:</strong> You can view all events without an account. Sign in to join tournaments.
+                        </div>
+                    )}
                 </div>
-            </div>
+            }
+        >
+            {isLoggedIn && (
+                <div className="flex items-center justify-end w-full mb-4">
+                    <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
+                        My Tours:
+                    </label>
+                    <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full">
+                        <span
+                            className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
+                                ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
+                            `}
+                        />
+                        <span
+                            className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
+                                ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
+                            `}
+                        />
+                        <input
+                            id="my-tours-switch"
+                            name="my-tours-switch"
+                            type="checkbox"
+                            aria-label="My Tours"
+                            checked={showMyToursOnly}
+                            onChange={() => setShowMyToursOnly(v => !v)}
+                            className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                        />
+                    </div>
+                </div>
+            )}
             <div className="text-left flex justify-center max-w-4xl mx-auto">
                 <div className="p-4 text-xs bg-white bg-opacity-95 rounded-lg">
                     <FullCalendar

@@ -176,7 +176,7 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
                                 </>
                             )}
                         </button>
-                        <div className="mt-4">
+                        {/* <div className="mt-4">
                             <div className="flex justify-center">
                                 <span className="">Or continue with</span>
                             </div>
@@ -206,7 +206,7 @@ const Login: React.FC<LoginProps> = ({ theme }) => {
                                 </svg>
                                 <span>Google</span>
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

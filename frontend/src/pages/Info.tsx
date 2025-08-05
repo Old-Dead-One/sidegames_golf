@@ -7,17 +7,17 @@ const faqs = [
     {
         question: "What personal data do you collect?",
         answer:
-            "We use your email to identify you and maintain your play history. Additionally, use your name and address for financial transactions, and compliance with local laws.",
+            "We use your email to identify you and maintain your play history. Additionally, use your name and address for financial transactions, and compliance with state and federal laws.",
     },
     {
         question: "Why are the processing costs added to the entrance fee?",
         answer:
-            "To simplify the prize pool and payout. We could take the processing fees from your entrance fees but the prize pool would be a random number based on the remaining entrance money after processing.",
+            "To simplify the prize pool and payout. We could take the processing fees from your entrance fees but the prize pool would be a random number based on the remaining entrance fees after processing.",
     },
     {
         question: "Is this a sports betting site?",
         answer:
-            "No, there is no gambling associated with this site. You cannot place a bet on someone in the field to win. This app is intended to simplify golf side games, not bet on golf.",
+            "No, there is no gambling associated with this site. You cannot place a bet on someone in the field to win through this app. This app is intended to simplify golf side games, not bet on golf.",
     },
     // --- Additional FAQs ---
     // {
@@ -50,14 +50,14 @@ const faqs = [
     // },
     {
         question: "Can I edit or delete my account?",
-        answer: "Yes, you can update your profile information in the Account page or delete your account. Deleting your account will remove your profile and all associated data.",
+        answer: "Account management is available through the Profile dropdown menu. Navigate to the Account page to modify your profile information or delete your account. Warning: Account deletion is irreversible and will remove your profile and all associated data."
     },
     // {
     //     question: "What are the rules for side games?",
     //     answer: "Each event may have different side games. Rules are provided in the event details or by the event organizer.",
     // },
     {
-        question: "Why do I need to verify my email or complete my profile?",
+        question: "Why do I need to verify my email or complete my profile to join or create events?",
         answer: "Verification helps ensure security, compliance, and a fair experience for all users.",
     },
     {
@@ -74,7 +74,7 @@ const faqs = [
     },
     {
         question: "What if I forget my password?",
-        answer: "Use the Forgot Password link on the login page to reset your password via email.",
+        answer: "Use the Forgot Password link on the login page to reset your password via email. If you need to change your password, you can do so in the Password page located in the Profile dropdown menu.",
     },
 ];
 

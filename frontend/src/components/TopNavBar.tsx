@@ -42,7 +42,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
 
                                 {/* NavLinks for Desktop */}
                                 <NavLink
-                                    to="/Dashboard"
+                                    to="/dashboard"
                                     className={({ isActive }) =>
                                         isActive
                                             ? "rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
@@ -52,7 +52,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                                     Find a Game
                                 </NavLink>
                                 <NavLink
-                                    to="/CreateGame"
+                                    to="/create-game"
                                     className={({ isActive }) =>
                                         isActive
                                             ? "rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
@@ -62,7 +62,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                                     Create a Game
                                 </NavLink>
                                 <NavLink
-                                    to="/Info"
+                                    to="/info"
                                     className={({ isActive }) =>
                                         isActive
                                             ? "rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
@@ -72,7 +72,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                                     Faq
                                 </NavLink>
                                 <NavLink
-                                    to="/Calendar"
+                                    to="/calendar"
                                     className={({ isActive }) =>
                                         isActive
                                             ? "rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
@@ -125,7 +125,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                                 >
                                     <MenuItem>
                                         <NavLink
-                                            to="/Profile"
+                                            to="/profile"
                                             className={({ isActive }) =>
                                             (isActive
                                                 ? "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md bg-gray-900 text-white"
@@ -139,7 +139,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                                     {isLoggedIn && (
                                         <MenuItem>
                                             <NavLink
-                                                to="/Messages"
+                                                to="/messages"
                                                 className={({ isActive }) =>
                                                 (isActive
                                                     ? "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md bg-gray-900 text-white"
@@ -154,7 +154,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                                     )}
                                     <MenuItem>
                                         <NavLink
-                                            to="/Login"
+                                            to="/login"
                                             className={({ isActive }) =>
                                             (isActive
                                                 ? "flex items-center min-h-[44px] px-4 py-2 text-base font-medium leading-none rounded-md bg-gray-900 text-white"
@@ -210,9 +210,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                 <div className="space-y-1 px-2 pb-3 pt-2">
                     <DisclosureButton
                         as={NavLink}
-                        to="/Dashboard"
+                        to="/dashboard"
                         className={() =>
-                            isActive("/Dashboard")
+                            isActive("/dashboard")
                                 ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                 : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                         }
@@ -221,9 +221,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                     </DisclosureButton>
                     <DisclosureButton
                         as={NavLink}
-                        to="/CreateGame"
+                        to="/create-game"
                         className={() =>
-                            isActive("/CreateGame")
+                            isActive("/create-game")
                                 ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                 : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                         }
@@ -235,7 +235,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                             as="button"
                             type="button"
                             className={() =>
-                                isActive("/Cart")
+                                isActive("/cart")
                                     ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                     : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                             }
@@ -249,9 +249,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                     ) : (
                         <DisclosureButton
                             as={NavLink}
-                            to="/Cart"
+                            to="/cart"
                             className={() =>
-                                isActive("/Cart")
+                                isActive("/cart")
                                     ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                     : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                             }
@@ -264,9 +264,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                     )}
                     <DisclosureButton
                         as={NavLink}
-                        to="/Info"
+                        to="/info"
                         className={() =>
-                            isActive("/Info")
+                            isActive("/info")
                                 ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                 : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                         }
@@ -275,9 +275,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                     </DisclosureButton>
                     <DisclosureButton
                         as={NavLink}
-                        to="/Calendar"
+                        to="/calendar"
                         className={() =>
-                            isActive("/Calendar")
+                            isActive("/calendar")
                                 ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                 : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                         }
@@ -307,7 +307,7 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                             <div className="text-base font-medium text-white">{user?.displayName || "User Name"}</div>
                             <div className="text-sm font-medium text-gray-600">{user?.email || "user@example.com"}</div>
                         </div>
-                        <Link to="/Messages" onClick={() => {
+                        <Link to="/messages" onClick={() => {
                             const disclosureButton = document.querySelector('[aria-expanded="true"]') as HTMLElement;
                             if (disclosureButton) {
                                 disclosureButton.click();
@@ -327,9 +327,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                     <div className="mt-3 space-y-1 px-2">
                         <DisclosureButton
                             as={NavLink}
-                            to="/Profile"
+                            to="/profile"
                             className={() =>
-                                isActive("/Profile")
+                                isActive("/profile")
                                     ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                     : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                             }
@@ -338,9 +338,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                         </DisclosureButton>
                         <DisclosureButton
                             as={NavLink}
-                            to="/Messages"
+                            to="/messages"
                             className={() =>
-                                isActive("/Messages")
+                                isActive("/messages")
                                     ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                     : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"
                             }
@@ -349,9 +349,9 @@ const TopNavBar: React.FC<TopNavBarProps> = ({ logoColor, onCartClick }) => {
                         </DisclosureButton>
                         <DisclosureButton
                             as={NavLink}
-                            to="/Login"
+                            to="/login"
                             className={() =>
-                                isActive("/Login")
+                                isActive("/login")
                                     ? "block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
                                     : "block rounded-md px-3 py-2 text-base font-medium hover:bg-gray-700 hover:text-white"} onClick={isLoggedIn ? logout : undefined}>
                             {isLoggedIn ? "Logout" : "Login"}

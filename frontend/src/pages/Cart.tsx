@@ -32,12 +32,17 @@ const Cart: React.FC<CartProps> = ({ theme, onClose }) => {
 
                 const { data: userCart, error } = await supabase
                     .from('cart')
-                    .select('*')
+                    .select('cartItems')
                     .eq('id', userId)
-                    .single();
+                    .maybeSingle();
 
                 if (error) {
-                    console.error("Error fetching user cart:", error);
+                    if (error.code === 'PGRST116') {
+                        // No cart found for this user - this is normal for new users
+                        setCartItems([]);
+                    } else {
+                        console.error("Error fetching user cart:", error);
+                    }
                 } else {
                     if (userCart) {
                         setCartItems((userCart.cartItems || []).map((item: any) => ({
@@ -92,27 +97,30 @@ const Cart: React.FC<CartProps> = ({ theme, onClose }) => {
 
     const deleteCartItem = async (index: number) => {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            const userId = session.user.id;
+        if (!session) {
+            toast.error("You must be logged in to manage your cart.");
+            return;
+        }
 
-            // Remove the item from local state
-            const updatedCartItems = cartItems.filter((_, i) => i !== index);
-            setCartItems(updatedCartItems);
+        const userId = session.user.id;
 
-            // Update the database
-            const { error } = await supabase
-                .from('cart')
-                .upsert({
-                    id: userId,
-                    cartItems: updatedCartItems
-                });
+        // Remove the item from local state
+        const updatedCartItems = cartItems.filter((_, i) => i !== index);
+        setCartItems(updatedCartItems);
 
-            if (error) {
-                console.error("Error deleting cart item:", error);
-                toast.error("Failed to delete cart item.");
-            } else {
-                toast.success("Cart item deleted successfully.");
-            }
+        // Update the database
+        const { error } = await supabase
+            .from('cart')
+            .upsert({
+                id: userId,
+                cartItems: updatedCartItems
+            });
+
+        if (error) {
+            console.error("Error deleting cart item:", error);
+            toast.error("Failed to delete cart item.");
+        } else {
+            toast.success("Cart item deleted successfully.");
         }
     };
 
@@ -182,7 +190,7 @@ const Cart: React.FC<CartProps> = ({ theme, onClose }) => {
                                     toast.warn("There are no items in the cart.");
                                 } else {
                                     onClose?.();
-                                    navigate('/ReviewCart');
+                                    navigate('/review-cart');
                                 }
                             }}
                         >

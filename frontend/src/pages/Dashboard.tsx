@@ -39,7 +39,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const [totalCost, setTotalCost] = useState<number>(0);
     const [loading, setLoading] = useState(false);
     const [tourLocations, setTourLocations] = useState<any[]>([]);
-    const { addToCart, isEventInCart, joinedTours, user } = useUser();
+    const { addToCart, isEventInCart, joinedTours, user, isLoggedIn } = useUser();
     const [showMyToursOnly, setShowMyToursOnly] = useState(false);
     const [enabledSideGames, setEnabledSideGames] = useState<{ key: string; name: string; fee: number | null }[]>([]);
     const [purchasedSideGames, setPurchasedSideGames] = useState<Set<string>>(new Set());
@@ -128,15 +128,26 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
         }
     }, [tours]);
 
-    // Since locations are now global, we show all locations
-    // In the future, you might want to filter by events that exist for the selected tour
+    // Only show locations when a tour is selected, filter by tour
     const filteredLocationDetails: LocationDetail[] = React.useMemo(() => {
-        if (!selectedtour_id) return [];
+        if (!selectedtour_id) {
+            return []; // No locations when no tour is selected
+        }
+
         const tourLocationIds = tourLocations
             .filter((tl) => tl.tour_id === selectedtour_id)
             .map((tl) => tl.location_id);
+
+        // If no tour locations found, show all locations that have events for this tour
+        if (tourLocationIds.length === 0) {
+            const eventLocationIds = events
+                .filter(ev => ev.tour_id === selectedtour_id)
+                .map(ev => ev.location_id);
+            return locations.filter((loc) => eventLocationIds.includes(loc.id));
+        }
+
         return locations.filter((loc) => tourLocationIds.includes(loc.id));
-    }, [selectedtour_id, locations, tourLocations]);
+    }, [selectedtour_id, locations, tourLocations, events]);
 
     const filteredEvents = React.useMemo(() => {
         if (!selectedlocation_id) return [];
@@ -179,15 +190,18 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 setEnabledSideGames([]);
                 return;
             }
+
             const { data: row, error } = await supabase
                 .from('event_side_games')
                 .select('*')
                 .eq('event_id', selectedEvent.id)
                 .single();
+
             if (error || !row) {
                 setEnabledSideGames([]);
                 return;
             }
+
             const allSideGameKeys = [
                 { key: 'open_net', label: 'Open Net' },
                 { key: 'sr_net', label: 'Sr Net' },
@@ -204,7 +218,16 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
             ];
             const enabled = allSideGameKeys
                 .filter(sg => row[sg.key])
-                .map(sg => ({ key: sg.key, name: sg.label, fee: row[`${sg.key}_fee`] }));
+                .map(sg => ({
+                    key: sg.key,
+                    name: sg.label,
+                    fee: row[`${sg.key}_fee`] !== null && row[`${sg.key}_fee`] !== undefined
+                        ? Number(row[`${sg.key}_fee`])
+                        : null
+                }));
+
+
+
             setEnabledSideGames(enabled);
         };
         fetchEnabledSideGames();
@@ -221,7 +244,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                 .select('side_games_data')
                 .eq('user_id', user.id)
                 .eq('event_id', selectedEvent.id);
-            console.log('Purchases response:', purchases, 'Error:', error);
+
             if (error) {
                 setPurchasedSideGames(new Set());
                 return;
@@ -338,6 +361,12 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
     const autoCompleteFormRef = useRef<any>(null);
 
     const handleAddToCart = () => {
+        // Check if user is logged in
+        if (!isLoggedIn) {
+            toast.error("You must be logged in to enter events. Please sign in or create an account.");
+            return;
+        }
+
         if (!selectedEvent) {
             toast.error("Please select an event");
             return;
@@ -407,33 +436,55 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
             title="Find a Game"
             theme={theme}
             includeInnerCard={true}
-        >
-            <div className="flex items-center justify-end w-full mb-4 rounded">
-                <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
-                    My Tours:
-                </label>
-                <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
-                    <span
-                        className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
-                            ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
-                        `}
-                    />
-                    <span
-                        className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
-                            ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
-                        `}
-                    />
-                    <input
-                        id="my-tours-switch"
-                        name="my-tours-switch"
-                        type="checkbox"
-                        aria-label="My Tours"
-                        checked={showMyToursOnly}
-                        onChange={() => setShowMyToursOnly(v => !v)}
-                        className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
-                    />
+            footerTitle="📋 How to Find a Game"
+            footerContent={
+                <div className="text-xs text-gray-300 bg-gray-800 bg-opacity-80 rounded-lg p-3">
+                    <ol className="list-decimal list-inside space-y-1 text-left">
+                        <li><strong>Browse freely!</strong> Select a <strong>Tour</strong> (e.g., APT USA, My Men's League, etc.)</li>
+                        <li>Choose a <strong>Location</strong> (e.g., Florida Gulf Coast, Georgia Central, The Ledges GC, etc.)</li>
+                        <li>Pick an <strong>Event</strong> (e.g., The Red Rock Championship, Tuesday Night League, etc.)</li>
+                        <li>Select your <strong>Side Games</strong> (e.g., Open Net, Sr Net, Super Skins, etc.)</li>
+                        <li>Click <strong>"Add to Cart"</strong> to complete your purchase</li>
+                    </ol>
+                    <div className="mt-2 text-yellow-300">
+                        💡 <strong>Tip:</strong> Use the "My Tours" toggle to filter events for tours you've joined.
+                    </div>
+                    {!isLoggedIn && (
+                        <div className="mt-2 text-blue-300 border border-blue-500 rounded p-2">
+                            🔐 <strong>Ready to join?</strong> You'll need to <strong>log in</strong> to add events to your cart and complete purchases.
+                        </div>
+                    )}
                 </div>
-            </div>
+            }
+        >
+            {isLoggedIn && (
+                <div className="flex items-center justify-end w-full mb-4 rounded">
+                    <label htmlFor="my-tours-switch" className="text-xs text-gray-700 select-none mr-1">
+                        My Tours:
+                    </label>
+                    <div className="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-lg">
+                        <span
+                            className={`absolute mx-auto h-4 w-9 rounded-full transition-colors duration-200 ease-in-out
+                                ${showMyToursOnly ? 'bg-indigo-600' : 'bg-gray-200'}
+                            `}
+                        />
+                        <span
+                            className={`absolute left-0 size-5 rounded-full border bg-white shadow-xs transition-transform duration-200 ease-in-out
+                                ${showMyToursOnly ? 'border-indigo-600 translate-x-5' : 'border-gray-300'}
+                            `}
+                        />
+                        <input
+                            id="my-tours-switch"
+                            name="my-tours-switch"
+                            type="checkbox"
+                            aria-label="My Tours"
+                            checked={showMyToursOnly}
+                            onChange={() => setShowMyToursOnly(v => !v)}
+                            className="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                        />
+                    </div>
+                </div>
+            )}
             <div className="space-y-4">
                 <AutoCompleteForm
                     ref={autoCompleteFormRef}
@@ -520,6 +571,7 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                                         const sgKey = sg.key
                                             ? sg.key.toLowerCase().replace(/^[0-9]+_/, '').replace(/[^a-z0-9]/g, '_')
                                             : '';
+
                                         return rowKey === sgKey && sg.fee !== null && sg.fee !== undefined;
                                     })
                                 ).map(row => {
@@ -533,8 +585,11 @@ const Dashboard: React.FC<DashboardProps> = ({ theme }) => {
                                             : '';
                                         return rowKey === sgKey;
                                     });
+
                                     return sg ? { ...row, value: sg.fee ?? row.value } : row;
                                 })}
+
+
                                 net={net}
                                 division={division}
                                 superSkins={superSkins}

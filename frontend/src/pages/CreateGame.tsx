@@ -22,7 +22,7 @@ interface PendingConfirmation {
     eventId: string | null;
 }
 
-const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
+const CreateGame: React.FC<{ theme: string; onContactClick?: () => void }> = ({ theme, onContactClick }) => {
     const [tours, setTours] = useState<Tour[]>([]);
     const [locations, setLocations] = useState<LocationDetail[]>([]);
     const [events, setEvents] = useState<EventItem[]>([]);
@@ -94,8 +94,12 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
             // Open the Event Details accordion when an event is selected
             setExpanded("eventdetailspanel");
         } else {
-            resetFields();
-            // Close the Event Details accordion when no event is selected
+            // Clear form fields without triggering resetForm to avoid infinite loop
+            setEventName("");
+            setCourseDetails({ course_name: "" });
+            setEventDate(new Date().toISOString().split("T")[0]);
+            setSelectedSideGames([]);
+            setFormKey(k => k + 1);
             setExpanded("tourpanel");
         }
     };
@@ -189,7 +193,6 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
             if (error && error.code !== 'PGRST116') { // PGRST116: No rows found
                 // If table doesn't exist yet, return false (no admin privileges)
                 if (error.message?.includes('relation "admin_privileges" does not exist')) {
-                    console.log('Admin privileges table does not exist yet');
                     return false;
                 }
                 console.error('Error checking admin privileges:', error);
@@ -372,23 +375,9 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                 eventSideGamesRow[`${key}_fee`] = selectedMap[key] || null;
             });
 
-            // Debug logs
-            console.log('selectedSideGames:', sideGamesToUse.map(sg => sg.key));
-            sideGamesToUse.forEach(sg => {
-                const key = sg.key
-                    .toLowerCase()
-                    .replace(/^[0-9]+_/, '')
-                    .replace(/[^a-z0-9]/g, '_');
-                console.log('Mapping:', sg.key, '->', key, 'fee:', sg.entranceFee);
-            });
-            console.log('selectedMap:', selectedMap);
-            console.log('eventSideGamesRow:', eventSideGamesRow);
-
             const { error: sideGamesError } = await supabase
                 .from('event_side_games')
                 .upsert([eventSideGamesRow]);
-
-            console.log('sideGamesError:', sideGamesError);
 
             if (sideGamesError) {
                 toast.error("Failed to save side games for event");
@@ -421,7 +410,14 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
         setFormKey(k => k + 1);
         // Reset the expanded state to tour panel
         setExpanded("tourpanel");
-        // Reset the autocomplete form using the ref
+        // Reset form values without triggering handlers
+        setTourValue(null);
+        setSelectedtour_id(null);
+        setLocationValue(null);
+        setSelectedlocation_id(null);
+        setEventValue(null);
+        setSelectedEvent(null);
+        // Reset the autocomplete form using the ref (for side games only)
         if (autoCompleteFormRef.current && autoCompleteFormRef.current.resetForm) {
             autoCompleteFormRef.current.resetForm();
         }
@@ -616,6 +612,22 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                 title="Create a Game"
                 theme={theme}
                 includeInnerCard={true}
+                footerTitle="🎯 How to Create a Game"
+                footerContent={
+                    <div className="text-xs text-gray-300 bg-gray-800 bg-opacity-80 rounded-lg p-3">
+                        <ol className="list-decimal list-inside space-y-1 text-left">
+                            <li>Select a <strong>Tour</strong> you have admin privileges for. Don't have admin privileges? <button onClick={onContactClick} className="text-blue-300 hover:text-blue-400">Contact us</button></li>
+                            <li>Choose a <strong>Location</strong> (e.g., Florida Gulf Coast, St. George Utah etc.)</li>
+                            <li>Fill in <strong>Event Details</strong> (e.g., Course Name, Event Name, Date, etc.)</li>
+                            <li>Configure <strong>Side Games</strong> (e.g., Open Net, Sr Net, Super Skins, etc.)</li>
+                            <li>Click <strong>"Create Event"</strong> to publish</li>
+                            <li>You can <strong>"Update Event"</strong> or <strong>"Cancel Event"</strong> in the same way.</li>
+                        </ol>
+                        <div className="mt-2 text-yellow-300">
+                            ⚠️ <strong>Requirements:</strong> You need admin privileges and a complete profile to create, update, or cancel events.
+                        </div>
+                    </div>
+                }
             >
                 {canCreate ? (
                     isProfileComplete ? (
@@ -737,13 +749,13 @@ const CreateGame: React.FC<{ theme: string }> = ({ theme }) => {
                         </div>
                     ) : (
                         <div className="text-yellow-600 font-semibold text-center">
-                            <p>You must have an address and phone number in your profile to create, update, or cancel events.</p>
-                            <Link to="/Profile" className="underline text-blue-700">Go to Profile</Link>
+                            <p>You must be logged in, have a verified email, and have a complete profile to create, update, or cancel events.</p>
+                            <Link to="/profile" className="underline text-blue-700">Go to Profile</Link>
                         </div>
                     )
                 ) : (
                     <p className="text-yellow-600 font-semibold text-center">
-                        You must be logged in and have a verified email to create, update, or cancel events.
+                        You must be logged in to access the Create a Game feature.
                     </p>
                 )}
             </Card>

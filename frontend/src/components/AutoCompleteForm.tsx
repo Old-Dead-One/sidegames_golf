@@ -75,9 +75,8 @@ const AutoCompleteForm = forwardRef<any, AutoCompleteFormProps>(({
     // Expose a resetForm method to parent via ref
     useImperativeHandle(ref, () => ({
         resetForm: () => {
-            onSelectTour(null);
-            onSelectLocation(null);
-            onSelectEvent(null);
+            // Don't call the handlers to avoid infinite loops
+            // The parent component should handle the state resets directly
             // Reset side games and cost fields
             const fakeEvent = { target: { value: "", checked: false } } as React.ChangeEvent<HTMLInputElement>;
             onNetChange(fakeEvent);

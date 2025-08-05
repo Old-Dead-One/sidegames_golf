@@ -35,7 +35,6 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
 
     const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
-        console.log('Checkbox clicked:', value);
 
         const normalizedKey = (value || '')
             .toLowerCase()
@@ -44,37 +43,30 @@ const SideGamesTable: React.FC<SideGamesTableProps> = ({
 
         // If already purchased, show a message but allow the user to see their purchase
         if (purchasedSideGames.has(normalizedKey)) {
-            console.log('Already purchased:', value);
             toast.info("You have already purchased this side game for this event.");
             return;
         }
 
         // If this is a net game and user already purchased a net game, prevent selection
         if (/net/i.test(value) && Array.from(purchasedSideGames).some(key => /net/i.test(key))) {
-            console.log('Net game already purchased, blocking:', value);
             toast.error("You have already purchased a net game for this event.");
             return;
         }
 
         // If this is a division game and user already purchased a division game, prevent selection
         if (/d[1-5][_ ]skins/i.test(value) && Array.from(purchasedSideGames).some(key => /d[1-5][_ ]skins/i.test(key))) {
-            console.log('Division game already purchased, blocking:', value);
             toast.error("You have already purchased a division skins game for this event.");
             return;
         }
 
         // Otherwise, proceed as before
         if (/super[_ ]skins/i.test(value)) {
-            console.log('Super Skins handler:', value);
             onSuperSkinsChange(event);
         } else if (/d[1-5][_ ]skins/i.test(value)) {
-            console.log('Division handler:', value);
             onDivisionChange(event);
         } else if (/net/i.test(value)) {
-            console.log('Net handler:', value);
             onNetChange(event);
         } else {
-            console.log('Fallback net handler:', value);
             onNetChange(event);
         }
     };

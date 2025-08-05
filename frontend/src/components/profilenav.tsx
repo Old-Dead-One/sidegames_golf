@@ -4,12 +4,12 @@ import { BellIcon, CalendarIcon, CogIcon, CreditCardIcon, KeyIcon, UserCircleIco
 import { useUser } from '../context/UserContext';
 
 const navigation = [
-    { name: 'Profile', href: '/Profile', icon: UserCircleIcon },
-    { name: 'Account', href: '/Account', icon: CogIcon },
-    { name: 'Password', href: '/Password', icon: KeyIcon },
-    { name: 'Notifications', href: '/Notifications', icon: BellIcon },
-    { name: 'Transactions', href: '/Transactions', icon: CreditCardIcon },
-    { name: 'My Events', href: '/ProfileEvents', icon: CalendarIcon },
+    { name: 'Profile', href: '/profile', icon: UserCircleIcon },
+    { name: 'Account', href: '/account', icon: CogIcon },
+    { name: 'Password', href: '/password', icon: KeyIcon },
+    { name: 'Notifications', href: '/notifications', icon: BellIcon },
+    { name: 'Transactions', href: '/transactions', icon: CreditCardIcon },
+    { name: 'My Events', href: '/profile-events', icon: CalendarIcon },
 ]
 
 function classNames(...classes: (string | boolean | undefined)[]): string {

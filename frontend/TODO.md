@@ -1,30 +1,44 @@
 # TODO List
 
+## ✅ Recently Completed (Demo Preparation)
+- [x] **Footer Instructions**: Added contextual help in collapsible footers for Find a Game, Create a Game, and Calendar pages
+- [x] **Calendar Accessibility**: Made Calendar page accessible to non-logged-in users for browsing events
+- [x] **Contact Integration**: Added functional contact modal links in Create Game instructions
+- [x] **Code Cleanup**: Removed unused imports and variables across all components
+- [x] **TypeScript Errors**: Fixed all build errors and warnings
+- [x] **Environment Setup**: Configured for demo with proper error handling
+- [x] **Final Build Fix**: Resolved unused variable in Calendar.tsx causing build failure
+- [x] **UI Cleanup**: Removed non-functional Google sign-in button for professional demo presentation
+- [x] **Cart Error Fix**: Resolved 406 errors by using `.maybeSingle()` for cart queries to handle empty cart tables
+- [x] **Infinite Loop Fix**: Resolved "Maximum call stack size exceeded" error in CreateGame by preventing circular calls between form reset and event handlers
+- [x] **Authentication UX Fix**: Added proper login checks for Add to Cart, Cart management, and Checkout with user-friendly error messages (add it back after demo)
+- [x] **D5 Skins Pricing Fix**: Resolved issue where Division D5 Skins was showing $0.00 instead of $20.00 by cleaning up duplicate entries in the side_games table and ensuring proper key mapping between static data and database values
+
 ## Authentication & Security
 - [ ] Add “Sign up / Sign in with Google” (and optionally other providers)
 - [ ] Add CAPTCHA to event creation
 - [ ] Add CAPTCHA to account creation (sign up)
 - [ ] (Optional) Add email confirmation reminders for unverified users
+- [ ] **Post Demo**: Configure Supabase email server for email verification (currently using placeholder logic)
 
 ## User Experience
 - [ ] Add a “Forgot Password?” link to the login page
 - [ ] Add a “Resend verification email” option for unverified users
 - [ ] Add a “Delete Account” feature (with confirmation and data cleanup)
-- [ ] Show a list of events the user has created on the My Events page
-- [ ] Show a list of events the user has entered (registered for)
+- [x] Show a list of events the user has created on the My Events page
+- [x] Show a list of events the user has entered (registered for)
 
-## Event Management
+## Event Management/Admin pages
 - [x] Add ability to edit/delete events (with proper permissions)
 - [x] Add event date picker with correct year range (2024–2030)
 - [x] Add side games modal/section UI/UX (modern, styled, with custom order)
 - [ ] Add event detail pages (with player list, event info, etc.)
-- [ ] Prevent users from joining the same event twice (already implemented in purchases, but double-check UI)
-- [ ] (Optional) Add event search/filtering
 - [ ] Add bulk event upload via CSV (use Supabase CSV import for large data sets, e.g., Tours with many events)
-- [ ] Add the id of the user that creates an event to the event so only they have access to it
-- [ ] Add DB logic to collect which side games are in each event
+- [x] Add the id of the user that creates an event to the event so only they have access to it
+- [x] Add DB logic to collect which side games are in each event
 - [ ] Add logic to the delete event button to check that there are no players already in the event before allowing deletion
 - [ ] Add a refund players method for events (e.g., when an event is deleted or canceled)
+- [ ] Add logic to create new Tours and Locations from Create Event fields with duplicate checking dialog
 
 ## Notifications & Communication
 - [ ] Implement notification sending (email/SMS) for event reminders, updates, etc.
@@ -43,7 +57,7 @@
 ## Performance & Polish
 - [x] Add loading spinners/placeholders to all async pages
 - [x] Add error boundaries for better error handling
-- [ ] Test on mobile and different browsers for responsive design
+- [x] Test on mobile and different browsers for responsive design
 
 ## Other Ideas
 - [ ] Analytics (track signups, event creation, etc.)

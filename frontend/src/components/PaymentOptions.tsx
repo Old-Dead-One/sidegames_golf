@@ -71,7 +71,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                 </div>
             </div>
 
-            <div className='flex flex-row justify-center gap-2'>
+            <div className='flex flex-col sm:flex-row justify-center gap-2'>
                 {/* Apple Pay Button */}
                 <button
                     onClick={() => handlePayment('apple-pay')}

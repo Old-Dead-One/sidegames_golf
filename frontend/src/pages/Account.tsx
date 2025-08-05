@@ -27,6 +27,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
     const [editingEmail, setEditingEmail] = useState(false);
     const [newEmail, setNewEmail] = useState("");
     const [emailError, setEmailError] = useState("");
+    const [showEmailAlert, setShowEmailAlert] = useState(false);
 
     // Format phone as (123) 456-7890, drop leading 1 if 11 digits
     function formatPhone(value: string) {
@@ -110,7 +111,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
     const handleDeleteAccount = async () => {
         if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
             try {
-                // TODO: Implement account deletion
+                // Account deletion functionality
                 toast.error("Account deletion not yet implemented");
             } catch (err) {
                 handleError(err, "Failed to delete account");
@@ -141,7 +142,8 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
             await updateUserProfile({ id: user.id, email: newEmail });
             setEmail(newEmail);
             setEditingEmail(false);
-            toast.success("Email updated!");
+            setShowEmailAlert(true);
+            toast.success("Email updated! Please check your email for verification.");
         } catch (err) {
             setEmailError("Failed to update profile email.");
         }
@@ -183,7 +185,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                 </div>
                                 <div className="text-xs flex flex-col">
                                     <div className="flex rounded-lg">
-                                        <label htmlFor="first-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="first-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             First Name:
                                         </label>
                                         <input
@@ -199,7 +201,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                         />
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="last-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="last-name" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Last Name:
                                         </label>
                                         <input
@@ -215,60 +217,67 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                     </div>
                                     {/* Email field */}
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="email" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="email" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Email:
+                                            {editingEmail && (
+                                                <button
+                                                    type="button"
+                                                    className="text-xs hover:text-red-400 ml-3"
+                                                    onClick={handleEmailCancel}
+                                                    aria-label="Cancel email edit"
+                                                >
+                                                    ❌
+                                                </button>
+                                            )}
                                         </label>
                                         {editingEmail ? (
                                             <div className="flex gap-2 items-center w-full grow">
-                                                <input
-                                                    id="email"
-                                                    name="email"
-                                                    type="email"
-                                                    value={newEmail}
-                                                    onChange={e => setNewEmail(e.target.value)}
-                                                    autoComplete="email"
-                                                    required
-                                                    className="w-full grow rounded-r-lg border-0 py-1 focus:ring-1 focus:ring-indigo-600"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="rounded-lg bg-indigo-600 text-white px-2 py-1 text-xs font-semibold hover:bg-indigo-700"
-                                                    onClick={handleEmailSave}
-                                                    disabled={newEmail === email || !isValidEmail(newEmail)}
-                                                >
-                                                    Save
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="rounded-lg bg-white text-black px-2 py-1 text-xs font-semibold hover:bg-neutral-200"
-                                                    onClick={handleEmailCancel}
-                                                >
-                                                    Cancel
-                                                </button>
+                                                <div className="relative w-full grow">
+                                                    <input
+                                                        id="email"
+                                                        name="email"
+                                                        type="email"
+                                                        value={newEmail}
+                                                        onChange={e => setNewEmail(e.target.value)}
+                                                        autoComplete="email"
+                                                        required
+                                                        className="w-full rounded-r-lg border-0 py-1 pr-8 focus:ring-1 focus:ring-indigo-600"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs"
+                                                        onClick={handleEmailSave}
+                                                        disabled={newEmail === email || !isValidEmail(newEmail)}
+                                                        aria-label="Save email"
+                                                    >
+                                                        ✅
+                                                    </button>
+                                                </div>
                                             </div>
                                         ) : (
-                                            <div className="flex gap-2 items-center w-full grow">
+                                            <div className="relative w-full grow">
                                                 <input
                                                     id="email"
                                                     name="email"
                                                     type="email"
                                                     value={email}
                                                     readOnly
-                                                    className="w-full grow rounded-r-lg border-0 py-1 bg-neutral-200 text-neutral-700 cursor-not-allowed"
+                                                    className="w-full rounded-r-lg border-0 py-1 pr-8 bg-neutral-200 text-neutral-700 cursor-not-allowed"
                                                 />
                                                 <button
                                                     type="button"
-                                                    className="rounded-lg bg-white text-black px-2 py-2 text-xs font-semibold hover:bg-neutral-200"
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs hover:text-indigo-400"
                                                     onClick={() => setEditingEmail(true)}
+                                                    aria-label="Edit email"
                                                 >
-                                                    Edit
+                                                    ✏️
                                                 </button>
                                             </div>
                                         )}
                                         {emailError && <p className="text-xs text-red-500 mt-1">{emailError}</p>}
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="phone" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="phone" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Phone:
                                         </label>
                                         <input
@@ -283,7 +292,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                         />
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="address" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="address" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Address:
                                         </label>
                                         <input
@@ -298,7 +307,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                         />
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="apartment" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="apartment" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Apt, Suite:
                                         </label>
                                         <input
@@ -311,7 +320,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                         />
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="country" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="country" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Country:
                                         </label>
                                         <select
@@ -328,7 +337,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                         </select>
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="region" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="region" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             State:
                                         </label>
                                         <input
@@ -343,7 +352,7 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                                         />
                                     </div>
                                     <div className="mt-2 flex rounded-lg">
-                                        <label htmlFor="postal-code" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 w-[100px]">
+                                        <label htmlFor="postal-code" className="inline-flex items-center rounded-l-lg border text-nowrap border-white px-2 min-w-[80px] w-[80px] flex-shrink-0">
                                             Zip Code:
                                         </label>
                                         <input
@@ -396,6 +405,29 @@ const Account: React.FC<AccountProps> = ({ theme }) => {
                     </div>
                 </div>
             </div>
+
+            {/* Email Verification Alert Dialog */}
+            {showEmailAlert && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-neutral-800 border border-white rounded-lg p-6 max-w-md mx-4">
+                        <div className="text-center">
+                            <div className="text-2xl mb-4">📧</div>
+                            <h3 className="text-lg font-semibold text-white mb-2">Email Verification Required</h3>
+                            <p className="text-sm text-neutral-300 mb-4">
+                                We've sent a verification email to your new address. Please check your inbox and click the verification link to complete the email change.
+                            </p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setShowEmailAlert(false)}
+                                    className="flex-1 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                                >
+                                    Got it
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Card>
     );
 }

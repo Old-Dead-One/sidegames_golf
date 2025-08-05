@@ -30,7 +30,7 @@ const LandingPage: React.FC<LandingProps> = ({ theme }) => {
                                 alt="Find a Game"
                             />
                         </a>
-                        <a href="/CreateGame">
+                        <a href="/create-game">
                             <img
                                 src={create_a_game_logo_black}
                                 className="w-40 animate-pulse"

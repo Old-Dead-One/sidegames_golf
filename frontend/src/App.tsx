@@ -55,19 +55,19 @@ const App: React.FC = () => {
               <Suspense fallback={<LoadingSpinner size="large" />}>
                 <Routes>
                   <Route path="/" element={<Landing theme={bgColor} />} />
-                  <Route path="/Dashboard" element={<Dashboard theme={bgColor} />} />
-                  <Route path="/Info" element={<Info theme={bgColor} openLegalModal={openLegalModal} onContactClick={() => setContactOpen(true)} />} />
-                  <Route path="/Calendar" element={<Calendar theme={bgColor} />} />
-                  <Route path="/Profile" element={<Profile theme={bgColor} />} />
-                  <Route path="/Messages" element={<Messages theme={bgColor} />} />
-                  <Route path="/Notifications" element={<Notifications theme={bgColor} />} />
-                  <Route path="/Login" element={<Login theme={bgColor} />} />
-                  <Route path="/Account" element={<Account theme={bgColor} />} />
-                  <Route path="/Password" element={<Password theme={bgColor} />} />
-                  <Route path="/Transactions" element={<Transactions theme={bgColor} />} />
-                  <Route path="/ProfileEvents" element={<ProfileEvents theme={bgColor} />} />
-                  <Route path="/ReviewCart" element={<ReviewCart theme={bgColor} onOpenCart={() => setCartDrawerOpen(true)} />} />
-                  <Route path="/CreateGame" element={<CreateGame theme={bgColor} />} />
+                  <Route path="/dashboard" element={<Dashboard theme={bgColor} />} />
+                  <Route path="/info" element={<Info theme={bgColor} openLegalModal={openLegalModal} onContactClick={() => setContactOpen(true)} />} />
+                  <Route path="/calendar" element={<Calendar theme={bgColor} />} />
+                  <Route path="/profile" element={<Profile theme={bgColor} />} />
+                  <Route path="/messages" element={<Messages theme={bgColor} />} />
+                  <Route path="/notifications" element={<Notifications theme={bgColor} />} />
+                  <Route path="/login" element={<Login theme={bgColor} />} />
+                  <Route path="/account" element={<Account theme={bgColor} />} />
+                  <Route path="/password" element={<Password theme={bgColor} />} />
+                  <Route path="/transactions" element={<Transactions theme={bgColor} />} />
+                  <Route path="/profile-events" element={<ProfileEvents theme={bgColor} />} />
+                  <Route path="/review-cart" element={<ReviewCart theme={bgColor} onOpenCart={() => setCartDrawerOpen(true)} />} />
+                  <Route path="/create-game" element={<CreateGame theme={bgColor} onContactClick={() => setContactOpen(true)} />} />
                 </Routes>
               </Suspense>
             </div>
